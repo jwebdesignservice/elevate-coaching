@@ -1,20 +1,26 @@
-import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { requireUser } from '@/lib/auth';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { MobileNav } from '@/components/layout/MobileNav';
 
 export default async function AuthedLayout({ children }: { children: React.ReactNode }) {
-  // Gate: redirects to /sign-in when unauthenticated. Result discarded — the
-  // page itself re-fetches the profile when it needs it (deduped per request
-  // by React's `cache` inside `getCurrentUser`/`requireUser`).
-  await requireUser();
+  // Gate 1: requires a signed-in user with a profile row. Redirects to
+  // /sign-in if either is missing. Result is consumed here so the gate below
+  // can read profile.category.
+  const { profile } = await requireUser();
 
-  const hdrs = await headers();
-  const currentPath = hdrs.get('x-pathname') || '';
+  // Gate 2: every authed page assumes the user has picked a training
+  // category. New sign-ups land here without one (handle_new_user trigger
+  // sets category = NULL); bounce them to /onboarding until they pick.
+  if (!profile.category) {
+    redirect('/onboarding');
+  }
 
   return (
     <div className="bg-background flex min-h-screen">
-      <Sidebar currentPath={currentPath} />
-      <main className="flex flex-1 flex-col">{children}</main>
+      <Sidebar />
+      <MobileNav />
+      <main className="flex min-w-0 flex-1 flex-col">{children}</main>
     </div>
   );
 }

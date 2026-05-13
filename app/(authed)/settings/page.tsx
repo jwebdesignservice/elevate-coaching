@@ -1,11 +1,14 @@
 import { BadgeCheck, Calendar, Mail, Shield, User as UserIcon } from 'lucide-react';
 import { requireUser } from '@/lib/auth';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/layout/TopBar';
 import { RightRail } from '@/components/layout/RightRail';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { env } from '@/lib/env';
+import type { Category } from '@/lib/categories';
+import { CategoryCard } from './category-card';
 
 export const metadata = {
   title: 'Settings · Elevate Coaching',
@@ -24,6 +27,40 @@ const ROLE_LABEL: Record<string, string> = {
 
 export default async function SettingsPage() {
   const { profile } = await requireUser();
+
+  // The authed-layout gate guarantees profile.category is non-null by the
+  // time this page renders. Cast the type narrow that the gate enforces at
+  // runtime.
+  const currentCategory = profile.category as Category;
+
+  // Fetch the user's latest pending change request (if any). One query, RLS
+  // scopes to the current user automatically. Limit 1 because we only show
+  // the most recent — older pending rows are blocked by the UI but the DB
+  // doesn't enforce uniqueness (the coach may resolve and re-request).
+  const supabase = await createSupabaseServerClient();
+  const { data: pendingRows } = await supabase
+    .from('category_change_requests')
+    .select('id, requested_category, created_at')
+    .eq('user_id', profile.id)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  // Cast the row from the (under-inferred) Supabase chain — same pattern as
+  // lib/auth.ts / app/onboarding/actions.ts.
+  const pending = (pendingRows?.[0] ?? null) as {
+    id: string;
+    requested_category: Category;
+    created_at: string;
+  } | null;
+  const pendingRequest = pending
+    ? {
+        id: pending.id,
+        requestedCategory: pending.requested_category,
+        createdAt: pending.created_at,
+      }
+    : null;
+
   const displayName = profile.name?.trim() || 'Member';
   const initials =
     profile.name
@@ -44,7 +81,7 @@ export default async function SettingsPage() {
       />
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 space-y-6 overflow-y-auto p-8">
+        <div className="flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 lg:p-8">
           {/* Profile card — visual hero of the page */}
           <Card className="from-surface to-surface-hover border-border relative overflow-hidden bg-gradient-to-br p-8">
             <div
@@ -115,9 +152,13 @@ export default async function SettingsPage() {
             </dl>
 
             <p className="text-text-dim relative mt-6 text-xs">
-              Profile editing (name, avatar, training category, goal focus) lands in SP-2.
+              Editing your name and avatar lands in a later sprint. Your training category is
+              editable below via the coach-reviewed change-request flow.
             </p>
           </Card>
+
+          {/* Training category — set at onboarding, change via coach review */}
+          <CategoryCard currentCategory={currentCategory} pendingRequest={pendingRequest} />
 
           <Card className="bg-surface border-border p-6">
             <h2 className="text-text mb-4 text-xl font-semibold tracking-tight">Billing</h2>

@@ -53,6 +53,19 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+
+  // Supabase redirects expired / invalid OTP links to the configured Site URL
+  // (currently pointing at root while it's still localhost). Catch those error
+  // params here and forward to /sign-in with a readable code.
+  if (pathname === '/' && request.nextUrl.searchParams.has('error')) {
+    const errorCode = request.nextUrl.searchParams.get('error_code') ?? 'verification_failed';
+    const mapped = errorCode === 'otp_expired' ? 'link_expired' : 'verification_failed';
+    const url = request.nextUrl.clone();
+    url.pathname = '/sign-in';
+    url.search = `?error=${mapped}`;
+    return NextResponse.redirect(url);
+  }
+
   const isAuthPage = pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up');
   const isProtectedPage = pathname.startsWith('/dashboard') || pathname.startsWith('/settings');
 

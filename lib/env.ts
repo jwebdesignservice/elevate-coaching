@@ -19,9 +19,15 @@ const schema = z.object({
 
 const parsed = schema.safeParse(process.env);
 
-if (!parsed.success) {
+// During `next build`, NEXT_PUBLIC_* vars are inlined at compile time and
+// may not be present in CI / Vercel preview environments. Skip the hard
+// throw so the build succeeds; the runtime environment is responsible for
+// having valid values before the app serves traffic.
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+
+if (!parsed.success && !isBuildPhase) {
   console.error('❌ Invalid environment variables:', parsed.error.flatten().fieldErrors);
   throw new Error('Invalid environment variables — see logs above.');
 }
 
-export const env = parsed.data;
+export const env = (parsed.data ?? {}) as z.infer<typeof schema>;

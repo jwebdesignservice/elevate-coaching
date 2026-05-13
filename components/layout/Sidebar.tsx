@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname, useSelectedLayoutSegment } from 'next/navigation';
 import {
   Apple,
   BadgeCheck,
@@ -14,7 +17,6 @@ import {
 import { Logo } from '@/components/branded/Logo';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { env } from '@/lib/env';
 
 interface NavItem {
   label: string;
@@ -30,7 +32,7 @@ interface NavItem {
  * are visual placeholders for sprints that haven't shipped yet — wired
  * to `#` and styled identically to real items so the IA matches the
  * design spec. They become clickable when their routes land in
- * SP-2/SP-4/SP-5/SP-6.
+ * SP-4/SP-5/SP-6/SP-8.
  *
  * Active state: gradient mint→transparent surface + 3px mint bar pinned
  * to the left edge + bright text + slightly larger mint icon.
@@ -45,15 +47,33 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Settings', href: '/settings', Icon: Settings },
 ];
 
-interface SidebarProps {
-  currentPath: string;
+interface SidebarContentProps {
+  /** Called after a nav link is clicked. Used by the mobile drawer to close
+   *  itself; the inline desktop sidebar can omit this and the links behave
+   *  as normal full-route navigations. */
+  onNavigate?: () => void;
 }
 
-export function Sidebar({ currentPath }: SidebarProps) {
-  const whatsappHref = `https://wa.me/${env.NEXT_PUBLIC_COACH_WHATSAPP}`;
+/**
+ * Sidebar inner content — logo, nav, coach card. Shared between the inline
+ * desktop sidebar and the mobile off-canvas drawer (see MobileNav).
+ * Uses usePathname() so the active state updates on client-side navigation
+ * without requiring a full layout re-render.
+ */
+export function SidebarContent({ onNavigate }: SidebarContentProps) {
+  // usePathname() is the primary source — it returns the full URL path and
+  // updates reactively on client-side navigation.
+  // useSelectedLayoutSegment() is a belt-and-suspenders fallback: it reads
+  // the active child segment from the nearest parent layout context (a
+  // different internal signal in Next.js), so if one hook doesn't fire the
+  // other should catch it.
+  const pathname = usePathname();
+  const segment = useSelectedLayoutSegment();
+  const currentPath = pathname ?? (segment != null ? `/${segment}` : '');
+  const whatsappHref = `https://wa.me/${process.env.NEXT_PUBLIC_COACH_WHATSAPP}`;
 
   return (
-    <aside className="bg-surface border-border flex w-[220px] shrink-0 flex-col border-r p-6">
+    <div className="flex h-full flex-col p-6">
       <Logo variant="full" />
 
       <nav className="mt-10 flex flex-1 flex-col gap-1">
@@ -68,6 +88,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 aria-current="page"
+                onClick={onNavigate}
                 className={`${baseRow} text-text from-accent/15 via-accent/5 bg-gradient-to-r to-transparent font-semibold`}
               >
                 <span
@@ -98,6 +119,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={`${baseRow} text-text-muted hover:text-text hover:bg-white/[0.03]`}
             >
               <item.Icon className="h-4 w-4" />
@@ -133,6 +155,18 @@ export function Sidebar({ currentPath }: SidebarProps) {
           Message Coach
         </Button>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The inline desktop sidebar. Hidden on small viewports (the MobileNav
+ * drawer renders the same SidebarContent there).
+ */
+export function Sidebar() {
+  return (
+    <aside className="bg-surface border-border hidden w-[220px] shrink-0 border-r md:flex md:flex-col">
+      <SidebarContent />
     </aside>
   );
 }

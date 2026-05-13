@@ -21,15 +21,17 @@ export function TopBar({ title, subtitle, userTier, userName }: TopBarProps) {
   const initial = (userName?.[0] ?? 'U').toUpperCase();
 
   return (
-    <div className="border-border flex items-center gap-6 border-b px-8 py-6">
-      <div className="flex-1">
-        <h1 className="text-text text-3xl leading-tight font-bold tracking-tight">{title}</h1>
+    <div className="border-border flex flex-wrap items-center gap-x-6 gap-y-3 border-b py-6 pr-8 pl-16 md:pl-8">
+      <div className="min-w-0 flex-1">
+        <h1 className="text-text truncate text-2xl leading-tight font-bold tracking-tight sm:text-3xl">
+          {title}
+        </h1>
         {subtitle && <p className="text-text-muted mt-1.5 text-sm">{subtitle}</p>}
       </div>
 
       <div className="flex items-center gap-3">
-        {/* Search */}
-        <div className="relative">
+        {/* Search — hidden on small screens to leave room for the title */}
+        <div className="relative hidden lg:block">
           <Search className="text-text-dim pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <input
             disabled
@@ -38,7 +40,8 @@ export function TopBar({ title, subtitle, userTier, userName }: TopBarProps) {
           />
         </div>
 
-        {/* Upgrade Now — mint outline per mockup */}
+        {/* Upgrade Now — mint outline per mockup. Hide the label below sm,
+            keep the icon so the affordance is still discoverable. */}
         {userTier !== 'pro' && (
           <Button
             nativeButton={false}
@@ -47,7 +50,7 @@ export function TopBar({ title, subtitle, userTier, userName }: TopBarProps) {
             className="text-accent border-accent/40 hover:bg-accent/10 hover:border-accent transition-colors"
           >
             <Zap className="h-4 w-4 fill-current" />
-            Upgrade Now
+            <span className="hidden sm:inline">Upgrade Now</span>
           </Button>
         )}
 
