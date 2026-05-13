@@ -1,13 +1,10 @@
 import { z } from 'zod';
 
 const schema = z.object({
-  // Database
-  DATABASE_URL: z.string().url().or(z.string().startsWith('postgres://')),
-
-  // Clerk
-  CLERK_SECRET_KEY: z.string().min(1),
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-  CLERK_WEBHOOK_SECRET: z.string().min(1),
+  // Supabase (replaces Clerk + Neon — see docs/superpowers/notes/2026-05-13-supabase-pivot.md)
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
 
   // Sentry (optional in dev, required in prod)
   NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
