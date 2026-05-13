@@ -140,10 +140,11 @@ font-medium`, `px-2 py-0.5`).
 
 ```tsx
 const baseRow =
-  'group/nav relative flex items-center gap-3 rounded-card px-3 py-2.5 text-sm transition-all duration-200';
+  'group/nav relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-all duration-200';
 ```
 
-- **Active**: `text-text font-semibold bg-gradient-to-r from-accent/15 via-accent/5 to-transparent` + a 3px left mint bar pinned via absolute positioning + mint icon.
+- **Active**: `text-text font-semibold bg-gradient-to-r from-accent/15 via-accent/5 to-transparent` + a 3px left mint bar (`bg-accent absolute inset-y-1 left-0 w-[3px] rounded-r-md`, near-full-height with 4px top/bottom inset) + mint icon.
+- The row uses `rounded-md` (not `rounded-card`) so the active gradient stays tight against the nav edge — `rounded-card` (14px) reads as too pill-like at this scale.
 - **Idle real route**: `text-text-muted hover:text-text hover:bg-white/[0.03]`.
 - **Coming soon**: `text-text-muted/70 cursor-not-allowed select-none` — same visual weight as a real route, just dimmer; no separate "SOON" tag (mockup doesn't use them, so we don't either).
 

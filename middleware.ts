@@ -17,7 +17,13 @@ import { env } from '@/lib/env';
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request });
+  // Forward x-pathname through the REQUEST headers (not response headers)
+  // so Server Components can read it via `headers()`. Setting it on the
+  // response only sends it to the browser, which is not what we need.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-pathname', request.nextUrl.pathname);
+
+  let supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
 
   const supabase = createServerClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
@@ -29,7 +35,9 @@ export async function middleware(request: NextRequest) {
         },
         setAll(cookiesToSet: CookieToSet[]) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request });
+          // Re-pass the forwarded headers so x-pathname survives the cookie
+          // dance — otherwise we'd lose it after the first setAll call.
+          supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),
           );
@@ -64,9 +72,9 @@ export async function middleware(request: NextRequest) {
     return redirectResponse;
   }
 
-  // Expose the request pathname to Server Components (e.g., the authed
-  // layout uses it to compute active Sidebar nav state).
-  supabaseResponse.headers.set('x-pathname', pathname);
+  // (x-pathname is forwarded via the request headers we built at the top —
+  // see NextResponse.next({ request: { headers: requestHeaders } }).
+  // The authed layout reads it through `headers()` to drive active nav.)
   return supabaseResponse;
 }
 

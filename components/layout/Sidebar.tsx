@@ -60,7 +60,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
         {NAV_ITEMS.map((item) => {
           const active = !item.comingSoon && currentPath.startsWith(item.href);
           const baseRow =
-            'group/nav relative flex items-center gap-3 rounded-card px-3 py-2.5 text-sm transition-all duration-200';
+            'group/nav relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-all duration-200';
 
           if (active) {
             return (
@@ -72,7 +72,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
               >
                 <span
                   aria-hidden
-                  className="bg-accent absolute top-1.5 bottom-1.5 left-0 w-[3px] rounded-r-md"
+                  className="bg-accent absolute inset-y-1 left-0 w-[3px] rounded-r-md"
                 />
                 <item.Icon className="text-accent h-4 w-4" />
                 <span>{item.label}</span>
