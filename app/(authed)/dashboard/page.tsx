@@ -12,6 +12,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { requireUser } from '@/lib/auth';
+import { CATEGORY_INFO, type Category } from '@/lib/categories';
 import { CircularProgress } from '@/components/charts/CircularProgress';
 import { MiniBars } from '@/components/charts/MiniBars';
 import { Sparkline } from '@/components/charts/Sparkline';
@@ -152,6 +153,11 @@ export default async function DashboardPage() {
   const { profile } = await requireUser();
   const firstName = profile.name?.split(/\s+/)[0]?.trim() || 'there';
 
+  // The authed-layout gate guarantees category is non-null here. Narrow once
+  // up top so the dashboard reads the user's real lane name in the eyebrow.
+  const category = profile.category as Category;
+  const categoryInfo = CATEGORY_INFO[category];
+
   return (
     <>
       <TopBar
@@ -163,9 +169,11 @@ export default async function DashboardPage() {
 
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 space-y-6 overflow-y-auto p-8">
-          {/* Current Program hero */}
+          {/* Current Program hero — eyebrow is the user's real category lane.
+              Title/meta/progress remain demo data until SP-5 lands real
+              programmes filtered by category. */}
           <ProgramHero
-            eyebrow="Current Program"
+            eyebrow={`Category ${category} · ${categoryInfo.name}`}
             title="Hybrid Performance Blueprint"
             meta="Week 4 of 12 · Strength · Conditioning · Mindset"
             progressPct={67}
