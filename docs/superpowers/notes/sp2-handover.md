@@ -14,16 +14,16 @@ drawer, and 44 unit tests.
 
 Commit-by-commit:
 
-| Commit | Phase | Summary |
-| --- | --- | --- |
-| `9954f8f` | Spec | Design doc + locked decisions |
-| `e901708` | A | Schema migration + types regen |
-| `5004ac9` | B | `lib/categories.ts` + 21 unit tests |
-| `88089cc` | C | Onboarding route, action, gate, e2e smoke |
-| `b85b495` | D | Settings category card + change-request flow |
-| `49352fb` | E | Dashboard eyebrow → real category |
-| `a48e117` | F | Mobile sidebar drawer + responsive shell polish |
-| `d633565` | G | Prettier + Supabase TS write-cast pattern |
+| Commit    | Phase | Summary                                         |
+| --------- | ----- | ----------------------------------------------- |
+| `9954f8f` | Spec  | Design doc + locked decisions                   |
+| `e901708` | A     | Schema migration + types regen                  |
+| `5004ac9` | B     | `lib/categories.ts` + 21 unit tests             |
+| `88089cc` | C     | Onboarding route, action, gate, e2e smoke       |
+| `b85b495` | D     | Settings category card + change-request flow    |
+| `49352fb` | E     | Dashboard eyebrow → real category               |
+| `a48e117` | F     | Mobile sidebar drawer + responsive shell polish |
+| `d633565` | G     | Prettier + Supabase TS write-cast pattern       |
 
 ## 1. CRITICAL — migration not applied to live project
 
@@ -79,12 +79,19 @@ The pattern adopted in SP-2:
 
 - **Reads:** destructure data, then cast to the expected row shape.
   ```ts
-  const { data: profileRaw } = await supabase.from('profiles').select('category').eq('id', uid).single();
+  const { data: profileRaw } = await supabase
+    .from('profiles')
+    .select('category')
+    .eq('id', uid)
+    .single();
   const profile = profileRaw as { category: Category | null };
   ```
 - **Writes:** cast the payload to `never`.
   ```ts
-  await supabase.from('profiles').update({ category } as never).eq('id', uid);
+  await supabase
+    .from('profiles')
+    .update({ category } as never)
+    .eq('id', uid);
   ```
 
 This is a temporary pattern. When the upstream package fixes the
@@ -119,21 +126,20 @@ Once the migration runs, manual verification checklist:
       `/onboarding` (not `/dashboard`).
 - [ ] Pick "Beginner" → lands on `/dashboard`. Eyebrow on the program
       hero reads "Category A · Beginner".
-- [ ] Navigate to `/settings`. See the category card with the same code
-      + name + description.
+- [ ] Navigate to `/settings`. See the category card with the same code + name + description.
 - [ ] Click "Request change" → pick "Strength" → optional reason →
       submit. See the green success line + pending-status banner replaces
       the button.
 - [ ] As the coach (any account with `profiles.role = 'coach'`), open
       Supabase Studio, view `category_change_requests`. Approve a row
       via two SQL statements:
-      ```sql
-      update public.category_change_requests
-        set status='approved', resolved_at=now(), resolved_by='<coach uuid>'
-        where id='<request id>';
-      update public.profiles
-        set category='<requested>' where id='<user id>';
-      ```
+      `sql
+    update public.category_change_requests
+      set status='approved', resolved_at=now(), resolved_by='<coach uuid>'
+      where id='<request id>';
+    update public.profiles
+      set category='<requested>' where id='<user id>';
+    `
 - [ ] Sign-in as the requester → dashboard eyebrow reflects the new
       category, settings card shows it, pending banner is gone.
 - [ ] Open the site on a mobile viewport (375px). Hamburger appears
