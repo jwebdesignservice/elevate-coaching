@@ -48,22 +48,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["change_request_status"]
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "category_change_requests_resolved_by_fkey"
-            columns: ["resolved_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "category_change_requests_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {

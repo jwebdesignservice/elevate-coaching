@@ -46,11 +46,17 @@ export default async function SettingsPage() {
     .order('created_at', { ascending: false })
     .limit(1);
 
-  const pending = pendingRows?.[0] ?? null;
+  // Cast the row from the (under-inferred) Supabase chain — same pattern as
+  // lib/auth.ts / app/onboarding/actions.ts.
+  const pending = (pendingRows?.[0] ?? null) as {
+    id: string;
+    requested_category: Category;
+    created_at: string;
+  } | null;
   const pendingRequest = pending
     ? {
         id: pending.id,
-        requestedCategory: pending.requested_category as Category,
+        requestedCategory: pending.requested_category,
         createdAt: pending.created_at,
       }
     : null;

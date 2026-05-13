@@ -62,13 +62,13 @@ export async function requestCategoryChangeAction(
     redirect('/sign-in');
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profileRaw, error: profileError } = await supabase
     .from('profiles')
     .select('category')
     .eq('id', user.id)
     .single();
 
-  if (profileError || !profile) {
+  if (profileError || !profileRaw) {
     return {
       status: 'error',
       error: 'Could not load your profile. Please try again.',
@@ -76,7 +76,10 @@ export async function requestCategoryChangeAction(
     };
   }
 
-  const currentCategory = profile.category as Category | null;
+  // Same Supabase-TS workaround as lib/auth.ts: the chain returns `never`
+  // here, so we re-type the row from outside.
+  const profile = profileRaw as { category: Category | null };
+  const currentCategory = profile.category;
   if (!currentCategory) {
     // Defence in depth — the settings layout's gate should prevent this.
     redirect('/onboarding');
@@ -90,12 +93,14 @@ export async function requestCategoryChangeAction(
     };
   }
 
+  // Write payload cast — see comment in app/onboarding/actions.ts for the
+  // Supabase-TS inference quirk this works around.
   const { error: insertError } = await supabase.from('category_change_requests').insert({
     user_id: user.id,
     current_category: currentCategory,
     requested_category: parsed.data.requested_category,
     reason: parsed.data.reason?.length ? parsed.data.reason : null,
-  });
+  } as never);
 
   if (insertError) {
     return {

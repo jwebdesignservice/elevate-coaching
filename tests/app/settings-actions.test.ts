@@ -194,9 +194,7 @@ describe('app/(authed)/settings/actions', () => {
         requestCategoryChangeInitialState,
         makeFormData({ requested_category: 'C', reason: '' }),
       );
-      expect(mock.ccrInsert).toHaveBeenCalledWith(
-        expect.objectContaining({ reason: null }),
-      );
+      expect(mock.ccrInsert).toHaveBeenCalledWith(expect.objectContaining({ reason: null }));
     });
 
     it('returns an error when the insert fails', async () => {

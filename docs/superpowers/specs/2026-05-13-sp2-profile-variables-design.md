@@ -21,16 +21,16 @@ The SP-1 retro flagged the category and goal taxonomies as the single highest-ri
 
 ## 2. Locked decisions from brainstorm
 
-| #   | Decision                  | Choice                                                                                                                                                              |
-| --- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Q1  | Category names            | **A = Beginner, B = Fat Loss, C = Strength, D = Advanced.** Verbatim from brief.                                                                                    |
-| Q2  | Goals as a separate axis  | **Dropped.** The brief commits to four things; those are the categories. There is no second multi-select goals axis. This overrides SP-1 §2 Q8.                     |
-| Q3  | Goals column on profiles  | **Not added.** No `goals text[]` column, no `lib/goals.ts`, no goals picker in onboarding.                                                                           |
-| Q4  | Schema additions          | **`category` only.** No `avatar_url`, `date_of_birth`, or `country` — the brief does not commit to them. Add later if/when the brief does.                          |
-| Q5  | Category column type      | **Postgres enum `user_category` (`'A' \| 'B' \| 'C' \| 'D'`), nullable.** Enum gives DB-level integrity; nullable until onboarded.                                  |
-| Q6  | Category change flow      | **Self-request, coach-approves.** User picks at signup; later changes go through `category_change_requests` (pending → approved/denied) per SP-1 spec §90.          |
-| Q7  | Onboarding gate           | **Server-side redirect.** Authed layout reads `profile.category`; if NULL → redirect to `/onboarding`. `/onboarding` redirects to `/dashboard` once category set.   |
-| Q8  | Onboarding shape          | **One screen, four cards.** Single pick, server action writes the row, redirect to `/dashboard`.                                                                    |
+| #   | Decision                 | Choice                                                                                                                                                            |
+| --- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Q1  | Category names           | **A = Beginner, B = Fat Loss, C = Strength, D = Advanced.** Verbatim from brief.                                                                                  |
+| Q2  | Goals as a separate axis | **Dropped.** The brief commits to four things; those are the categories. There is no second multi-select goals axis. This overrides SP-1 §2 Q8.                   |
+| Q3  | Goals column on profiles | **Not added.** No `goals text[]` column, no `lib/goals.ts`, no goals picker in onboarding.                                                                        |
+| Q4  | Schema additions         | **`category` only.** No `avatar_url`, `date_of_birth`, or `country` — the brief does not commit to them. Add later if/when the brief does.                        |
+| Q5  | Category column type     | **Postgres enum `user_category` (`'A' \| 'B' \| 'C' \| 'D'`), nullable.** Enum gives DB-level integrity; nullable until onboarded.                                |
+| Q6  | Category change flow     | **Self-request, coach-approves.** User picks at signup; later changes go through `category_change_requests` (pending → approved/denied) per SP-1 spec §90.        |
+| Q7  | Onboarding gate          | **Server-side redirect.** Authed layout reads `profile.category`; if NULL → redirect to `/onboarding`. `/onboarding` redirects to `/dashboard` once category set. |
+| Q8  | Onboarding shape         | **One screen, four cards.** Single pick, server action writes the row, redirect to `/dashboard`.                                                                  |
 
 ### Why Q2 (no goals axis) overrides SP-1 §2 Q8
 
@@ -264,7 +264,9 @@ export async function setCategoryAction(formData: FormData) {
   }
 
   const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) redirect('/sign-in');
 
   const { error } = await supabase
@@ -346,7 +348,7 @@ Replace the demo `CURRENT PROGRAM` eyebrow on the dashboard with the user's real
 Path: `app/(authed)/dashboard/page.tsx` — eyebrow span becomes:
 
 ```tsx
-<span className="text-[11px] font-semibold tracking-[0.25em] uppercase text-accent">
+<span className="text-accent text-[11px] font-semibold uppercase tracking-[0.25em]">
   Category {profile.category} · {CATEGORY_INFO[profile.category!].name}
 </span>
 ```
@@ -371,13 +373,13 @@ This is the only visual change in SP-2 outside the onboarding/settings work.
 
 ## 10. Routes summary
 
-| Route                            | Auth     | Behaviour                                                                                  |
-| -------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
-| `/onboarding`                    | required | Renders picker if `category IS NULL`; redirects to `/dashboard` otherwise.                |
-| `/dashboard`                     | required | Redirects to `/onboarding` if `category IS NULL`; otherwise renders shell + real category. |
-| `/settings`                      | required | Renders profile + category card + change-request form. Read-only for everything else.      |
+| Route                             | Auth     | Behaviour                                                                                  |
+| --------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `/onboarding`                     | required | Renders picker if `category IS NULL`; redirects to `/dashboard` otherwise.                 |
+| `/dashboard`                      | required | Redirects to `/onboarding` if `category IS NULL`; otherwise renders shell + real category. |
+| `/settings`                       | required | Renders profile + category card + change-request form. Read-only for everything else.      |
 | (server action) onboarding submit | required | `.is('category', null)` guard; redirects to `/dashboard` on success.                       |
-| (server action) request change   | required | Inserts pending row; returns confirmation, no redirect.                                    |
+| (server action) request change    | required | Inserts pending row; returns confirmation, no redirect.                                    |
 
 No new public routes.
 

@@ -35,9 +35,9 @@ export default async function OnboardingPage() {
           Pick your training category
         </h1>
         <p className="text-text-muted mx-auto max-w-xl text-sm leading-relaxed">
-          Choose the lane that fits where you are now. Your coach builds
-          programmes, tutorials, and weekly tasks for each category — picking
-          accurately means everything that follows is built for you.
+          Choose the lane that fits where you are now. Your coach builds programmes, tutorials, and
+          weekly tasks for each category — picking accurately means everything that follows is built
+          for you.
         </p>
       </header>
 

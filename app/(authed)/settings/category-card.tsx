@@ -7,10 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { CATEGORIES, CATEGORY_INFO, type Category } from '@/lib/categories';
 import { requestCategoryChangeAction } from './actions';
-import {
-  requestCategoryChangeInitialState,
-  type RequestCategoryChangeState,
-} from './state';
+import { requestCategoryChangeInitialState, type RequestCategoryChangeState } from './state';
 
 interface PendingRequest {
   id: string;
@@ -81,8 +78,8 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
           <Clock className="text-accent mt-0.5 h-4 w-4 shrink-0" />
           <div className="flex flex-col gap-1 text-sm">
             <span className="text-text font-medium">
-              Requested change to {CATEGORY_INFO[pendingRequest.requestedCategory].name}
-              {' '}on {dateFmt.format(new Date(pendingRequest.createdAt))}.
+              Requested change to {CATEGORY_INFO[pendingRequest.requestedCategory].name} on{' '}
+              {dateFmt.format(new Date(pendingRequest.createdAt))}.
             </span>
             <span className="text-text-muted">
               Awaiting coach approval. You&apos;ll be moved into your new lane once it&apos;s
@@ -97,7 +94,10 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
       {!pendingRequest && (
         <Collapsible.Root open={open} onOpenChange={setOpen}>
           <Collapsible.Panel className="overflow-hidden transition-all data-[ending-style]:h-0 data-[starting-style]:h-0">
-            <form action={formAction} className="border-border mt-6 flex flex-col gap-5 border-t pt-6">
+            <form
+              action={formAction}
+              className="border-border mt-6 flex flex-col gap-5 border-t pt-6"
+            >
               <div>
                 <p className="text-text-muted mb-3 text-sm">
                   Pick the lane you&apos;d like to move to. Your coach reviews each request
@@ -118,9 +118,7 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
                           'bg-surface-hover/60 border-border relative flex cursor-pointer flex-col gap-1 rounded-md border p-3 transition-colors',
                           'focus-within:border-accent/60 focus-within:ring-accent/30 focus-within:ring-2',
                           'hover:border-white/10',
-                          isPicked
-                            ? 'border-accent/70 bg-accent/[0.08]'
-                            : '',
+                          isPicked ? 'border-accent/70 bg-accent/[0.08]' : '',
                         ].join(' ')}
                       >
                         <input
@@ -136,9 +134,7 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
                           <span className="text-accent text-[10px] font-semibold tracking-[0.2em] uppercase">
                             {code}
                           </span>
-                          {isPicked && (
-                            <Check className="text-accent h-3.5 w-3.5" aria-hidden />
-                          )}
+                          {isPicked && <Check className="text-accent h-3.5 w-3.5" aria-hidden />}
                         </div>
                         <span className="text-text text-sm font-medium">{c.name}</span>
                         <span className="text-text-dim text-xs leading-relaxed">{c.tagline}</span>
@@ -202,10 +198,7 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
       )}
 
       {state.status === 'success' && state.message ? (
-        <p
-          role="status"
-          className="text-accent mt-4 flex items-center gap-2 text-sm"
-        >
+        <p role="status" className="text-accent mt-4 flex items-center gap-2 text-sm">
           <Check className="h-4 w-4" aria-hidden />
           {state.message}
         </p>

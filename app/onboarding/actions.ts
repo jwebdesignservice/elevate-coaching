@@ -48,9 +48,14 @@ export async function setCategoryAction(
     redirect('/sign-in');
   }
 
+  // The Supabase TS chain types write builders as `never` in this project
+  // (the same upstream inference quirk that lib/auth.ts works around on the
+  // read side with `as Profile`). `as never` on the payload bypasses it
+  // without losing static coverage — `parsed.data.category` is already
+  // typed as a Category before we hand it over.
   const { error } = await supabase
     .from('profiles')
-    .update({ category: parsed.data.category })
+    .update({ category: parsed.data.category } as never)
     .eq('id', user.id)
     .is('category', null);
 

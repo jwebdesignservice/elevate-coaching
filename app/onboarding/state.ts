@@ -5,9 +5,7 @@
  * full rationale.
  */
 
-export type OnboardingState =
-  | { status: 'idle'; error: null }
-  | { status: 'error'; error: string };
+export type OnboardingState = { status: 'idle'; error: null } | { status: 'error'; error: string };
 
 export const onboardingInitialState: OnboardingState = {
   status: 'idle',

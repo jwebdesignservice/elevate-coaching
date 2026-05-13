@@ -42,7 +42,7 @@ export function MobileNav({ currentPath }: MobileNavProps) {
         <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
         <Dialog.Popup
           aria-label="Main navigation"
-          className="bg-surface border-border fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col border-r shadow-xl outline-none transition-transform duration-200 ease-out data-[ending-style]:-translate-x-full data-[starting-style]:-translate-x-full"
+          className="bg-surface border-border fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col border-r shadow-xl transition-transform duration-200 ease-out outline-none data-[ending-style]:-translate-x-full data-[starting-style]:-translate-x-full"
         >
           {/* Visible close button at the top-right of the panel. Base UI's
               Dialog.Close swallows the click so the popup closes cleanly. */}
