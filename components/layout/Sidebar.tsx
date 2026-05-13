@@ -1,5 +1,15 @@
 import Link from 'next/link';
-import { LayoutDashboard, MessageCircle, Settings, type LucideIcon } from 'lucide-react';
+import {
+  Apple,
+  CheckSquare,
+  Dumbbell,
+  LayoutDashboard,
+  LibraryBig,
+  MessageCircle,
+  Settings,
+  Users,
+  type LucideIcon,
+} from 'lucide-react';
 import { Logo } from '@/components/branded/Logo';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -9,10 +19,25 @@ interface NavItem {
   label: string;
   href: string;
   Icon: LucideIcon;
+  comingSoon?: boolean;
 }
 
+/**
+ * Sidebar nav.
+ *
+ * Real routes (Dashboard, Settings) are interactive. The remaining items
+ * are visual placeholders for sprints that haven't shipped yet — keeping
+ * them here matches the design spec's information architecture and stops
+ * the rail from feeling half-built. They render as muted, non-clickable
+ * rows with a subtle "Soon" tag.
+ */
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', Icon: LayoutDashboard },
+  { label: 'Programs', href: '#', Icon: LibraryBig, comingSoon: true },
+  { label: 'Exercises', href: '#', Icon: Dumbbell, comingSoon: true },
+  { label: 'Nutrition', href: '#', Icon: Apple, comingSoon: true },
+  { label: 'Tasks', href: '#', Icon: CheckSquare, comingSoon: true },
+  { label: 'Coaches', href: '#', Icon: Users, comingSoon: true },
   { label: 'Settings', href: '/settings', Icon: Settings },
 ];
 
@@ -28,12 +53,28 @@ export function Sidebar({ currentPath }: SidebarProps) {
 
       <nav className="mt-10 flex flex-1 flex-col gap-1">
         {NAV_ITEMS.map((item) => {
-          const active = currentPath.startsWith(item.href);
+          const active = !item.comingSoon && currentPath.startsWith(item.href);
+          if (item.comingSoon) {
+            return (
+              <div
+                key={item.label}
+                aria-disabled="true"
+                title="Coming soon"
+                className="rounded-card text-text-dim flex cursor-not-allowed items-center gap-3 px-3 py-2 text-sm select-none"
+              >
+                <item.Icon className="h-4 w-4" />
+                <span className="flex-1">{item.label}</span>
+                <span className="bg-surface-hover text-text-dim rounded-pill px-1.5 py-px text-[9px] tracking-wider uppercase">
+                  Soon
+                </span>
+              </div>
+            );
+          }
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`rounded-card flex items-center gap-3 px-3 py-2 text-sm ${
+              className={`rounded-card flex items-center gap-3 px-3 py-2 text-sm transition-colors ${
                 active ? 'bg-accent text-accent-fg font-medium' : 'text-text-muted hover:text-text'
               }`}
             >

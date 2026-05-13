@@ -5,8 +5,14 @@ interface LogoProps {
 
 export function Logo({ variant = 'full', className }: LogoProps) {
   return (
-    <div className={className}>
-      <svg viewBox="0 0 64 64" className="h-8 w-8" aria-hidden>
+    <div
+      className={
+        variant === 'full'
+          ? `flex flex-col items-center text-center ${className ?? ''}`
+          : (className ?? '')
+      }
+    >
+      <svg viewBox="0 0 64 64" className={variant === 'full' ? 'h-10 w-10' : 'h-8 w-8'} aria-hidden>
         <defs>
           <linearGradient id="elevate-grad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#7CFCDD" />
@@ -18,8 +24,8 @@ export function Logo({ variant = 'full', className }: LogoProps) {
       </svg>
       {variant === 'full' && (
         <div className="mt-2">
-          <div className="text-text text-lg font-semibold tracking-wide">ELEVATE</div>
-          <div className="text-text-muted text-[10px] tracking-[0.3em]">COACHING</div>
+          <div className="text-text text-xl font-bold tracking-[0.18em]">ELEVATE</div>
+          <div className="text-text-muted text-[10px] tracking-[0.4em]">COACHING</div>
         </div>
       )}
     </div>

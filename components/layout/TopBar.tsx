@@ -23,8 +23,8 @@ export function TopBar({ title, subtitle, userTier, userName }: TopBarProps) {
   return (
     <div className="border-border flex items-center gap-6 border-b px-8 py-6">
       <div className="flex-1">
-        <h1 className="text-text text-2xl font-semibold">{title}</h1>
-        {subtitle && <p className="text-text-muted mt-1 text-sm">{subtitle}</p>}
+        <h1 className="text-text text-3xl font-bold tracking-tight">{title}</h1>
+        {subtitle && <p className="text-text-muted mt-1.5 text-sm">{subtitle}</p>}
       </div>
 
       <div className="flex items-center gap-4">

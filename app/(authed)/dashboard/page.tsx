@@ -61,7 +61,7 @@ export default async function DashboardPage() {
 
           {/* Video Tutorials placeholder — SP-6 will fill */}
           <Card className="bg-surface border-border p-6">
-            <h2 className="text-text mb-4 text-xl font-semibold">Video Tutorials</h2>
+            <h2 className="text-text mb-4 text-xl font-semibold tracking-tight">Video Tutorials</h2>
             <p className="text-text-muted text-sm">
               Your tutorial library appears here when SP-6 ships.
             </p>
@@ -71,7 +71,7 @@ export default async function DashboardPage() {
         <RightRail>
           {/* Quick Tips — Path A placeholder, content lands in SP-2 */}
           <Card className="bg-surface border-border p-5">
-            <h3 className="text-text mb-3 font-medium">Quick Tips</h3>
+            <h3 className="text-text mb-3 font-semibold tracking-tight">Quick Tips</h3>
             <p className="text-text-muted text-sm">
               Personalized form cues and recovery tips appear here once your coach assigns a
               program.
@@ -80,7 +80,7 @@ export default async function DashboardPage() {
 
           {/* Coach Support — always available */}
           <Card className="bg-surface border-border p-5">
-            <h3 className="text-text mb-3 font-medium">Coach Support</h3>
+            <h3 className="text-text mb-3 font-semibold tracking-tight">Coach Support</h3>
             <p className="text-text-muted mb-3 text-xs">
               Book a 1:1 call or send a message anytime you need guidance.
             </p>
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
               href={env.NEXT_PUBLIC_COACH_CALENDLY}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-surface-hover text-text rounded-card border-border hover:border-accent block w-full border py-2 text-center text-sm"
+              className="bg-surface-hover text-text rounded-card border-border hover:border-accent block w-full border py-2 text-center text-sm font-medium"
             >
               Schedule a call
             </a>

@@ -27,21 +27,26 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      <section className="flex flex-1 items-center justify-center px-6">
-        <div className="max-w-2xl text-center">
-          <div className="text-accent mb-4 text-xs tracking-widest uppercase">
+      <section className="relative flex flex-1 items-center justify-center overflow-hidden px-6">
+        {/* subtle accent halo */}
+        <div
+          aria-hidden
+          className="bg-accent/10 pointer-events-none absolute top-1/2 left-1/2 h-[480px] w-[480px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+        />
+        <div className="relative max-w-3xl text-center">
+          <div className="text-accent mb-5 text-xs font-semibold tracking-[0.3em] uppercase">
             Premium Training Platform
           </div>
-          <h1 className="text-text mb-6 text-5xl leading-tight font-semibold">
+          <h1 className="text-text mb-6 text-6xl leading-[1.05] font-bold tracking-tight">
             Train like you have a 1-1 coach,
             <br />
             <span className="text-accent">without the price tag.</span>
           </h1>
-          <p className="text-text-muted mb-8 text-lg leading-relaxed">
+          <p className="text-text-muted mx-auto mb-10 max-w-xl text-lg leading-relaxed">
             Personalized programs, exercise tutorials, daily accountability and nutrition guidance —
             built around your goals, delivered by your coach.
           </p>
-          <div className="flex justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-3">
             <Button
               nativeButton={false}
               render={<Link href="/sign-up" />}

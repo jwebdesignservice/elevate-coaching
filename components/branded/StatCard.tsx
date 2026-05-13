@@ -12,11 +12,15 @@ interface StatCardProps {
 export function StatCard({ icon, label, value, delta, trend }: StatCardProps) {
   return (
     <Card className="bg-surface border-border flex items-center gap-4 p-5">
-      <div className="rounded-card bg-surface-hover text-accent p-2">{icon}</div>
-      <div className="flex-1">
-        <div className="text-text-muted text-xs tracking-wide uppercase">{label}</div>
-        <div className="text-text mt-1 text-3xl font-semibold">{value}</div>
-        {delta && <div className="text-accent mt-1 text-xs">{delta}</div>}
+      <div className="rounded-card bg-surface-hover text-accent flex h-10 w-10 shrink-0 items-center justify-center">
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="text-text-muted text-[11px] font-medium tracking-[0.15em] uppercase">
+          {label}
+        </div>
+        <div className="text-text mt-1 text-4xl leading-none font-bold tracking-tight">{value}</div>
+        {delta && <div className="text-accent mt-1.5 text-xs font-medium">{delta}</div>}
       </div>
       {trend && <div className="ml-auto">{trend}</div>}
     </Card>
