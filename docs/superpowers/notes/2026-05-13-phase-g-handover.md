@@ -11,16 +11,17 @@
 
 ## Status
 
-| Phase | Tasks | Status |
-|------|-------|--------|
-| A–D | 1–26 | ✅ done |
-| E | (eliminated) | Supabase trigger replaces Clerk webhook |
-| F | 27–33 | ✅ done last session |
-| **G** | **34–41** | **❌ not started — read this file before starting** |
-| H | (renumbered, see below) | not started |
-| I | (renumbered, see below) | not started |
+| Phase | Tasks                   | Status                                              |
+| ----- | ----------------------- | --------------------------------------------------- |
+| A–D   | 1–26                    | ✅ done                                             |
+| E     | (eliminated)            | Supabase trigger replaces Clerk webhook             |
+| F     | 27–33                   | ✅ done last session                                |
+| **G** | **34–41**               | **❌ not started — read this file before starting** |
+| H     | (renumbered, see below) | not started                                         |
+| I     | (renumbered, see below) | not started                                         |
 
 Last session also shipped a critical Phase C follow-up fix:
+
 - `supabase/migrations/20260513151506_fix_profiles_rls_recursion.sql`
 - `supabase/migrations/20260513151644_grant_is_coach_anon_execute.sql`
 
@@ -40,6 +41,7 @@ The plan file (`docs/superpowers/plans/2026-05-13-sp1-platform-spine.md`) Tasks 
 ### Schema deltas (CRITICAL)
 
 The plan assumes the `users` / `profiles` table has these columns:
+
 - `category` (enum or text)
 - `goals` (text array)
 - `plan` (subscription tier)
@@ -53,12 +55,14 @@ This means **Task 35 (onboarding flow), the category/goals widgets in Task 36 (d
 **This is the single biggest scope decision for the next session.** Two paths:
 
 **Path A — Cut to true SP-1 vertical slice (recommended):**
+
 - Drop Task 35 entirely (defer onboarding to SP-2 when category/goals land).
 - Trim Task 36 to: dashboard with TopBar, empty StatCards, "no program yet" HeroCard, RightRail with "Coach Support" / "Quick Tips" placeholders. No category badge, no goals chips.
 - Trim Task 37 to: settings with Profile (name/email/tier/role), Billing placeholder, Quick Preferences card, Coach Support card. No category card, no goal-focus card.
-- Net SP-1 = the *spine* (auth + brand + layout + landing + minimal dashboard + minimal settings). Onboarding is the first SP-2 task.
+- Net SP-1 = the _spine_ (auth + brand + layout + landing + minimal dashboard + minimal settings). Onboarding is the first SP-2 task.
 
 **Path B — Expand SP-1 to include onboarding (more work):**
+
 - Write a schema migration adding `category` and `goals` columns to `profiles` (+ regenerate types).
 - Build `lib/categories.ts` and `lib/goals.ts` from scratch (the plan imports them but doesn't define them — they appear to have been deleted at some point or never created).
 - Build Task 35 onboarding flow, but rewrite the server action (plan uses `withRls` from `@/lib/db` — that file doesn't exist; the pivot replaced it with Supabase clients in `lib/supabase/`).
@@ -69,7 +73,8 @@ This means **Task 35 (onboarding flow), the category/goals widgets in Task 36 (d
 ### File-level deltas — per task
 
 #### Task 34 — Landing page (`app/(public)/page.tsx`)
-Plan code is fine *except* `<Button asChild>` (Phase F finding: this repo uses Base UI, not Radix). Replace with `<Button nativeButton={false} render={<Link href="..." />}>` — exact pattern is in [app/page.tsx](app/page.tsx) (which Task 34 replaces) and is used throughout Phase F components.
+
+Plan code is fine _except_ `<Button asChild>` (Phase F finding: this repo uses Base UI, not Radix). Replace with `<Button nativeButton={false} render={<Link href="..." />}>` — exact pattern is in [app/page.tsx](app/page.tsx) (which Task 34 replaces) and is used throughout Phase F components.
 
 Also: the plan uses `<Button asChild size="lg">` — Base UI's Button does accept `size`, confirm via [components/ui/button.tsx](components/ui/button.tsx) (`'default' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg'`).
 
@@ -78,9 +83,11 @@ Plan step says `git rm app/page.tsx` after moving — that's correct; the curren
 **Decision needed for Task 34:** the plan's hero copy is generic. Confirm whether to use it verbatim or refine (eyebrow text, headline, sub, CTA labels) — see plan lines 2645–2664.
 
 #### Task 35 — Onboarding flow
+
 **Path A: skip entirely.**
 
 **Path B caveats:**
+
 - `withRls` import doesn't exist — replace with `createSupabaseServerClient()` from `lib/supabase/server.ts`. RLS is enforced automatically by Supabase based on the JWT in the cookie.
 - `requireUser()` returns `{ user, profile }` — destructure `profile.id`, not `userId`/`role`.
 - `getCurrentUser()` in the page returns `null | { user, profile }` — guard with `if (!user)` not `if (user.category)`.
@@ -89,17 +96,26 @@ Plan step says `git rm app/page.tsx` after moving — that's correct; the curren
   // lib/categories.ts
   export const CATEGORIES = ['A', 'B', 'C', 'D'] as const;
   export type Category = (typeof CATEGORIES)[number];
-  export const CATEGORY_INFO: Record<Category, { name: string; description: string; idealFor: string }> = { /* ... */ };
+  export const CATEGORY_INFO: Record<
+    Category,
+    { name: string; description: string; idealFor: string }
+  > = {
+    /* ... */
+  };
   // lib/goals.ts
-  export const GOALS = ['build_muscle', 'lose_fat', /* ... */] as const;
+  export const GOALS = ['build_muscle', 'lose_fat' /* ... */] as const;
   export type Goal = (typeof GOALS)[number];
-  export const GOAL_LABEL: Record<Goal, string> = { /* ... */ };
+  export const GOAL_LABEL: Record<Goal, string> = {
+    /* ... */
+  };
   ```
 
 #### Task 36 — Dashboard rebuild (`app/(authed)/dashboard/page.tsx`)
+
 The Phase D placeholder is currently at this exact path; Task 36 **overwrites** it. The Phase F Sidebar already wraps it via `app/(authed)/layout.tsx`.
 
 Plan-vs-reality deltas:
+
 - `user.plan` → `profile.subscription_tier`.
 - `user.category`, `user.goals` → don't exist (Path A: drop those sections; Path B: add them after the schema migration).
 - `TopBar` prop `userPlan` → was renamed to `userTier` in Phase F (Task 31). Also pass the new `userName={profile.name}` prop (Phase F added it for avatar initial).
@@ -109,6 +125,7 @@ Plan-vs-reality deltas:
 - The HeroCard CTA href `/settings` requires Task 37 to exist (or accept the redirect-loop gracefully).
 
 #### Task 37 — Settings page (`app/(authed)/settings/page.tsx`)
+
 **Major rewrites required.**
 
 - Plan imports `currentUser` from `@clerk/nextjs/server` — **Clerk is GONE**. Replace with `requireUser()` from `@/lib/auth`. Use `profile.name` (already in profile shape) and `profile.email`. The plan's `firstName`/`lastName` split doesn't apply — we only have a single `name` field.
@@ -117,12 +134,14 @@ Plan-vs-reality deltas:
 - Plan emoji `📅` → `<Calendar className="h-4 w-4" />`.
 
 #### Task 38 — e2e signup-flow Playwright test
+
 - Plan test mentions "Clerk dev instance" and "Clerk test mode" — **replace with Supabase**. Playwright is already a dep (Phase A commit `0aee610`). Confirm `playwright.config.ts` exists — if not, scaffold one (`npx playwright init` was likely run, but verify).
 - Test 1 ("lands on landing page") — needs the landing page heading text from whatever Task 34 actually ships. Match exactly.
 - Test 2 ("protected routes redirect") — already proven to work in Phase F's smoke test (curl `/dashboard` returned 307 → `/sign-in`). Should pass.
-- Test 3 ("sign-up renders form") — the existing sign-up page is at [app/(auth)/sign-up/page.tsx](app/(auth)/sign-up/page.tsx); confirm test selector matches what it actually renders (it's a custom shadcn form, NOT a Clerk-hosted iframe).
+- Test 3 ("sign-up renders form") — the existing sign-up page is at [app/(auth)/sign-up/page.tsx](<app/(auth)/sign-up/page.tsx>); confirm test selector matches what it actually renders (it's a custom shadcn form, NOT a Clerk-hosted iframe).
 
 #### Tasks 39–41 — CI + push + deploy
+
 **Mostly already done or pre-empted.**
 
 - **Task 39 (GitHub Actions CI):** plan-supplied workflow uses Clerk env vars (`CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_WEBHOOK_SECRET`). Replace with Supabase env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, plus `NEXT_PUBLIC_COACH_WHATSAPP` and `NEXT_PUBLIC_COACH_CALENDLY` from `env.ts`). Use stub values for CI typecheck/build. Also: `npm run lint` script is `eslint`, `npm test` is `vitest run`, there's no `npm run typecheck` or `npm run format:check` yet — either add those scripts to `package.json` or call the binaries directly (`npx tsc --noEmit`, `npx prettier --check .`).

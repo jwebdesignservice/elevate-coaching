@@ -18,6 +18,7 @@ Replace **Clerk + Neon** (original SP-1 spec) with **Supabase** (Postgres + Auth
 ## What changes
 
 ### Removed
+
 - `@clerk/nextjs` package (was installed Task 2; uninstalled in this pivot)
 - `svix` package (was installed Task 2 for Clerk webhook signature verification; uninstalled)
 - Phase E entirely (Tasks 24–26: Clerk webhook handler + idempotency + integration tests). Supabase database trigger on `auth.users INSERT` replaces this with a single SQL function.
@@ -25,12 +26,14 @@ Replace **Clerk + Neon** (original SP-1 spec) with **Supabase** (Postgres + Auth
 - env vars: `DATABASE_URL`, `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_WEBHOOK_SECRET`.
 
 ### Added
+
 - `@supabase/ssr@^0.5` (server-side rendering helpers, cookie-based session)
 - `@supabase/supabase-js@^2.45` (JS client SDK)
 - env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
 - New Supabase project (created out-of-org from MCP; managed manually for now)
 
 ### Modified
+
 - `lib/env.ts` — Supabase vars replace Clerk/DB vars
 - `.env.example` — same
 - `tests/lib/env.test.ts` — same
@@ -39,6 +42,7 @@ Replace **Clerk + Neon** (original SP-1 spec) with **Supabase** (Postgres + Auth
 - Phase F-G: `useUser()` becomes Supabase's `supabase.auth.getUser()` (server-side) or `useUser()` from `@supabase/auth-helpers-react` (client-side)
 
 ### Unchanged
+
 - Phase A entire foundation (Tasks 1–8) — Next.js, TS, Tailwind 4, shadcn v4, brand tokens, Inter, Sentry config, Prettier
 - Brand tokens / dark theme / visual design
 - All shadcn primitives
@@ -48,11 +52,11 @@ Replace **Clerk + Neon** (original SP-1 spec) with **Supabase** (Postgres + Auth
 
 ## Trade-offs accepted
 
-| | We accept | Because |
-|---|---|---|
-| **Auth UX polish** | Slightly less polished default than Clerk's drop-in components | Building custom sign-in/up with shadcn + Supabase Auth gets us 90% there; the remaining gap doesn't justify a second dashboard + double webhook surface |
-| **Provider lock-in** | Tighter coupling to one vendor (auth + db + storage in one) | Less likely to swap a $25/mo SaaS than to migrate a 1000-row Postgres |
-| **MCP access** | The new Supabase project is not in the MCP-accessible org, so we manage it via dashboard + CLI rather than MCP automation | One-time setup friction; ongoing dev unaffected |
+|                      | We accept                                                                                                                 | Because                                                                                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Auth UX polish**   | Slightly less polished default than Clerk's drop-in components                                                            | Building custom sign-in/up with shadcn + Supabase Auth gets us 90% there; the remaining gap doesn't justify a second dashboard + double webhook surface |
+| **Provider lock-in** | Tighter coupling to one vendor (auth + db + storage in one)                                                               | Less likely to swap a $25/mo SaaS than to migrate a 1000-row Postgres                                                                                   |
+| **MCP access**       | The new Supabase project is not in the MCP-accessible org, so we manage it via dashboard + CLI rather than MCP automation | One-time setup friction; ongoing dev unaffected                                                                                                         |
 
 ## Supabase project details
 
@@ -65,6 +69,7 @@ Replace **Clerk + Neon** (original SP-1 spec) with **Supabase** (Postgres + Auth
 ## Migration path within the live plan
 
 The committed plan (`docs/superpowers/plans/2026-05-13-sp1-platform-spine.md`) still describes Clerk + Neon. **This document supersedes those sections** for:
+
 - Task 6 (env validation — already rewritten)
 - Task 9 (Neon project) — N/A, replaced by Supabase project creation (already done by user)
 - Task 10 (Clerk project) — N/A, ditto

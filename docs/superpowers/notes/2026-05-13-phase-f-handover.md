@@ -13,13 +13,13 @@ The previous session loaded the full spec + plan + multiple file reads into cont
 
 ## Status
 
-| Phase | Tasks | Status |
-|------|-------|--------|
-| A–D | 1–26 | ✅ done (commits up to `aa15f4e`) |
-| E | (eliminated) | Supabase trigger replaces Clerk webhook — see pivot doc |
-| **F** | **27–33** | **1/7 done** |
-| G | 34–41 | not started |
-| H–I | 42+ | not started |
+| Phase | Tasks        | Status                                                  |
+| ----- | ------------ | ------------------------------------------------------- |
+| A–D   | 1–26         | ✅ done (commits up to `aa15f4e`)                       |
+| E     | (eliminated) | Supabase trigger replaces Clerk webhook — see pivot doc |
+| **F** | **27–33**    | **1/7 done**                                            |
+| G     | 34–41        | not started                                             |
+| H–I   | 42+          | not started                                             |
 
 **Task 27** (Logo) committed at `c798c9f`, reviewed (spec + code quality both passed). Note: minor SVG `id="elevate-grad"` collision risk if multiple Logos render on one page — flagged for later, not a blocker.
 
@@ -58,6 +58,7 @@ The pivot is documented in `docs/superpowers/notes/2026-05-13-supabase-pivot.md`
 ### Task 31 (TopBar) adaptation
 
 Plan shows:
+
 ```ts
 import { UserButton } from '@clerk/nextjs';
 // …
@@ -65,6 +66,7 @@ import { UserButton } from '@clerk/nextjs';
 ```
 
 Replace with a custom `Avatar` + `DropdownMenu` containing:
+
 - A `Link href="/settings"` "Settings" item
 - A `<form action="/sign-out" method="post">` "Sign out" item (POST endpoint already exists at `app/(auth)/sign-out/route.ts` — verified)
 
@@ -86,14 +88,14 @@ supabaseResponse.headers.set('x-pathname', request.nextUrl.pathname);
 
 The plan file (committed earlier) contains corrupted UTF-8 in emoji glyphs across Tasks 30–36 — they render as `âŒ‚`, `âš™`, `ðŸ’¬`, `âš¡`, `ðŸ””`, `â–¶`, `👋`, etc. **Do not paste those bytes.** Substitute lucide-react icons (already a dep) — clean and consistent:
 
-| Plan glyph (broken) | Intent | Replacement |
-|--------------------|--------|-------------|
-| `âŒ‚` (Sidebar nav) | Dashboard | `<LayoutDashboard className="h-4 w-4" />` |
-| `âš™` (Sidebar nav) | Settings | `<Settings className="h-4 w-4" />` |
-| `ðŸ’¬` (Sidebar) | Message Coach | `<MessageCircle className="h-4 w-4" />` |
-| `âš¡` (TopBar) | Upgrade Now | `<Zap className="h-4 w-4" />` |
-| `ðŸ””` (TopBar) | Notifications | `<Bell className="h-5 w-5 text-text-muted" />` |
-| `â–¶` (HeroCard CTA) | Play | `<Play className="h-4 w-4" />` |
+| Plan glyph (broken)  | Intent        | Replacement                                    |
+| -------------------- | ------------- | ---------------------------------------------- |
+| `âŒ‚` (Sidebar nav)  | Dashboard     | `<LayoutDashboard className="h-4 w-4" />`      |
+| `âš™` (Sidebar nav)  | Settings      | `<Settings className="h-4 w-4" />`             |
+| `ðŸ’¬` (Sidebar)     | Message Coach | `<MessageCircle className="h-4 w-4" />`        |
+| `âš¡` (TopBar)       | Upgrade Now   | `<Zap className="h-4 w-4" />`                  |
+| `ðŸ””` (TopBar)      | Notifications | `<Bell className="h-5 w-5 text-text-muted" />` |
+| `â–¶` (HeroCard CTA) | Play          | `<Play className="h-4 w-4" />`                 |
 
 For dashboard page emojis like 👋, 📈, 💪, 🔥, 🎯 (Task 36, Phase G — not now), prefer lucide too, but that's later.
 
