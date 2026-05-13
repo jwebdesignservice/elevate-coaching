@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Apple,
   BadgeCheck,
@@ -14,7 +17,6 @@ import {
 import { Logo } from '@/components/branded/Logo';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { env } from '@/lib/env';
 
 interface NavItem {
   label: string;
@@ -46,7 +48,6 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 interface SidebarContentProps {
-  currentPath: string;
   /** Called after a nav link is clicked. Used by the mobile drawer to close
    *  itself; the inline desktop sidebar can omit this and the links behave
    *  as normal full-route navigations. */
@@ -55,11 +56,13 @@ interface SidebarContentProps {
 
 /**
  * Sidebar inner content — logo, nav, coach card. Shared between the inline
- * desktop sidebar and the mobile off-canvas drawer (see MobileNav). Server-
- * renderable on both surfaces.
+ * desktop sidebar and the mobile off-canvas drawer (see MobileNav).
+ * Uses usePathname() so the active state updates on client-side navigation
+ * without requiring a full layout re-render.
  */
-export function SidebarContent({ currentPath, onNavigate }: SidebarContentProps) {
-  const whatsappHref = `https://wa.me/${env.NEXT_PUBLIC_COACH_WHATSAPP}`;
+export function SidebarContent({ onNavigate }: SidebarContentProps) {
+  const currentPath = usePathname();
+  const whatsappHref = `https://wa.me/${process.env.NEXT_PUBLIC_COACH_WHATSAPP}`;
 
   return (
     <div className="flex h-full flex-col p-6">
@@ -148,18 +151,14 @@ export function SidebarContent({ currentPath, onNavigate }: SidebarContentProps)
   );
 }
 
-interface SidebarProps {
-  currentPath: string;
-}
-
 /**
  * The inline desktop sidebar. Hidden on small viewports (the MobileNav
  * drawer renders the same SidebarContent there).
  */
-export function Sidebar({ currentPath }: SidebarProps) {
+export function Sidebar() {
   return (
     <aside className="bg-surface border-border hidden w-[220px] shrink-0 border-r md:flex md:flex-col">
-      <SidebarContent currentPath={currentPath} />
+      <SidebarContent />
     </aside>
   );
 }

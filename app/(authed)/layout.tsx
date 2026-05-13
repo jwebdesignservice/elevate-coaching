@@ -1,4 +1,3 @@
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { requireUser } from '@/lib/auth';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -17,13 +16,10 @@ export default async function AuthedLayout({ children }: { children: React.React
     redirect('/onboarding');
   }
 
-  const hdrs = await headers();
-  const currentPath = hdrs.get('x-pathname') || '';
-
   return (
     <div className="bg-background flex min-h-screen">
-      <Sidebar currentPath={currentPath} />
-      <MobileNav currentPath={currentPath} />
+      <Sidebar />
+      <MobileNav />
       <main className="flex min-w-0 flex-1 flex-col">{children}</main>
     </div>
   );

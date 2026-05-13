@@ -5,10 +5,6 @@ import { Dialog } from '@base-ui/react/dialog';
 import { Menu, X } from 'lucide-react';
 import { SidebarContent } from './Sidebar';
 
-interface MobileNavProps {
-  currentPath: string;
-}
-
 /**
  * Mobile navigation — hamburger button + off-canvas drawer.
  *
@@ -26,7 +22,7 @@ interface MobileNavProps {
  * absorbs clicks (closing the drawer); the Popup is the panel itself,
  * pinned to the left edge.
  */
-export function MobileNav({ currentPath }: MobileNavProps) {
+export function MobileNav() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -52,7 +48,7 @@ export function MobileNav({ currentPath }: MobileNavProps) {
           >
             <X className="h-4 w-4" aria-hidden />
           </Dialog.Close>
-          <SidebarContent currentPath={currentPath} onNavigate={() => setOpen(false)} />
+          <SidebarContent onNavigate={() => setOpen(false)} />
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>
