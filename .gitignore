@@ -1,0 +1,32 @@
+﻿# Node
+node_modules/
+.next/
+out/
+
+# Env
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# Vercel
+.vercel
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sentry
+.sentryclirc
+
+# Tests
+playwright-report/
+test-results/
+
+# OS
+.DS_Store
+Thumbs.db
