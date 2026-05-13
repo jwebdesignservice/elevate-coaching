@@ -14,8 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      category_change_requests: {
+        Row: {
+          created_at: string
+          current_category: Database["public"]["Enums"]["user_category"] | null
+          id: string
+          reason: string | null
+          requested_category: Database["public"]["Enums"]["user_category"]
+          resolved_at: string | null
+          resolved_by: string | null
+          status: Database["public"]["Enums"]["change_request_status"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_category?: Database["public"]["Enums"]["user_category"] | null
+          id?: string
+          reason?: string | null
+          requested_category: Database["public"]["Enums"]["user_category"]
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["change_request_status"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_category?: Database["public"]["Enums"]["user_category"] | null
+          id?: string
+          reason?: string | null
+          requested_category?: Database["public"]["Enums"]["user_category"]
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["change_request_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "category_change_requests_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "category_change_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          category: Database["public"]["Enums"]["user_category"] | null
           created_at: string
           email: string
           id: string
@@ -25,6 +77,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category?: Database["public"]["Enums"]["user_category"] | null
           created_at?: string
           email: string
           id: string
@@ -34,6 +87,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category?: Database["public"]["Enums"]["user_category"] | null
           created_at?: string
           email?: string
           id?: string
@@ -52,7 +106,9 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      change_request_status: "pending" | "approved" | "denied"
       subscription_tier: "free" | "basic" | "pro"
+      user_category: "A" | "B" | "C" | "D"
       user_role: "user" | "coach"
     }
     CompositeTypes: {
@@ -181,7 +237,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      change_request_status: ["pending", "approved", "denied"],
       subscription_tier: ["free", "basic", "pro"],
+      user_category: ["A", "B", "C", "D"],
       user_role: ["user", "coach"],
     },
   },
