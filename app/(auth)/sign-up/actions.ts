@@ -13,16 +13,12 @@ const signUpSchema = z.object({
     .max(128, 'Password is too long.'),
 });
 
-export type SignUpState =
-  | { status: 'idle'; error: null; email: null }
-  | { status: 'error'; error: string; email: null }
-  | { status: 'success'; error: null; email: string };
-
-export const signUpInitialState: SignUpState = {
-  status: 'idle',
-  error: null,
-  email: null,
-};
+// NOTE: SignUpState + signUpInitialState live in ./state.ts (NOT this file).
+// A "use server" file may only export async functions — exporting a plain
+// object (the initial state) from this file throws at runtime in Next.js 16:
+//   Error: A "use server" file can only export async functions, found object.
+// (See: https://nextjs.org/docs/messages/invalid-use-server-value)
+import type { SignUpState } from './state';
 
 export async function signUpAction(_prev: SignUpState, formData: FormData): Promise<SignUpState> {
   const parsed = signUpSchema.safeParse({

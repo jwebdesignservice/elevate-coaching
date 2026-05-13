@@ -4,7 +4,8 @@ import { useActionState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { signUpAction, signUpInitialState, type SignUpState } from './actions';
+import { signUpAction } from './actions';
+import { signUpInitialState, type SignUpState } from './state';
 
 export function SignUpForm() {
   const [state, formAction, isPending] = useActionState<SignUpState, FormData>(
