@@ -18,7 +18,10 @@ export default function LandingPage() {
           <Link href="/sign-in" className="text-text-muted hover:text-text text-sm">
             Sign in
           </Link>
-          <Link href="/sign-up" className={cn(buttonVariants(), 'bg-accent text-accent-fg hover:bg-accent/90')}>
+          <Link
+            href="/sign-up"
+            className={cn(buttonVariants(), 'bg-accent text-accent-fg hover:bg-accent/90')}
+          >
             Get started
           </Link>
         </nav>
@@ -46,13 +49,19 @@ export default function LandingPage() {
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href="/sign-up"
-              className={cn(buttonVariants({ size: 'lg' }), 'bg-accent text-accent-fg hover:bg-accent/90')}
+              className={cn(
+                buttonVariants({ size: 'lg' }),
+                'bg-accent text-accent-fg hover:bg-accent/90',
+              )}
             >
               Start your transformation
             </Link>
             <Link
               href="/sign-in"
-              className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'border-border text-text')}
+              className={cn(
+                buttonVariants({ variant: 'outline', size: 'lg' }),
+                'border-border text-text',
+              )}
             >
               I already have an account
             </Link>

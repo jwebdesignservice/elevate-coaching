@@ -10,7 +10,12 @@ export default function SignUpPage() {
   return (
     <Card className="bg-surface border-border">
       <CardHeader>
-        <h1 className="font-heading text-base leading-snug font-medium text-text text-xl" data-slot="card-title">Create your account</h1>
+        <h1
+          className="font-heading text-text text-base text-xl leading-snug font-medium"
+          data-slot="card-title"
+        >
+          Create your account
+        </h1>
         <CardDescription className="text-text-muted">
           Start training with Elevate Coaching.
         </CardDescription>
