@@ -2,6 +2,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { requireUser } from '@/lib/auth';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { MobileNav } from '@/components/layout/MobileNav';
 
 export default async function AuthedLayout({ children }: { children: React.ReactNode }) {
   // Gate 1: requires a signed-in user with a profile row. Redirects to
@@ -22,7 +23,8 @@ export default async function AuthedLayout({ children }: { children: React.React
   return (
     <div className="bg-background flex min-h-screen">
       <Sidebar currentPath={currentPath} />
-      <main className="flex flex-1 flex-col">{children}</main>
+      <MobileNav currentPath={currentPath} />
+      <main className="flex min-w-0 flex-1 flex-col">{children}</main>
     </div>
   );
 }

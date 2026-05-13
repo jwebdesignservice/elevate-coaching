@@ -75,7 +75,7 @@ export default async function SettingsPage() {
       />
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 space-y-6 overflow-y-auto p-8">
+        <div className="flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 lg:p-8">
           {/* Profile card — visual hero of the page */}
           <Card className="from-surface to-surface-hover border-border relative overflow-hidden bg-gradient-to-br p-8">
             <div

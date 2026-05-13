@@ -168,7 +168,7 @@ export default async function DashboardPage() {
       />
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 space-y-6 overflow-y-auto p-8">
+        <div className="flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 lg:p-8">
           {/* Current Program hero — eyebrow is the user's real category lane.
               Title/meta/progress remain demo data until SP-5 lands real
               programmes filtered by category. */}
