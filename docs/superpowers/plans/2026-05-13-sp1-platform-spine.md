@@ -1,8 +1,8 @@
-# SP-1 Platform Spine — Implementation Plan
+﻿# SP-1 Platform Spine â€” Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the vertical slice of the Elevate Coaching training platform — a deployed Next.js app where a real user can sign up via Clerk, complete onboarding (category + goals), and land on a dashboard shell that reads their own data from Neon Postgres with Row-Level Security enforced.
+**Goal:** Build the vertical slice of the Elevate Coaching training platform â€” a deployed Next.js app where a real user can sign up via Clerk, complete onboarding (category + goals), and land on a dashboard shell that reads their own data from Neon Postgres with Row-Level Security enforced.
 
 **Architecture:** Next.js 16 App Router on Vercel, Neon Postgres with RLS policies driven by per-connection session GUCs, Clerk for auth with `publicMetadata.role` in the JWT, Sentry for error tracking, shadcn/ui on top of Tailwind tokens locked to the Elevate brand. Webhook from Clerk syncs user creation into Neon with Svix-style idempotency.
 
@@ -16,93 +16,93 @@
 
 ```
 .                                  # worktree root
-├── .env.example                   # template env vars (committed)
-├── .env.local                     # local secrets (gitignored)
-├── .eslintrc.json
-├── .gitignore
-├── .prettierrc
-├── README.md
-├── instrumentation.ts             # Sentry init (Next 16 pattern)
-├── middleware.ts                  # Clerk + onboarding gate
-├── next.config.ts
-├── package.json
-├── postcss.config.mjs
-├── tailwind.config.ts
-├── tsconfig.json
-├── components.json                # shadcn config
-├── sentry.client.config.ts
-├── sentry.edge.config.ts
-├── sentry.server.config.ts
-├── vitest.config.ts
-├── playwright.config.ts
-│
-├── app/
-│   ├── layout.tsx                 # root layout (providers, fonts, Clerk)
-│   ├── globals.css
-│   ├── (public)/
-│   │   ├── layout.tsx             # public shell (no sidebar)
-│   │   ├── page.tsx               # / — landing
-│   │   ├── sign-in/[[...rest]]/page.tsx
-│   │   └── sign-up/[[...rest]]/page.tsx
-│   ├── (authed)/
-│   │   ├── layout.tsx             # sidebar + top bar + right rail
-│   │   ├── onboarding/
-│   │   │   ├── page.tsx
-│   │   │   └── actions.ts         # server action: completeOnboarding
-│   │   ├── dashboard/page.tsx
-│   │   └── settings/page.tsx
-│   └── api/
-│       └── webhooks/clerk/route.ts
-│
-├── components/
-│   ├── ui/                        # shadcn primitives (auto-generated)
-│   ├── layout/
-│   │   ├── Sidebar.tsx
-│   │   ├── TopBar.tsx
-│   │   └── RightRail.tsx
-│   └── branded/
-│       ├── Logo.tsx
-│       ├── HeroCard.tsx
-│       └── StatCard.tsx
-│
-├── lib/
-│   ├── db.ts                      # Neon client + withRls() helper
-│   ├── auth.ts                    # requireUser(), getCurrentUser()
-│   ├── env.ts                     # zod env validation
-│   ├── access.ts                  # canAccess() stub (filled in SP-3)
-│   ├── categories.ts              # category constants
-│   ├── goals.ts                   # goal constants
-│   └── utils.ts                   # shadcn cn() helper
-│
-├── db/
-│   ├── schema.sql                 # canonical schema (reference)
-│   ├── policies.sql               # RLS policies (reference)
-│   └── migrations/
-│       └── 0001_initial.sql       # first migration applied to Neon
-│
-├── tests/
-│   ├── lib/
-│   │   ├── env.test.ts
-│   │   └── db.test.ts
-│   └── e2e/
-│       ├── signup-flow.spec.ts
-│       └── rls-enforcement.spec.ts
-│
-└── .github/
-    └── workflows/
-        └── ci.yml
+â”œâ”€â”€ .env.example                   # template env vars (committed)
+â”œâ”€â”€ .env.local                     # local secrets (gitignored)
+â”œâ”€â”€ .eslintrc.json
+â”œâ”€â”€ .gitignore
+â”œâ”€â”€ .prettierrc
+â”œâ”€â”€ README.md
+â”œâ”€â”€ instrumentation.ts             # Sentry init (Next 16 pattern)
+â”œâ”€â”€ middleware.ts                  # Clerk + onboarding gate
+â”œâ”€â”€ next.config.ts
+â”œâ”€â”€ package.json
+â”œâ”€â”€ postcss.config.mjs
+â”œâ”€â”€ tailwind.config.ts
+â”œâ”€â”€ tsconfig.json
+â”œâ”€â”€ components.json                # shadcn config
+â”œâ”€â”€ sentry.client.config.ts
+â”œâ”€â”€ sentry.edge.config.ts
+â”œâ”€â”€ sentry.server.config.ts
+â”œâ”€â”€ vitest.config.ts
+â”œâ”€â”€ playwright.config.ts
+â”‚
+â”œâ”€â”€ app/
+â”‚   â”œâ”€â”€ layout.tsx                 # root layout (providers, fonts, Clerk)
+â”‚   â”œâ”€â”€ globals.css
+â”‚   â”œâ”€â”€ (public)/
+â”‚   â”‚   â”œâ”€â”€ layout.tsx             # public shell (no sidebar)
+â”‚   â”‚   â”œâ”€â”€ page.tsx               # / â€” landing
+â”‚   â”‚   â”œâ”€â”€ sign-in/[[...rest]]/page.tsx
+â”‚   â”‚   â””â”€â”€ sign-up/[[...rest]]/page.tsx
+â”‚   â”œâ”€â”€ (authed)/
+â”‚   â”‚   â”œâ”€â”€ layout.tsx             # sidebar + top bar + right rail
+â”‚   â”‚   â”œâ”€â”€ onboarding/
+â”‚   â”‚   â”‚   â”œâ”€â”€ page.tsx
+â”‚   â”‚   â”‚   â””â”€â”€ actions.ts         # server action: completeOnboarding
+â”‚   â”‚   â”œâ”€â”€ dashboard/page.tsx
+â”‚   â”‚   â””â”€â”€ settings/page.tsx
+â”‚   â””â”€â”€ api/
+â”‚       â””â”€â”€ webhooks/clerk/route.ts
+â”‚
+â”œâ”€â”€ components/
+â”‚   â”œâ”€â”€ ui/                        # shadcn primitives (auto-generated)
+â”‚   â”œâ”€â”€ layout/
+â”‚   â”‚   â”œâ”€â”€ Sidebar.tsx
+â”‚   â”‚   â”œâ”€â”€ TopBar.tsx
+â”‚   â”‚   â””â”€â”€ RightRail.tsx
+â”‚   â””â”€â”€ branded/
+â”‚       â”œâ”€â”€ Logo.tsx
+â”‚       â”œâ”€â”€ HeroCard.tsx
+â”‚       â””â”€â”€ StatCard.tsx
+â”‚
+â”œâ”€â”€ lib/
+â”‚   â”œâ”€â”€ db.ts                      # Neon client + withRls() helper
+â”‚   â”œâ”€â”€ auth.ts                    # requireUser(), getCurrentUser()
+â”‚   â”œâ”€â”€ env.ts                     # zod env validation
+â”‚   â”œâ”€â”€ access.ts                  # canAccess() stub (filled in SP-3)
+â”‚   â”œâ”€â”€ categories.ts              # category constants
+â”‚   â”œâ”€â”€ goals.ts                   # goal constants
+â”‚   â””â”€â”€ utils.ts                   # shadcn cn() helper
+â”‚
+â”œâ”€â”€ db/
+â”‚   â”œâ”€â”€ schema.sql                 # canonical schema (reference)
+â”‚   â”œâ”€â”€ policies.sql               # RLS policies (reference)
+â”‚   â””â”€â”€ migrations/
+â”‚       â””â”€â”€ 0001_initial.sql       # first migration applied to Neon
+â”‚
+â”œâ”€â”€ tests/
+â”‚   â”œâ”€â”€ lib/
+â”‚   â”‚   â”œâ”€â”€ env.test.ts
+â”‚   â”‚   â””â”€â”€ db.test.ts
+â”‚   â””â”€â”€ e2e/
+â”‚       â”œâ”€â”€ signup-flow.spec.ts
+â”‚       â””â”€â”€ rls-enforcement.spec.ts
+â”‚
+â””â”€â”€ .github/
+    â””â”€â”€ workflows/
+        â””â”€â”€ ci.yml
 ```
 
 **File responsibility rules:**
-- `app/` — routes only, minimal logic; delegate to `lib/` and `components/`
-- `lib/` — pure functions + DB access; testable without UI
-- `components/branded/` — Elevate-specific composed components
-- `components/layout/` — shell pieces, framework-agnostic
-- `components/ui/` — shadcn primitives, never modified by us directly (use shadcn CLI to update)
+- `app/` â€” routes only, minimal logic; delegate to `lib/` and `components/`
+- `lib/` â€” pure functions + DB access; testable without UI
+- `components/branded/` â€” Elevate-specific composed components
+- `components/layout/` â€” shell pieces, framework-agnostic
+- `components/ui/` â€” shadcn primitives, never modified by us directly (use shadcn CLI to update)
 
 ---
 
-## Phase A — Foundation (Tasks 1-8)
+## Phase A â€” Foundation (Tasks 1-8)
 
 Bootstrap the repo, install everything, configure tooling. No business logic yet.
 
@@ -127,7 +127,7 @@ When prompted "would you like to proceed in this non-empty directory?", answer *
 npm run dev
 ```
 
-Expected: "Local: http://localhost:3000" printed. Open the URL → see default Next.js welcome page. Stop with Ctrl+C.
+Expected: "Local: http://localhost:3000" printed. Open the URL â†’ see default Next.js welcome page. Stop with Ctrl+C.
 
 - [ ] **Step 3: Verify `docs/` was not overwritten**
 
@@ -154,7 +154,7 @@ git commit -m "chore(SP-1): bootstrap Next.js 16 + TypeScript + Tailwind"
 - [ ] **Step 1: Install Clerk, Neon, Zod, Sentry, Svix**
 
 ```bash
-npm install @clerk/nextjs@^6 @neondatabase/serverless@^0.10 zod@^3.23 svix@^1 @sentry/nextjs@^8
+npm install @clerk/nextjs@^6 @neondatabase/serverless@^0.10 zod@^3.23 svix@^1 @sentry/nextjs@^10
 ```
 
 - [ ] **Step 2: Install dev dependencies for testing + linting**
@@ -272,7 +272,7 @@ export default {
 - [ ] **Step 2: Update `app/globals.css` to set base colors**
 
 ```css
-/* app/globals.css — append below shadcn's existing content */
+/* app/globals.css â€” append below shadcn's existing content */
 @layer base {
   body {
     background-color: theme('colors.background');
@@ -340,7 +340,7 @@ export default function RootLayout({
 - [ ] **Step 2: Replace default `app/page.tsx` with a minimal landing placeholder**
 
 ```typescript
-// app/page.tsx — TEMPORARY: replaced fully in Task 38
+// app/page.tsx â€” TEMPORARY: replaced fully in Task 38
 export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center">
@@ -356,7 +356,7 @@ export default function Home() {
 npm run dev
 ```
 
-Open http://localhost:3000 → should see the title in mint-teal on near-black background. Stop.
+Open http://localhost:3000 â†’ should see the title in mint-teal on near-black background. Stop.
 
 - [ ] **Step 4: Commit**
 
@@ -462,8 +462,8 @@ const schema = z.object({
 const parsed = schema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error('❌ Invalid environment variables:', parsed.error.flatten().fieldErrors);
-  throw new Error('Invalid environment variables — see logs above.');
+  console.error('âŒ Invalid environment variables:', parsed.error.flatten().fieldErrors);
+  throw new Error('Invalid environment variables â€” see logs above.');
 }
 
 export const env = parsed.data;
@@ -472,7 +472,7 @@ export const env = parsed.data;
 - [ ] **Step 4: Create `.env.example`**
 
 ```bash
-# .env.example — committed; real values in .env.local (gitignored)
+# .env.example â€” committed; real values in .env.local (gitignored)
 
 # Database (Neon Postgres)
 DATABASE_URL=postgres://user:pass@host/db
@@ -496,7 +496,7 @@ NEXT_PUBLIC_COACH_CALENDLY=https://calendly.com/elevate-coaching/intro
 npm test
 ```
 
-Expected: PASS — 2 tests in `env.test.ts`.
+Expected: PASS â€” 2 tests in `env.test.ts`.
 
 - [ ] **Step 6: Commit**
 
@@ -539,11 +539,11 @@ Expected: all 4 files present.
 Create `app/api/_debug/sentry/route.ts`:
 
 ```typescript
-// app/api/_debug/sentry/route.ts — REMOVE AFTER VERIFICATION
+// app/api/_debug/sentry/route.ts â€” REMOVE AFTER VERIFICATION
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  throw new Error('SP-1 Sentry test — this error is expected.');
+  throw new Error('SP-1 Sentry test â€” this error is expected.');
   return NextResponse.json({ ok: true });
 }
 ```
@@ -637,21 +637,21 @@ git commit -m "chore(SP-1): configure Prettier, gitignore, format/typecheck scri
 
 ---
 
-## Phase B — Provisioning (Tasks 9-13)
+## Phase B â€” Provisioning (Tasks 9-13)
 
 External services: Neon, Clerk, Vercel, Sentry already configured. This phase wires real credentials and verifies everything connects.
 
 ### Task 9: Provision Neon Postgres
 
-**Files:** None (external setup) — capture creds in `.env.local`
+**Files:** None (external setup) â€” capture creds in `.env.local`
 
 - [ ] **Step 1: Create Neon project**
 
-Go to https://neon.tech → New Project → name `elevate-coaching-prod` → region closest to UK (e.g., `eu-west-2` London or `eu-central-1` Frankfurt) → PostgreSQL 16.
+Go to https://neon.tech â†’ New Project â†’ name `elevate-coaching-prod` â†’ region closest to UK (e.g., `eu-west-2` London or `eu-central-1` Frankfurt) â†’ PostgreSQL 16.
 
 - [ ] **Step 2: Copy the pooled connection string**
 
-From Neon dashboard → Connection Details → choose **Pooled connection** → copy the `postgres://...` string.
+From Neon dashboard â†’ Connection Details â†’ choose **Pooled connection** â†’ copy the `postgres://...` string.
 
 - [ ] **Step 3: Save to `.env.local`**
 
@@ -677,15 +677,15 @@ No commit (secrets are in `.env.local` which is gitignored).
 
 ### Task 10: Provision Clerk
 
-**Files:** None (external setup) — capture creds in `.env.local`
+**Files:** None (external setup) â€” capture creds in `.env.local`
 
 - [ ] **Step 1: Create Clerk application**
 
-Go to https://clerk.com → Add Application → name `Elevate Coaching` → enable Email + Google sign-in methods.
+Go to https://clerk.com â†’ Add Application â†’ name `Elevate Coaching` â†’ enable Email + Google sign-in methods.
 
 - [ ] **Step 2: Configure JWT template to include role**
 
-In Clerk dashboard → **Sessions → Customize session token** → add this claim:
+In Clerk dashboard â†’ **Sessions â†’ Customize session token** â†’ add this claim:
 
 ```json
 {
@@ -697,7 +697,7 @@ Save. This puts `role` in every JWT so middleware reads it without a DB hit.
 
 - [ ] **Step 3: Copy keys to `.env.local`**
 
-From Clerk dashboard → API Keys:
+From Clerk dashboard â†’ API Keys:
 
 ```bash
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
@@ -706,7 +706,7 @@ CLERK_SECRET_KEY=sk_test_...
 
 - [ ] **Step 4: Configure URLs in Clerk dashboard**
 
-In Clerk dashboard → **Paths**:
+In Clerk dashboard â†’ **Paths**:
 - Sign-in URL: `/sign-in`
 - Sign-up URL: `/sign-up`
 - After sign-up redirect: `/onboarding`
@@ -718,7 +718,7 @@ No commit.
 
 ### Task 11: Provision Vercel project + link repo
 
-**Files:** None (external) — captures `vercel/` directory after linking
+**Files:** None (external) â€” captures `vercel/` directory after linking
 
 - [ ] **Step 1: Install Vercel CLI**
 
@@ -766,7 +766,7 @@ Repeat for `preview` environment using the same values (you can later swap to a 
 vercel env pull .env.local
 ```
 
-Open `.env.local` → confirm all 7 vars present.
+Open `.env.local` â†’ confirm all 7 vars present.
 
 - [ ] **Step 5: Verify `.vercel/` is gitignored**
 
@@ -786,11 +786,11 @@ git commit -m "chore(SP-1): gitignore .vercel directory"
 
 ### Task 12: Set up Clerk webhook endpoint in Clerk dashboard
 
-**Files:** None (external) — get `CLERK_WEBHOOK_SECRET`
+**Files:** None (external) â€” get `CLERK_WEBHOOK_SECRET`
 
 - [ ] **Step 1: Create webhook in Clerk dashboard**
 
-Clerk dashboard → **Webhooks** → **Add Endpoint**:
+Clerk dashboard â†’ **Webhooks** â†’ **Add Endpoint**:
 - Endpoint URL: `https://<your-vercel-project>.vercel.app/api/webhooks/clerk` (placeholder OK; update after first deploy)
 - Subscribe to events: `user.created` (only one needed for SP-1)
 - Click **Create**
@@ -805,7 +805,7 @@ After creation, copy the **Signing Secret** (starts with `whsec_`).
 # .env.local
 CLERK_WEBHOOK_SECRET=whsec_...
 
-# Also push to Vercel (was added in Task 11 — verify):
+# Also push to Vercel (was added in Task 11 â€” verify):
 vercel env ls
 ```
 
@@ -815,7 +815,7 @@ No commit.
 
 ### Task 13: Verify all connections from local dev
 
-**Files:** None — verification only
+**Files:** None â€” verification only
 
 - [ ] **Step 1: Start dev server**
 
@@ -825,13 +825,13 @@ npm run dev
 
 - [ ] **Step 2: Visit homepage**
 
-http://localhost:3000 → see the Elevate Coaching welcome heading.
+http://localhost:3000 â†’ see the Elevate Coaching welcome heading.
 
 - [ ] **Step 3: Verify Sentry test route**
 
-http://localhost:3000/api/_debug/sentry → expect a 500 error response.
+http://localhost:3000/api/_debug/sentry â†’ expect a 500 error response.
 
-Go to Sentry dashboard → confirm the error appears within 1 minute.
+Go to Sentry dashboard â†’ confirm the error appears within 1 minute.
 
 - [ ] **Step 4: Test database connection from a quick script**
 
@@ -864,7 +864,7 @@ No commit (no committed changes).
 
 ---
 
-## Phase C — Database (Tasks 14-19)
+## Phase C â€” Database (Tasks 14-19)
 
 Define the schema, RLS policies, and the DB client that sets session GUCs.
 
@@ -873,10 +873,10 @@ Define the schema, RLS policies, and the DB client that sets session GUCs.
 **Files:**
 - Create: `db/schema.sql`, `db/policies.sql`, `db/migrations/0001_initial.sql`
 
-- [ ] **Step 1: Write `db/schema.sql` (reference; matches design § 4)**
+- [ ] **Step 1: Write `db/schema.sql` (reference; matches design Â§ 4)**
 
 ```sql
--- db/schema.sql — canonical reference of all tables in SP-1
+-- db/schema.sql â€” canonical reference of all tables in SP-1
 -- Apply via db/migrations/0001_initial.sql
 
 CREATE TABLE IF NOT EXISTS users (
@@ -925,7 +925,7 @@ CREATE TABLE IF NOT EXISTS clerk_events (
 - [ ] **Step 2: Write `db/policies.sql`**
 
 ```sql
--- db/policies.sql — RLS policies driven by session GUCs
+-- db/policies.sql â€” RLS policies driven by session GUCs
 
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE category_change_requests ENABLE ROW LEVEL SECURITY;
@@ -1057,7 +1057,7 @@ git commit -m "feat(SP-1): add canonical schema + RLS policies + initial migrati
 
 - [ ] **Step 1: Run the migration via Neon's SQL Editor**
 
-Open https://console.neon.tech → your project → SQL Editor → paste the entire contents of `db/migrations/0001_initial.sql` → Run.
+Open https://console.neon.tech â†’ your project â†’ SQL Editor â†’ paste the entire contents of `db/migrations/0001_initial.sql` â†’ Run.
 
 Expected: "COMMIT" success. No errors.
 
@@ -1114,7 +1114,7 @@ beforeAll(() => {
 
 describe('withRls', () => {
   it('sets app.user_id GUC inside the callback', async () => {
-    // This test runs against a real DB connection — skip if not configured.
+    // This test runs against a real DB connection â€” skip if not configured.
     if (!process.env.DATABASE_URL || !process.env.DATABASE_URL.includes('neon')) {
       return;
     }
@@ -1135,13 +1135,13 @@ describe('withRls', () => {
 });
 ```
 
-- [ ] **Step 2: Run test — expect failure**
+- [ ] **Step 2: Run test â€” expect failure**
 
 ```bash
 npm test
 ```
 
-Expected: FAIL — `Cannot find module '@/lib/db'`.
+Expected: FAIL â€” `Cannot find module '@/lib/db'`.
 
 - [ ] **Step 3: Implement `lib/db.ts`**
 
@@ -1153,7 +1153,7 @@ import { env } from './env';
 neonConfig.fetchConnectionCache = true;
 
 // Raw SQL tag for queries that bypass RLS (e.g., webhook inserts)
-// Webhooks use this directly — they have no user session.
+// Webhooks use this directly â€” they have no user session.
 export const sql = neon(env.DATABASE_URL);
 
 interface RlsContext {
@@ -1192,12 +1192,12 @@ export async function withRls<T>(
 **Note on Neon transaction semantics:** Neon's HTTP driver is request-scoped. For per-callback RLS, we use the WebSocket-backed `Pool` with explicit `BEGIN/COMMIT`. Replace the body with:
 
 ```typescript
-// lib/db.ts — REVISED
+// lib/db.ts â€” REVISED
 import { Pool } from '@neondatabase/serverless';
 import ws from 'ws';
 import { env } from './env';
 
-// WebSocket polyfill for Node — only needed in Node runtimes (not Edge)
+// WebSocket polyfill for Node â€” only needed in Node runtimes (not Edge)
 import { neonConfig } from '@neondatabase/serverless';
 if (typeof WebSocket === 'undefined') {
   neonConfig.webSocketConstructor = ws;
@@ -1292,7 +1292,7 @@ describe.skipIf(!hasNeon)('withRls', () => {
 npm test
 ```
 
-Expected: PASS (or "skipped" if `DATABASE_URL` not pointing at Neon — that's fine in CI without a DB).
+Expected: PASS (or "skipped" if `DATABASE_URL` not pointing at Neon â€” that's fine in CI without a DB).
 
 - [ ] **Step 6: Commit**
 
@@ -1386,7 +1386,7 @@ git commit -m "feat(SP-1): add category and goal constants with descriptions"
 ```typescript
 // lib/access.ts
 // Full canAccess(user, contentItem) lives in SP-3 once Plan + Category + per-user overrides exist.
-// For SP-1, only auth gating matters — no plan-based gating yet (plan is always 'free').
+// For SP-1, only auth gating matters â€” no plan-based gating yet (plan is always 'free').
 
 import type { Category } from './categories';
 import type { Goal } from './goals';
@@ -1416,7 +1416,7 @@ export function canAccess(_user: UserAccessContext, _contentItem: unknown): bool
 
 ```bash
 git add lib/access.ts
-git commit -m "feat(SP-1): stub canAccess() — full implementation lands in SP-3"
+git commit -m "feat(SP-1): stub canAccess() â€” full implementation lands in SP-3"
 ```
 
 ---
@@ -1518,7 +1518,7 @@ test.describe('RLS enforcement', () => {
 npm run test:e2e -- tests/e2e/rls-enforcement.spec.ts
 ```
 
-Expected: PASS — 3 tests green.
+Expected: PASS â€” 3 tests green.
 
 - [ ] **Step 4: Commit**
 
@@ -1529,7 +1529,7 @@ git commit -m "test(SP-1): verify RLS prevents cross-user reads"
 
 ---
 
-## Phase D — Auth Foundation (Tasks 20-23)
+## Phase D â€” Auth Foundation (Tasks 20-23)
 
 ### Task 20: Implement lib/auth.ts
 
@@ -1557,9 +1557,9 @@ describe('requireUser', () => {
 });
 ```
 
-(The exact error shape from `redirect()` in Next 16 is `NEXT_REDIRECT` — the test just confirms a redirect was triggered.)
+(The exact error shape from `redirect()` in Next 16 is `NEXT_REDIRECT` â€” the test just confirms a redirect was triggered.)
 
-- [ ] **Step 2: Run — expect failure**
+- [ ] **Step 2: Run â€” expect failure**
 
 ```bash
 npm test
@@ -1608,7 +1608,7 @@ export async function getCurrentUser(): Promise<UserAccessContext> {
   });
 
   if (rows.length === 0) {
-    // Webhook lag — user exists in Clerk but not yet in our DB.
+    // Webhook lag â€” user exists in Clerk but not yet in our DB.
     // Force a brief retry by redirecting to onboarding which has its own handler.
     redirect('/onboarding?syncing=1');
   }
@@ -1634,7 +1634,7 @@ export async function requireAdmin(): Promise<{ userId: string }> {
 }
 ```
 
-- [ ] **Step 4: Run tests — expect pass**
+- [ ] **Step 4: Run tests â€” expect pass**
 
 ```bash
 npm test
@@ -1697,7 +1697,7 @@ export const config = {
 npm run dev
 ```
 
-Open http://localhost:3000/dashboard → should redirect to Clerk's hosted sign-in. Stop.
+Open http://localhost:3000/dashboard â†’ should redirect to Clerk's hosted sign-in. Stop.
 
 - [ ] **Step 3: Commit**
 
@@ -1769,7 +1769,7 @@ export default function RootLayout({
 npm run dev
 ```
 
-Open http://localhost:3000 → page loads normally. Stop.
+Open http://localhost:3000 â†’ page loads normally. Stop.
 
 - [ ] **Step 3: Commit**
 
@@ -1830,7 +1830,7 @@ export default function SignUpPage() {
 npm run dev
 ```
 
-Open http://localhost:3000/sign-up → should see Clerk's themed sign-up form on a dark background with mint accent on the submit button. Open http://localhost:3000/sign-in → themed sign-in.
+Open http://localhost:3000/sign-up â†’ should see Clerk's themed sign-up form on a dark background with mint accent on the submit button. Open http://localhost:3000/sign-in â†’ themed sign-in.
 
 - [ ] **Step 5: Commit**
 
@@ -1841,14 +1841,14 @@ git commit -m "feat(SP-1): add themed Clerk sign-in and sign-up routes"
 
 ---
 
-## Phase E — Clerk Webhook (Tasks 24-28)
+## Phase E â€” Clerk Webhook (Tasks 24-28)
 
 ### Task 24: Implement webhook signature verification
 
 **Files:**
 - Create: `app/api/webhooks/clerk/route.ts`
 
-- [ ] **Step 1: Write the route — verify signature only**
+- [ ] **Step 1: Write the route â€” verify signature only**
 
 ```typescript
 // app/api/webhooks/clerk/route.ts
@@ -1931,7 +1931,7 @@ git commit -m "feat(SP-1): add Clerk webhook route with Svix signature verificat
 - [ ] **Step 1: Replace handler body**
 
 ```typescript
-// app/api/webhooks/clerk/route.ts — REPLACE THE FILE
+// app/api/webhooks/clerk/route.ts â€” REPLACE THE FILE
 import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import * as Sentry from '@sentry/nextjs';
@@ -1999,7 +1999,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ skipped: event.type });
   }
 
-  // user.created — insert into users table + clerk_events in one transaction
+  // user.created â€” insert into users table + clerk_events in one transaction
   const userData = (event as ClerkUserCreatedEvent).data;
   const primaryEmail = userData.email_addresses.find(
     (e) => e.id === userData.primary_email_address_id,
@@ -2038,7 +2038,7 @@ export async function POST(req: NextRequest) {
 
 - [ ] **Step 2: Test locally with curl + a real Clerk signing (use Svix replay)**
 
-Use Clerk dashboard's "Test webhook" feature: Clerk → Webhooks → your endpoint → "Send test event" with `user.created` type. (Local dev needs a tunnel — use `ngrok http 3000` and temporarily set the Clerk webhook URL to the ngrok URL.)
+Use Clerk dashboard's "Test webhook" feature: Clerk â†’ Webhooks â†’ your endpoint â†’ "Send test event" with `user.created` type. (Local dev needs a tunnel â€” use `ngrok http 3000` and temporarily set the Clerk webhook URL to the ngrok URL.)
 
 Expected response: `{"ok":true,"userId":"user_xxx"}`.
 
@@ -2120,7 +2120,7 @@ test.describe('Clerk webhook', () => {
     expect(rows.length).toBe(1);
   });
 
-  test('idempotency: same event id replayed → only one row', async ({ request }) => {
+  test('idempotency: same event id replayed â†’ only one row', async ({ request }) => {
     const { body, headers } = buildPayload('evt_test_create_2', 'user_webhook_test_2');
     await request.post('/api/webhooks/clerk', { data: body, headers });
     const res2 = await request.post('/api/webhooks/clerk', { data: body, headers });
@@ -2164,7 +2164,7 @@ git commit -m "test(SP-1): verify webhook signature, insert, and idempotency"
 
 ---
 
-## Phase F — Brand & Layout (Tasks 27-33)
+## Phase F â€” Brand & Layout (Tasks 27-33)
 
 ### Task 27: Build the Logo component
 
@@ -2204,7 +2204,7 @@ export function Logo({ variant = 'full', className }: LogoProps) {
 }
 ```
 
-This is a placeholder SVG matching the mockup's twin-triangle motif — replace with the client's final asset when supplied (see spec § 9 open items).
+This is a placeholder SVG matching the mockup's twin-triangle motif â€” replace with the client's final asset when supplied (see spec Â§ 9 open items).
 
 - [ ] **Step 2: Commit**
 
@@ -2302,7 +2302,7 @@ export function HeroCard({
       <div className="text-text-muted text-xs mb-4">{progressPct}%</div>
       <div className="flex gap-3">
         <Button asChild className="bg-accent text-accent-fg hover:bg-accent/90">
-          <a href={primaryCta.href}>▶ {primaryCta.label}</a>
+          <a href={primaryCta.href}>â–¶ {primaryCta.label}</a>
         </Button>
         {secondaryCta && (
           <Button asChild variant="outline" className="border-border text-text">
@@ -2340,8 +2340,8 @@ import { Button } from '@/components/ui/button';
 import { env } from '@/lib/env';
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/dashboard', icon: '⌂' },
-  { label: 'Settings', href: '/settings', icon: '⚙' },
+  { label: 'Dashboard', href: '/dashboard', icon: 'âŒ‚' },
+  { label: 'Settings', href: '/settings', icon: 'âš™' },
 ];
 
 interface SidebarProps {
@@ -2386,7 +2386,7 @@ export function Sidebar({ currentPath }: SidebarProps) {
         <div className="text-text text-sm mb-4">Freedom tomorrow.</div>
         <Button asChild variant="outline" className="w-full border-border text-text">
           <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
-            💬 Message Coach
+            ðŸ’¬ Message Coach
           </a>
         </Button>
       </div>
@@ -2441,7 +2441,7 @@ export function TopBar({ title, subtitle, userPlan }: TopBarProps) {
 
         {userPlan !== 'pro' && (
           <Button asChild className="bg-accent text-accent-fg hover:bg-accent/90">
-            <Link href="/settings">⚡ Upgrade Now</Link>
+            <Link href="/settings">âš¡ Upgrade Now</Link>
           </Button>
         )}
 
@@ -2450,7 +2450,7 @@ export function TopBar({ title, subtitle, userPlan }: TopBarProps) {
           className="text-text-muted text-xl"
           title="Notifications (coming soon)"
         >
-          🔔
+          ðŸ””
         </button>
 
         <UserButton afterSignOutUrl="/" />
@@ -2534,7 +2534,7 @@ export default async function AuthedLayout({ children }: { children: React.React
 Update `middleware.ts` to set the header:
 
 ```typescript
-// middleware.ts — update the body of the clerkMiddleware callback
+// middleware.ts â€” update the body of the clerkMiddleware callback
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
@@ -2570,7 +2570,7 @@ git commit -m "feat(SP-1): add authed layout with sidebar + onboarding gate via 
 
 ---
 
-## Phase G — Pages (Tasks 34-41)
+## Phase G â€” Pages (Tasks 34-41)
 
 ### Task 34: Build the landing page (`/`)
 
@@ -2614,7 +2614,7 @@ export default function LandingPage() {
             <span className="text-accent">without the price tag.</span>
           </h1>
           <p className="text-text-muted text-lg mb-8 leading-relaxed">
-            Personalized programs, exercise tutorials, daily accountability and nutrition guidance —
+            Personalized programs, exercise tutorials, daily accountability and nutrition guidance â€”
             built around your goals, delivered by your coach.
           </p>
           <div className="flex gap-3 justify-center">
@@ -2629,7 +2629,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="text-text-dim text-xs text-center py-6 border-t border-border">
-        © 2026 Elevate Coaching
+        Â© 2026 Elevate Coaching
       </footer>
     </main>
   );
@@ -2642,7 +2642,7 @@ export default function LandingPage() {
 npm run dev
 ```
 
-Open http://localhost:3000 → see the landing page with brand applied. Stop.
+Open http://localhost:3000 â†’ see the landing page with brand applied. Stop.
 
 - [ ] **Step 3: Commit**
 
@@ -2778,7 +2778,7 @@ export default async function OnboardingPage() {
             size="lg"
             className="bg-accent text-accent-fg hover:bg-accent/90 w-full md:w-auto"
           >
-            Continue to dashboard →
+            Continue to dashboard â†’
           </Button>
         </form>
       </div>
@@ -2793,7 +2793,7 @@ export default async function OnboardingPage() {
 npm run dev
 ```
 
-Sign up at /sign-up → confirm webhook fires (check Neon) → land on /onboarding → pick category C, select 2 goals → submit. Should land on /dashboard with category and goals set.
+Sign up at /sign-up â†’ confirm webhook fires (check Neon) â†’ land on /onboarding â†’ pick category C, select 2 goals â†’ submit. Should land on /dashboard with category and goals set.
 
 - [ ] **Step 4: Commit**
 
@@ -2830,14 +2830,14 @@ export default async function DashboardPage() {
   return (
     <>
       <TopBar
-        title={`Welcome back, ${firstName} 👋`}
+        title={`Welcome back, ${firstName} ðŸ‘‹`}
         subtitle="Ready to elevate your performance today?"
         userPlan={user.plan}
       />
 
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-y-auto p-8 space-y-6">
-          {/* Placeholder hero — replaced by real program data in SP-5 */}
+          {/* Placeholder hero â€” replaced by real program data in SP-5 */}
           <HeroCard
             eyebrow="Current Program"
             title="No program assigned yet"
@@ -2850,15 +2850,15 @@ export default async function DashboardPage() {
             primaryCta={{ label: 'Learn more', href: '/settings' }}
           />
 
-          {/* Stat cards — empty until SP-4 wires real data */}
+          {/* Stat cards â€” empty until SP-4 wires real data */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard icon="📈" label="Weekly Progress" value="—" delta="Coming soon" />
-            <StatCard icon="💪" label="Workouts Completed" value="0" />
-            <StatCard icon="🔥" label="Active Streak" value="0" delta="days" />
-            <StatCard icon="🎯" label="Current Program" value="—" />
+            <StatCard icon="ðŸ“ˆ" label="Weekly Progress" value="â€”" delta="Coming soon" />
+            <StatCard icon="ðŸ’ª" label="Workouts Completed" value="0" />
+            <StatCard icon="ðŸ”¥" label="Active Streak" value="0" delta="days" />
+            <StatCard icon="ðŸŽ¯" label="Current Program" value="â€”" />
           </div>
 
-          {/* Video Tutorials placeholder — SP-6 will fill */}
+          {/* Video Tutorials placeholder â€” SP-6 will fill */}
           <Card className="bg-surface border-border p-6">
             <h2 className="text-text text-xl font-semibold mb-4">Video Tutorials</h2>
             <p className="text-text-muted text-sm">
@@ -2868,10 +2868,10 @@ export default async function DashboardPage() {
         </div>
 
         <RightRail>
-          {/* Today's Tasks — SP-4 */}
+          {/* Today's Tasks â€” SP-4 */}
           <Card className="bg-surface border-border p-5">
             <h3 className="text-text font-medium mb-3">Today's Tasks</h3>
-            <p className="text-text-muted text-sm">No tasks yet — daily tasks ship in SP-4.</p>
+            <p className="text-text-muted text-sm">No tasks yet â€” daily tasks ship in SP-4.</p>
           </Card>
 
           {/* Your category */}
@@ -2879,7 +2879,7 @@ export default async function DashboardPage() {
             <Card className="bg-surface border-border p-5">
               <h3 className="text-text font-medium mb-3">Your Category</h3>
               <Badge className="bg-accent text-accent-fg">
-                Category {user.category} — {CATEGORY_INFO[user.category].name}
+                Category {user.category} â€” {CATEGORY_INFO[user.category].name}
               </Badge>
               <p className="text-text-muted text-xs mt-3">{CATEGORY_INFO[user.category].description}</p>
             </Card>
@@ -2914,7 +2914,7 @@ export default async function DashboardPage() {
 npm run dev
 ```
 
-Sign in → land on /dashboard → see the welcome, category badge, goals chips, placeholder cards. Verify the layout at 375px (mobile), 768px (tablet), 1440px (desktop) widths in DevTools.
+Sign in â†’ land on /dashboard â†’ see the welcome, category badge, goals chips, placeholder cards. Verify the layout at 375px (mobile), 768px (tablet), 1440px (desktop) widths in DevTools.
 
 - [ ] **Step 3: Commit**
 
@@ -2949,9 +2949,9 @@ export default async function SettingsPage() {
   const dbUser = await getCurrentUser();
   const clerkUser = await currentUser();
   const fullName = clerkUser
-    ? `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || '—'
-    : '—';
-  const email = clerkUser?.primaryEmailAddress?.emailAddress ?? '—';
+    ? `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || 'â€”'
+    : 'â€”';
+  const email = clerkUser?.primaryEmailAddress?.emailAddress ?? 'â€”';
 
   return (
     <>
@@ -2983,7 +2983,7 @@ export default async function SettingsPage() {
                 <dd className="text-text mt-1">
                   {dbUser.category ? (
                     <Badge className="bg-accent text-accent-fg">
-                      {dbUser.category} — {CATEGORY_INFO[dbUser.category].name}
+                      {dbUser.category} â€” {CATEGORY_INFO[dbUser.category].name}
                     </Badge>
                   ) : (
                     <span className="text-text-muted">Not set</span>
@@ -3051,7 +3051,7 @@ export default async function SettingsPage() {
               rel="noopener noreferrer"
               className="block w-full text-center bg-surface-hover text-text text-sm py-2 rounded-card border border-border hover:border-accent"
             >
-              📅 Schedule a Call
+              ðŸ“… Schedule a Call
             </a>
           </Card>
         </RightRail>
@@ -3063,7 +3063,7 @@ export default async function SettingsPage() {
 
 - [ ] **Step 2: Test in browser**
 
-Visit /settings → see profile read-only with category badge, goals, preferences (disabled), Schedule a Call link.
+Visit /settings â†’ see profile read-only with category badge, goals, preferences (disabled), Schedule a Call link.
 
 - [ ] **Step 3: Commit**
 
@@ -3125,7 +3125,7 @@ git commit -m "test(SP-1): end-to-end smoke for landing, protection, sign-up ren
 
 ---
 
-## Phase H — CI + Deploy (Tasks 39-42)
+## Phase H â€” CI + Deploy (Tasks 39-42)
 
 ### Task 39: Set up GitHub Actions CI
 
@@ -3207,7 +3207,7 @@ git commit -m "ci(SP-1): GitHub Actions for typecheck, lint, format, test, build
 
 ### Task 40: Push to GitHub + trigger first CI run
 
-**Files:** None — git remote setup
+**Files:** None â€” git remote setup
 
 - [ ] **Step 1: Create a GitHub repository**
 
@@ -3223,7 +3223,7 @@ gh repo create elevate-coaching --private --source=. --remote=origin
 git push -u origin claude/dreamy-ride-012e78
 ```
 
-- [ ] **Step 3: Open a PR to main (optional — for review)**
+- [ ] **Step 3: Open a PR to main (optional â€” for review)**
 
 ```bash
 gh pr create --title "SP-1: Platform Spine" --body "Implements the vertical slice per spec." --base main
@@ -3237,13 +3237,13 @@ gh run watch
 
 Expected: CI completes green within ~3-5 minutes.
 
-No further commit required — CI is now active.
+No further commit required â€” CI is now active.
 
 ---
 
 ### Task 41: Deploy to Vercel production
 
-**Files:** None — deploys via Vercel
+**Files:** None â€” deploys via Vercel
 
 - [ ] **Step 1: Deploy from CLI**
 
@@ -3255,7 +3255,7 @@ Expected: deployment URL printed. Wait for the build to complete (~2-4 minutes).
 
 - [ ] **Step 2: Update Clerk webhook URL**
 
-In Clerk dashboard → Webhooks → edit your endpoint → set URL to:
+In Clerk dashboard â†’ Webhooks â†’ edit your endpoint â†’ set URL to:
 ```
 https://<your-vercel-prod-url>/api/webhooks/clerk
 ```
@@ -3264,19 +3264,19 @@ Save.
 
 - [ ] **Step 3: Smoke-test the deployed URL**
 
-Open the production URL → confirm:
+Open the production URL â†’ confirm:
 - Landing page loads with brand colors
-- Click "Get started" → sign-up page renders themed
-- Sign up with a real test email → confirm webhook delivery in Clerk dashboard → verify a row appears in Neon → confirm redirect to /onboarding
-- Complete onboarding → confirm category + goals persisted
+- Click "Get started" â†’ sign-up page renders themed
+- Sign up with a real test email â†’ confirm webhook delivery in Clerk dashboard â†’ verify a row appears in Neon â†’ confirm redirect to /onboarding
+- Complete onboarding â†’ confirm category + goals persisted
 
 - [ ] **Step 4: Check Lighthouse on the landing page**
 
-In Chrome DevTools → Lighthouse → Mobile, Performance only → run.
+In Chrome DevTools â†’ Lighthouse â†’ Mobile, Performance only â†’ run.
 
-Expected: Performance ≥ 90.
+Expected: Performance â‰¥ 90.
 
-No commit — deploy state lives in Vercel.
+No commit â€” deploy state lives in Vercel.
 
 ---
 
@@ -3287,7 +3287,7 @@ No commit — deploy state lives in Vercel.
 
 - [ ] **Step 1: Verify Sentry is wired by triggering once more**
 
-Visit `https://<prod-url>/api/_debug/sentry` → expect 500. Check Sentry dashboard → exception appears.
+Visit `https://<prod-url>/api/_debug/sentry` â†’ expect 500. Check Sentry dashboard â†’ exception appears.
 
 - [ ] **Step 2: Delete the debug route**
 
@@ -3311,35 +3311,35 @@ vercel --prod
 
 ---
 
-## Phase I — Acceptance Verification (Tasks 43-47)
+## Phase I â€” Acceptance Verification (Tasks 43-47)
 
-These tasks verify SP-1's acceptance criteria from spec § 8. Each is a verification step, not new code.
+These tasks verify SP-1's acceptance criteria from spec Â§ 8. Each is a verification step, not new code.
 
 ### Task 43: Run the acceptance checklist manually
 
-- [ ] **Step 1: Hit every criterion from spec § 8**
+- [ ] **Step 1: Hit every criterion from spec Â§ 8**
 
-Open `docs/superpowers/specs/2026-05-13-sp1-platform-spine-design.md` § 8 and check off each box by manual test against the deployed URL:
+Open `docs/superpowers/specs/2026-05-13-sp1-platform-spine-design.md` Â§ 8 and check off each box by manual test against the deployed URL:
 
 - [ ] Deployed to Vercel production (Task 41 confirmed)
-- [ ] Sign up → row in Neon → lands on `/onboarding`
-- [ ] Pick category + goal → lands on `/dashboard`
+- [ ] Sign up â†’ row in Neon â†’ lands on `/onboarding`
+- [ ] Pick category + goal â†’ lands on `/dashboard`
 - [ ] `/dashboard` shows name, category badge, goals tags
 - [ ] `/settings` shows same data read-only
 - [ ] Direct SQL probe: RLS denies cross-user reads (RLS test in Task 19 confirms; run it once more)
-- [ ] Logout → `/` redirects properly
-- [ ] Webhook idempotency: replay event in Clerk dashboard → only one row inserted
-- [ ] Webhook signature failure → 401 + Sentry capture (Task 26 test confirms)
+- [ ] Logout â†’ `/` redirects properly
+- [ ] Webhook idempotency: replay event in Clerk dashboard â†’ only one row inserted
+- [ ] Webhook signature failure â†’ 401 + Sentry capture (Task 26 test confirms)
 - [ ] Sentry wired (Task 42 confirmed)
 - [ ] Clerk JWT includes `role` claim (inspect JWT after login at jwt.io)
 - [ ] CI green (Task 40 confirmed)
-- [ ] Lighthouse ≥ 90 on landing (Task 41 confirmed)
+- [ ] Lighthouse â‰¥ 90 on landing (Task 41 confirmed)
 - [ ] Cold-load /dashboard < 2.5s on simulated fast 3G
 - [ ] Layout at 375px / 768px / 1440px
 
 - [ ] **Step 2: Document any failures in `docs/superpowers/notes/sp1-followups.md`**
 
-If any acceptance check fails, log it before fixing — don't paper over.
+If any acceptance check fails, log it before fixing â€” don't paper over.
 
 ---
 
@@ -3347,10 +3347,10 @@ If any acceptance check fails, log it before fixing — don't paper over.
 
 - [ ] **Step 1: Test at 375px (iPhone SE-ish)**
 
-Open Chrome DevTools → toggle device toolbar → choose iPhone SE → visit `/`, `/sign-up`, `/onboarding`, `/dashboard`, `/settings`. Confirm:
+Open Chrome DevTools â†’ toggle device toolbar â†’ choose iPhone SE â†’ visit `/`, `/sign-up`, `/onboarding`, `/dashboard`, `/settings`. Confirm:
 - No horizontal scrollbars
 - Sidebar collapses or scrolls appropriately on /dashboard
-- All buttons tappable (44×44px minimum hit target)
+- All buttons tappable (44Ã—44px minimum hit target)
 - No text overflow
 
 If any of these fail, add a follow-up task in `sp1-followups.md`.
@@ -3369,7 +3369,7 @@ Confirm everything matches the mockups visually.
 
 - [ ] **Step 1: Lighthouse on /dashboard**
 
-DevTools → Lighthouse → Mobile → Performance only → check "Slow 4G" throttling → Analyze.
+DevTools â†’ Lighthouse â†’ Mobile â†’ Performance only â†’ check "Slow 4G" throttling â†’ Analyze.
 
 Expected: LCP < 2.5s, CLS < 0.1.
 
@@ -3384,11 +3384,11 @@ If LCP exceeds 2.5s, options:
 
 - [ ] **Step 1: Inspect a real JWT**
 
-Sign in to the deployed app → open Chrome DevTools → Application → Cookies → find the `__session` cookie → copy the JWT.
+Sign in to the deployed app â†’ open Chrome DevTools â†’ Application â†’ Cookies â†’ find the `__session` cookie â†’ copy the JWT.
 
-Paste into https://jwt.io → check the payload includes `"role": ""` (empty string is fine — admin role isn't set yet).
+Paste into https://jwt.io â†’ check the payload includes `"role": ""` (empty string is fine â€” admin role isn't set yet).
 
-If `role` is missing from the JWT, revisit Task 10 step 2 — the Clerk session template needs the role claim.
+If `role` is missing from the JWT, revisit Task 10 step 2 â€” the Clerk session template needs the role claim.
 
 ---
 
@@ -3396,7 +3396,7 @@ If `role` is missing from the JWT, revisit Task 10 step 2 — the Clerk session 
 
 - [ ] **Step 1: Update spec verification section**
 
-Edit `docs/superpowers/specs/2026-05-13-sp1-platform-spine-design.md` § 10 — check all boxes that are now done.
+Edit `docs/superpowers/specs/2026-05-13-sp1-platform-spine-design.md` Â§ 10 â€” check all boxes that are now done.
 
 - [ ] **Step 2: Commit + tag**
 
@@ -3448,22 +3448,22 @@ After writing this plan, I scanned against the spec for coverage:
 
 | Spec section | Tasks that cover it |
 |---|---|
-| § 3 Scope (item 1 repo bootstrap) | Task 1 |
-| § 3 Scope (item 2 Vercel/Neon/Clerk) | Tasks 9, 10, 11 |
-| § 3 Scope (item 3 Sentry) | Task 7 |
-| § 3 Scope (item 4 landing) | Task 34 |
-| § 3 Scope (item 5 auth pages) | Task 23 |
-| § 3 Scope (item 6 onboarding) | Task 35 |
-| § 3 Scope (item 7 dashboard) | Task 36 |
-| § 3 Scope (item 8 settings) | Task 37 |
-| § 3 Scope (item 9 webhook) | Tasks 24, 25, 26 |
-| § 3 Scope (item 10 RLS) | Tasks 14, 15, 19 |
-| § 3 Scope (item 11 deploy) | Task 41 |
-| § 4 Data model | Tasks 14, 15 |
-| § 5 Routes/middleware | Tasks 21, 22, 23 |
-| § 6 Brand/components | Tasks 4, 5, 27-33 |
-| § 7 Cross-cutting rules | Tasks 6 (env), 18 (access stub), 33 (onboarding gate), 39 (CI) |
-| § 8 Acceptance criteria | Tasks 43-47 |
+| Â§ 3 Scope (item 1 repo bootstrap) | Task 1 |
+| Â§ 3 Scope (item 2 Vercel/Neon/Clerk) | Tasks 9, 10, 11 |
+| Â§ 3 Scope (item 3 Sentry) | Task 7 |
+| Â§ 3 Scope (item 4 landing) | Task 34 |
+| Â§ 3 Scope (item 5 auth pages) | Task 23 |
+| Â§ 3 Scope (item 6 onboarding) | Task 35 |
+| Â§ 3 Scope (item 7 dashboard) | Task 36 |
+| Â§ 3 Scope (item 8 settings) | Task 37 |
+| Â§ 3 Scope (item 9 webhook) | Tasks 24, 25, 26 |
+| Â§ 3 Scope (item 10 RLS) | Tasks 14, 15, 19 |
+| Â§ 3 Scope (item 11 deploy) | Task 41 |
+| Â§ 4 Data model | Tasks 14, 15 |
+| Â§ 5 Routes/middleware | Tasks 21, 22, 23 |
+| Â§ 6 Brand/components | Tasks 4, 5, 27-33 |
+| Â§ 7 Cross-cutting rules | Tasks 6 (env), 18 (access stub), 33 (onboarding gate), 39 (CI) |
+| Â§ 8 Acceptance criteria | Tasks 43-47 |
 
 **Coverage:** complete. Every scope item maps to one or more tasks.
 
@@ -3477,8 +3477,9 @@ After writing this plan, I scanned against the spec for coverage:
 
 Plan complete and saved to [docs/superpowers/plans/2026-05-13-sp1-platform-spine.md](2026-05-13-sp1-platform-spine.md). Two execution options:
 
-**1. Subagent-Driven (recommended)** — I dispatch a fresh subagent per task, review between tasks, fast iteration. Best when you want hands-off momentum.
+**1. Subagent-Driven (recommended)** â€” I dispatch a fresh subagent per task, review between tasks, fast iteration. Best when you want hands-off momentum.
 
-**2. Inline Execution** — Execute tasks in this session using executing-plans, batch execution with checkpoints. Best when you want to be in the loop on every step.
+**2. Inline Execution** â€” Execute tasks in this session using executing-plans, batch execution with checkpoints. Best when you want to be in the loop on every step.
 
 **Which approach?**
+
