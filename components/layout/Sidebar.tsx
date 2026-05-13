@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSelectedLayoutSegment } from 'next/navigation';
 import {
   Apple,
   BadgeCheck,
@@ -61,7 +61,15 @@ interface SidebarContentProps {
  * without requiring a full layout re-render.
  */
 export function SidebarContent({ onNavigate }: SidebarContentProps) {
-  const currentPath = usePathname();
+  // usePathname() is the primary source — it returns the full URL path and
+  // updates reactively on client-side navigation.
+  // useSelectedLayoutSegment() is a belt-and-suspenders fallback: it reads
+  // the active child segment from the nearest parent layout context (a
+  // different internal signal in Next.js), so if one hook doesn't fire the
+  // other should catch it.
+  const pathname = usePathname();
+  const segment = useSelectedLayoutSegment();
+  const currentPath = pathname ?? (segment != null ? `/${segment}` : '');
   const whatsappHref = `https://wa.me/${process.env.NEXT_PUBLIC_COACH_WHATSAPP}`;
 
   return (
