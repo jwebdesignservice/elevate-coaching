@@ -51,15 +51,22 @@ export async function middleware(request: NextRequest) {
   if (!user && isProtectedPage) {
     const url = request.nextUrl.clone();
     url.pathname = '/sign-in';
-    return NextResponse.redirect(url);
+    const redirectResponse = NextResponse.redirect(url);
+    redirectResponse.headers.set('x-pathname', pathname);
+    return redirectResponse;
   }
 
   if (user && isAuthPage) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
-    return NextResponse.redirect(url);
+    const redirectResponse = NextResponse.redirect(url);
+    redirectResponse.headers.set('x-pathname', pathname);
+    return redirectResponse;
   }
 
+  // Expose the request pathname to Server Components (e.g., the authed
+  // layout uses it to compute active Sidebar nav state).
+  supabaseResponse.headers.set('x-pathname', pathname);
   return supabaseResponse;
 }
 
