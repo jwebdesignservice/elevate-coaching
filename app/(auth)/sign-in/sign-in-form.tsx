@@ -65,7 +65,7 @@ export function SignInForm() {
       <Button
         type="submit"
         disabled={isPending}
-        className="bg-accent text-accent-foreground hover:bg-accent/90 h-10 w-full font-medium"
+        className="bg-accent text-accent-fg hover:bg-accent/90 h-10 w-full font-medium"
       >
         {isPending ? 'Signing in…' : 'Sign in'}
       </Button>
