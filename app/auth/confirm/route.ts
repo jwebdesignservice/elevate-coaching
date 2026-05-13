@@ -35,6 +35,16 @@ function safeNext(raw: string | null): string {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+
+  // Supabase sends error params when the OTP link is expired or invalid.
+  // Map to a readable code and bounce to sign-in so the user gets a message.
+  const supabaseError = searchParams.get('error');
+  if (supabaseError) {
+    const errorCode = searchParams.get('error_code') ?? 'verification_failed';
+    const mapped = errorCode === 'otp_expired' ? 'link_expired' : 'verification_failed';
+    return NextResponse.redirect(new URL(`/sign-in?error=${mapped}`, request.url));
+  }
+
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type') as EmailOtpType | null;
   const next = safeNext(searchParams.get('next'));
