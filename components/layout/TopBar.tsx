@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { Bell, Zap } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Bell, ChevronDown, Search, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -18,33 +17,41 @@ interface TopBarProps {
 }
 
 export function TopBar({ title, subtitle, userTier, userName }: TopBarProps) {
+  const displayName = userName?.trim() || 'Member';
   const initial = (userName?.[0] ?? 'U').toUpperCase();
 
   return (
     <div className="border-border flex items-center gap-6 border-b px-8 py-6">
       <div className="flex-1">
-        <h1 className="text-text text-3xl font-bold tracking-tight">{title}</h1>
+        <h1 className="text-text text-3xl leading-tight font-bold tracking-tight">{title}</h1>
         {subtitle && <p className="text-text-muted mt-1.5 text-sm">{subtitle}</p>}
       </div>
 
-      <div className="flex items-center gap-4">
-        <Input
-          disabled
-          placeholder="Search programs, exercises, or topics..."
-          className="bg-surface border-border text-text placeholder:text-text-dim w-[320px]"
-        />
+      <div className="flex items-center gap-3">
+        {/* Search */}
+        <div className="relative">
+          <Search className="text-text-dim pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <input
+            disabled
+            placeholder="Search programs, exercises, or topics..."
+            className="bg-surface border-border text-text placeholder:text-text-dim focus-visible:border-accent/40 h-10 w-[320px] rounded-md border pr-3 pl-9 text-sm transition-colors outline-none"
+          />
+        </div>
 
+        {/* Upgrade Now — mint outline per mockup */}
         {userTier !== 'pro' && (
           <Button
             nativeButton={false}
             render={<Link href="/settings" />}
-            className="bg-accent text-accent-fg hover:bg-accent/90"
+            variant="outline"
+            className="text-accent border-accent/40 hover:bg-accent/10 hover:border-accent transition-colors"
           >
-            <Zap className="h-4 w-4" />
+            <Zap className="h-4 w-4 fill-current" />
             Upgrade Now
           </Button>
         )}
 
+        {/* Notifications */}
         <button
           type="button"
           disabled
@@ -55,14 +62,17 @@ export function TopBar({ title, subtitle, userTier, userName }: TopBarProps) {
           <Bell className="text-text-muted h-5 w-5" />
         </button>
 
+        {/* User menu */}
         <DropdownMenu>
           <DropdownMenuTrigger
             aria-label="User menu"
-            className="focus-visible:ring-accent/50 rounded-full focus:outline-none focus-visible:ring-2"
+            className="focus-visible:ring-accent/50 flex items-center gap-2.5 rounded-full py-1 pr-2.5 pl-1 transition-colors hover:bg-white/[0.03] focus:outline-none focus-visible:ring-2"
           >
             <Avatar>
               <AvatarFallback className="bg-surface-hover text-text">{initial}</AvatarFallback>
             </Avatar>
+            <span className="text-text hidden text-sm font-medium md:inline">{displayName}</span>
+            <ChevronDown className="text-text-muted hidden h-4 w-4 md:inline" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={8} className="min-w-[160px]">
             <DropdownMenuItem render={<Link href="/settings" />}>Settings</DropdownMenuItem>
