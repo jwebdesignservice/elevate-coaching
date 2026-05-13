@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { SignUpForm } from './sign-up-form';
 
 export const metadata = {
@@ -10,7 +10,7 @@ export default function SignUpPage() {
   return (
     <Card className="bg-surface border-border">
       <CardHeader>
-        <CardTitle className="text-text font-heading text-xl">Create your account</CardTitle>
+        <h1 className="font-heading text-base leading-snug font-medium text-text text-xl" data-slot="card-title">Create your account</h1>
         <CardDescription className="text-text-muted">
           Start training with Elevate Coaching.
         </CardDescription>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Logo } from '@/components/branded/Logo';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export const metadata = {
   title: 'Elevate Coaching — Train like you have a 1-1 coach',
@@ -17,13 +18,9 @@ export default function LandingPage() {
           <Link href="/sign-in" className="text-text-muted hover:text-text text-sm">
             Sign in
           </Link>
-          <Button
-            nativeButton={false}
-            render={<Link href="/sign-up" />}
-            className="bg-accent text-accent-fg hover:bg-accent/90"
-          >
+          <Link href="/sign-up" className={cn(buttonVariants(), 'bg-accent text-accent-fg hover:bg-accent/90')}>
             Get started
-          </Button>
+          </Link>
         </nav>
       </header>
 
@@ -47,23 +44,18 @@ export default function LandingPage() {
             built around your goals, delivered by your coach.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Button
-              nativeButton={false}
-              render={<Link href="/sign-up" />}
-              size="lg"
-              className="bg-accent text-accent-fg hover:bg-accent/90"
+            <Link
+              href="/sign-up"
+              className={cn(buttonVariants({ size: 'lg' }), 'bg-accent text-accent-fg hover:bg-accent/90')}
             >
               Start your transformation
-            </Button>
-            <Button
-              nativeButton={false}
-              render={<Link href="/sign-in" />}
-              size="lg"
-              variant="outline"
-              className="border-border text-text"
+            </Link>
+            <Link
+              href="/sign-in"
+              className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'border-border text-text')}
             >
               I already have an account
-            </Button>
+            </Link>
           </div>
         </div>
       </section>
