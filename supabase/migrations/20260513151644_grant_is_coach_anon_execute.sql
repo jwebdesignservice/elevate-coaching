@@ -1,0 +1,26 @@
+-- Follow-up to 20260513151506_fix_profiles_rls_recursion.sql.
+--
+-- Problem
+-- -------
+-- Granting EXECUTE on public.is_coach() only to `authenticated` blocked
+-- unauthenticated (anon) requests with `42501: permission denied for
+-- function is_coach`. The chain:
+--
+--   1. anon makes a request to /rest/v1/profiles
+--   2. Postgres evaluates the SELECT policies on profiles
+--   3. profiles_select_coach_all USES public.is_coach() — anon lacks
+--      EXECUTE on it, so the whole policy evaluation aborts with 42501
+--      before reaching profiles_select_own (which would have correctly
+--      denied anyway since auth.uid() is null for anon)
+--
+-- Fix
+-- ---
+-- Grant EXECUTE on public.is_coach() to anon. The function returns false
+-- for anon (no auth.uid()), so the policy still correctly denies access —
+-- but now Postgres can finish evaluating it rather than 401-ing.
+--
+-- This has no security implication: is_coach() is a read-only function,
+-- runs as SECURITY DEFINER, and the role-elevation check still requires
+-- auth.uid() to match a 'coach' row in profiles.
+
+grant execute on function public.is_coach() to anon;
