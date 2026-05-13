@@ -94,6 +94,7 @@
 ```
 
 **File responsibility rules:**
+
 - `app/` â€” routes only, minimal logic; delegate to `lib/` and `components/`
 - `lib/` â€” pure functions + DB access; testable without UI
 - `components/branded/` â€” Elevate-specific composed components
@@ -109,6 +110,7 @@ Bootstrap the repo, install everything, configure tooling. No business logic yet
 ### Task 1: Bootstrap Next.js project in worktree root
 
 **Files:**
+
 - Create: `package.json`, `next.config.ts`, `tsconfig.json`, `app/layout.tsx`, `app/page.tsx`, `.gitignore`, `app/globals.css` (auto-generated)
 
 - [ ] **Step 1: Run create-next-app in the worktree root**
@@ -149,6 +151,7 @@ git commit -m "chore(SP-1): bootstrap Next.js 16 + TypeScript + Tailwind"
 ### Task 2: Install core runtime dependencies
 
 **Files:**
+
 - Modify: `package.json`
 
 - [ ] **Step 1: Install Clerk, Neon, Zod, Sentry, Svix**
@@ -183,6 +186,7 @@ git commit -m "chore(SP-1): install Clerk, Neon, Zod, Sentry, Svix, Vitest, Play
 ### Task 3: Initialize shadcn/ui
 
 **Files:**
+
 - Create: `components.json`, `lib/utils.ts`, `components/ui/*` (as needed)
 
 - [ ] **Step 1: Run shadcn init**
@@ -192,6 +196,7 @@ npx shadcn@latest init
 ```
 
 Answer prompts:
+
 - Style: **Default**
 - Base color: **Neutral**
 - CSS variables: **Yes**
@@ -222,6 +227,7 @@ git commit -m "chore(SP-1): initialize shadcn/ui with primitives for SP-1"
 ### Task 4: Replace Tailwind config with Elevate brand tokens
 
 **Files:**
+
 - Replace: `tailwind.config.ts`
 
 - [ ] **Step 1: Write the locked brand tokens into Tailwind config**
@@ -231,10 +237,7 @@ git commit -m "chore(SP-1): initialize shadcn/ui with primitives for SP-1"
 import type { Config } from 'tailwindcss';
 
 export default {
-  content: [
-    './app/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-  ],
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -303,6 +306,7 @@ git commit -m "feat(SP-1): apply Elevate brand tokens to Tailwind"
 ### Task 5: Wire Inter font + root layout
 
 **Files:**
+
 - Modify: `app/layout.tsx`
 
 - [ ] **Step 1: Update root layout to load Inter font and apply dark theme**
@@ -370,6 +374,7 @@ git commit -m "feat(SP-1): load Inter font and apply dark theme at root"
 ### Task 6: Set up env validation (lib/env.ts)
 
 **Files:**
+
 - Create: `lib/env.ts`, `.env.example`, `tests/lib/env.test.ts`
 
 - [ ] **Step 1: Write the failing test first**
@@ -421,12 +426,14 @@ export default defineConfig({
 ```
 
 Add to `package.json` scripts:
+
 ```json
 "test": "vitest run",
 "test:watch": "vitest"
 ```
 
 Run:
+
 ```bash
 npm test
 ```
@@ -510,6 +517,7 @@ git commit -m "feat(SP-1): add zod-validated env with example template"
 ### Task 7: Wire Sentry
 
 **Files:**
+
 - Create: `sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, `instrumentation.ts`
 - Modify: `next.config.ts`
 
@@ -520,6 +528,7 @@ npx @sentry/wizard@latest -i nextjs
 ```
 
 When prompted:
+
 - Authenticate via the browser (or use existing Sentry auth)
 - Choose/create project named `elevate-coaching`
 - Accept default integrations
@@ -568,6 +577,7 @@ git commit -m "feat(SP-1): wire Sentry for client/server/edge error tracking"
 ### Task 8: Configure ESLint, Prettier, .gitignore
 
 **Files:**
+
 - Modify: `.gitignore`
 - Create: `.prettierrc`, `.eslintrc.json` (replace existing if needed)
 
@@ -707,6 +717,7 @@ CLERK_SECRET_KEY=sk_test_...
 - [ ] **Step 4: Configure URLs in Clerk dashboard**
 
 In Clerk dashboard â†’ **Paths**:
+
 - Sign-in URL: `/sign-in`
 - Sign-up URL: `/sign-up`
 - After sign-up redirect: `/onboarding`
@@ -735,6 +746,7 @@ vercel link
 ```
 
 Answer prompts:
+
 - Set up and deploy: **Yes**
 - Which scope: choose your account
 - Link to existing project: **No, create new**
@@ -771,6 +783,7 @@ Open `.env.local` â†’ confirm all 7 vars present.
 - [ ] **Step 5: Verify `.vercel/` is gitignored**
 
 Add to `.gitignore` if missing:
+
 ```
 .vercel
 ```
@@ -791,6 +804,7 @@ git commit -m "chore(SP-1): gitignore .vercel directory"
 - [ ] **Step 1: Create webhook in Clerk dashboard**
 
 Clerk dashboard â†’ **Webhooks** â†’ **Add Endpoint**:
+
 - Endpoint URL: `https://<your-vercel-project>.vercel.app/api/webhooks/clerk` (placeholder OK; update after first deploy)
 - Subscribe to events: `user.created` (only one needed for SP-1)
 - Click **Create**
@@ -829,7 +843,7 @@ http://localhost:3000 â†’ see the Elevate Coaching welcome heading.
 
 - [ ] **Step 3: Verify Sentry test route**
 
-http://localhost:3000/api/_debug/sentry â†’ expect a 500 error response.
+http://localhost:3000/api/\_debug/sentry â†’ expect a 500 error response.
 
 Go to Sentry dashboard â†’ confirm the error appears within 1 minute.
 
@@ -871,6 +885,7 @@ Define the schema, RLS policies, and the DB client that sets session GUCs.
 ### Task 14: Write canonical schema files
 
 **Files:**
+
 - Create: `db/schema.sql`, `db/policies.sql`, `db/migrations/0001_initial.sql`
 
 - [ ] **Step 1: Write `db/schema.sql` (reference; matches design Â§ 4)**
@@ -1064,11 +1079,13 @@ Expected: "COMMIT" success. No errors.
 - [ ] **Step 2: Verify tables exist**
 
 In SQL Editor:
+
 ```sql
 SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;
 ```
 
 Expected output:
+
 ```
 category_change_requests
 clerk_events
@@ -1099,6 +1116,7 @@ No commit (state is in Neon).
 ### Task 16: Build the DB client with RLS GUC helper
 
 **Files:**
+
 - Create: `lib/db.ts`, `tests/lib/db.test.ts`
 
 - [ ] **Step 1: Write the failing test**
@@ -1165,27 +1183,26 @@ interface RlsContext {
  * Run a callback with Postgres session GUCs set so RLS policies fire correctly.
  * Uses SET LOCAL inside a transaction so connection pooling can't leak state.
  */
-export async function withRls<T>(
-  ctx: RlsContext,
-  callback: () => Promise<T>,
-): Promise<T> {
+export async function withRls<T>(ctx: RlsContext, callback: () => Promise<T>): Promise<T> {
   // Open a transaction-scoped connection
   // neon's HTTP driver doesn't support multi-statement transactions natively,
   // so we use the transaction() helper:
   const txSql = neon(env.DATABASE_URL, { fullResults: false });
 
   // Use Neon's transaction wrapper to ensure SET LOCAL is bounded to a single tx.
-  return await txSql.transaction(
-    [
-      txSql`SELECT set_config('app.user_id', ${ctx.userId}, true)`,
-      txSql`SELECT set_config('app.user_role', ${ctx.role}, true)`,
-    ],
-    { isolationLevel: 'ReadCommitted' },
-  ).then(async () => {
-    // Note: Neon's HTTP transaction is single-shot for arrays of queries.
-    // For dynamic callbacks, switch to the WebSocket driver pattern below:
-    return await callback();
-  });
+  return await txSql
+    .transaction(
+      [
+        txSql`SELECT set_config('app.user_id', ${ctx.userId}, true)`,
+        txSql`SELECT set_config('app.user_role', ${ctx.role}, true)`,
+      ],
+      { isolationLevel: 'ReadCommitted' },
+    )
+    .then(async () => {
+      // Note: Neon's HTTP transaction is single-shot for arrays of queries.
+      // For dynamic callbacks, switch to the WebSocket driver pattern below:
+      return await callback();
+    });
 }
 ```
 
@@ -1306,6 +1323,7 @@ git commit -m "feat(SP-1): add Neon client with withRls() session-GUC helper"
 ### Task 17: Add lib/categories.ts and lib/goals.ts constants
 
 **Files:**
+
 - Create: `lib/categories.ts`, `lib/goals.ts`
 
 - [ ] **Step 1: Write `lib/categories.ts`**
@@ -1379,6 +1397,7 @@ git commit -m "feat(SP-1): add category and goal constants with descriptions"
 ### Task 18: Stub lib/access.ts (full canAccess() in SP-3)
 
 **Files:**
+
 - Create: `lib/access.ts`
 
 - [ ] **Step 1: Write the stub**
@@ -1424,6 +1443,7 @@ git commit -m "feat(SP-1): stub canAccess() â€” full implementation lands i
 ### Task 19: Write the RLS enforcement integration test
 
 **Files:**
+
 - Create: `tests/e2e/rls-enforcement.spec.ts`
 
 This is critical proof that RLS actually works. We insert two users and confirm one cannot read the other.
@@ -1458,6 +1478,7 @@ export default defineConfig({
 ```
 
 Add to `package.json`:
+
 ```json
 "test:e2e": "playwright test"
 ```
@@ -1495,7 +1516,7 @@ test.describe('RLS enforcement', () => {
 
   test('user A can read their own row', async () => {
     const rows = await withRls({ userId: 'user_rls_a', role: 'user' }, async (client) => {
-      const r = await client.query("SELECT * FROM users WHERE id = $1", ['user_rls_a']);
+      const r = await client.query('SELECT * FROM users WHERE id = $1', ['user_rls_a']);
       return r.rows;
     });
     expect(rows.length).toBe(1);
@@ -1534,6 +1555,7 @@ git commit -m "test(SP-1): verify RLS prevents cross-user reads"
 ### Task 20: Implement lib/auth.ts
 
 **Files:**
+
 - Create: `lib/auth.ts`, `tests/lib/auth.test.ts`
 
 - [ ] **Step 1: Write the failing test**
@@ -1603,7 +1625,7 @@ export async function getCurrentUser(): Promise<UserAccessContext> {
       plan: 'free' | 'basic' | 'pro';
       category: 'A' | 'B' | 'C' | 'D' | null;
       goals: string[];
-    }>("SELECT id, role, plan, category, goals FROM users WHERE id = $1", [userId]);
+    }>('SELECT id, role, plan, category, goals FROM users WHERE id = $1', [userId]);
     return r.rows;
   });
 
@@ -1654,6 +1676,7 @@ git commit -m "feat(SP-1): add requireUser/getCurrentUser/requireAdmin auth help
 ### Task 21: Write middleware.ts
 
 **Files:**
+
 - Create: `middleware.ts`
 
 - [ ] **Step 1: Write middleware**
@@ -1662,11 +1685,7 @@ git commit -m "feat(SP-1): add requireUser/getCurrentUser/requireAdmin auth help
 // middleware.ts
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
-  '/settings(.*)',
-  '/onboarding(.*)',
-]);
+const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/settings(.*)', '/onboarding(.*)']);
 
 const isPublicRoute = createRouteMatcher([
   '/',
@@ -1711,6 +1730,7 @@ git commit -m "feat(SP-1): add Clerk middleware protecting authed routes"
 ### Task 22: Wrap root layout with ClerkProvider
 
 **Files:**
+
 - Modify: `app/layout.tsx`
 
 - [ ] **Step 1: Update root layout**
@@ -1783,6 +1803,7 @@ git commit -m "feat(SP-1): wrap root with ClerkProvider themed to Elevate brand"
 ### Task 23: Create sign-in and sign-up routes
 
 **Files:**
+
 - Create: `app/(public)/sign-in/[[...rest]]/page.tsx`, `app/(public)/sign-up/[[...rest]]/page.tsx`, `app/(public)/layout.tsx`
 
 - [ ] **Step 1: Create public layout (no sidebar)**
@@ -1846,6 +1867,7 @@ git commit -m "feat(SP-1): add themed Clerk sign-in and sign-up routes"
 ### Task 24: Implement webhook signature verification
 
 **Files:**
+
 - Create: `app/api/webhooks/clerk/route.ts`
 
 - [ ] **Step 1: Write the route â€” verify signature only**
@@ -1879,7 +1901,11 @@ export async function POST(req: NextRequest) {
     'svix-signature': req.headers.get('svix-signature') ?? '',
   };
 
-  if (!headerPayload['svix-id'] || !headerPayload['svix-timestamp'] || !headerPayload['svix-signature']) {
+  if (
+    !headerPayload['svix-id'] ||
+    !headerPayload['svix-timestamp'] ||
+    !headerPayload['svix-signature']
+  ) {
     return NextResponse.json({ error: 'Missing Svix headers' }, { status: 400 });
   }
 
@@ -1926,6 +1952,7 @@ git commit -m "feat(SP-1): add Clerk webhook route with Svix signature verificat
 ### Task 25: Implement user.created handler with idempotency
 
 **Files:**
+
 - Modify: `app/api/webhooks/clerk/route.ts`
 
 - [ ] **Step 1: Replace handler body**
@@ -1960,7 +1987,11 @@ export async function POST(req: NextRequest) {
     'svix-signature': req.headers.get('svix-signature') ?? '',
   };
 
-  if (!headerPayload['svix-id'] || !headerPayload['svix-timestamp'] || !headerPayload['svix-signature']) {
+  if (
+    !headerPayload['svix-id'] ||
+    !headerPayload['svix-timestamp'] ||
+    !headerPayload['svix-signature']
+  ) {
     return NextResponse.json({ error: 'Missing Svix headers' }, { status: 400 });
   }
 
@@ -2045,6 +2076,7 @@ Expected response: `{"ok":true,"userId":"user_xxx"}`.
 - [ ] **Step 3: Verify row in Neon**
 
 In Neon SQL Editor:
+
 ```sql
 SELECT id, email, role, category, plan FROM users WHERE id LIKE 'user_%' LIMIT 5;
 ```
@@ -2063,6 +2095,7 @@ git commit -m "feat(SP-1): handle user.created webhook with idempotency + DB ins
 ### Task 26: Write webhook integration test
 
 **Files:**
+
 - Create: `tests/e2e/webhook.spec.ts`
 
 - [ ] **Step 1: Write test that sends a valid signed payload**
@@ -2169,6 +2202,7 @@ git commit -m "test(SP-1): verify webhook signature, insert, and idempotency"
 ### Task 27: Build the Logo component
 
 **Files:**
+
 - Create: `components/branded/Logo.tsx`
 
 - [ ] **Step 1: Write the component**
@@ -2218,6 +2252,7 @@ git commit -m "feat(SP-1): placeholder Logo component (twin-triangle motif)"
 ### Task 28: Build the StatCard component
 
 **Files:**
+
 - Create: `components/branded/StatCard.tsx`
 
 - [ ] **Step 1: Write the component**
@@ -2262,6 +2297,7 @@ git commit -m "feat(SP-1): add StatCard branded component"
 ### Task 29: Build the HeroCard component
 
 **Files:**
+
 - Create: `components/branded/HeroCard.tsx`
 
 - [ ] **Step 1: Write the component**
@@ -2327,6 +2363,7 @@ git commit -m "feat(SP-1): add HeroCard branded component"
 ### Task 30: Build Sidebar component
 
 **Files:**
+
 - Create: `components/layout/Sidebar.tsx`
 
 - [ ] **Step 1: Write the component**
@@ -2407,6 +2444,7 @@ git commit -m "feat(SP-1): add Sidebar with nav, coach card, WhatsApp deep-link"
 ### Task 31: Build TopBar component
 
 **Files:**
+
 - Create: `components/layout/TopBar.tsx`
 
 - [ ] **Step 1: Write the component**
@@ -2472,6 +2510,7 @@ git commit -m "feat(SP-1): add TopBar with search placeholder, upgrade CTA, User
 ### Task 32: Build RightRail component
 
 **Files:**
+
 - Create: `components/layout/RightRail.tsx`
 
 - [ ] **Step 1: Write the component (accepts arbitrary widget children)**
@@ -2505,6 +2544,7 @@ git commit -m "feat(SP-1): add RightRail container component"
 ### Task 33: Build authed layout (combines Sidebar + TopBar + RightRail)
 
 **Files:**
+
 - Create: `app/(authed)/layout.tsx`
 
 - [ ] **Step 1: Write the layout**
@@ -2538,11 +2578,7 @@ Update `middleware.ts` to set the header:
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
-  '/settings(.*)',
-  '/onboarding(.*)',
-]);
+const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/settings(.*)', '/onboarding(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
@@ -2575,6 +2611,7 @@ git commit -m "feat(SP-1): add authed layout with sidebar + onboarding gate via 
 ### Task 34: Build the landing page (`/`)
 
 **Files:**
+
 - Modify: `app/page.tsx`
 - Create: `app/(public)/page.tsx` (move existing)
 
@@ -2657,6 +2694,7 @@ git commit -m "feat(SP-1): build landing page with Elevate branding"
 ### Task 35: Build onboarding page with category picker + goals
 
 **Files:**
+
 - Create: `app/(authed)/onboarding/page.tsx`, `app/(authed)/onboarding/actions.ts`
 
 - [ ] **Step 1: Write the server action**
@@ -2807,6 +2845,7 @@ git commit -m "feat(SP-1): add onboarding flow (category + goals picker + server
 ### Task 36: Build dashboard page with placeholder cards
 
 **Files:**
+
 - Create: `app/(authed)/dashboard/page.tsx`
 
 - [ ] **Step 1: Write the dashboard page**
@@ -2928,6 +2967,7 @@ git commit -m "feat(SP-1): build dashboard shell with placeholder cards + catego
 ### Task 37: Build settings page (read-only)
 
 **Files:**
+
 - Create: `app/(authed)/settings/page.tsx`
 
 - [ ] **Step 1: Write the settings page**
@@ -3077,6 +3117,7 @@ git commit -m "feat(SP-1): build read-only settings page with profile + preferen
 ### Task 38: Write the end-to-end signup flow test
 
 **Files:**
+
 - Create: `tests/e2e/signup-flow.spec.ts`
 
 - [ ] **Step 1: Write the test**
@@ -3091,7 +3132,9 @@ import { test, expect } from '@playwright/test';
 test.describe('Signup flow', () => {
   test('lands on landing page with brand visible', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /train like you have a 1-1 coach/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /train like you have a 1-1 coach/i }),
+    ).toBeVisible();
     await expect(page.getByRole('link', { name: /get started/i })).toBeVisible();
   });
 
@@ -3130,6 +3173,7 @@ git commit -m "test(SP-1): end-to-end smoke for landing, protection, sign-up ren
 ### Task 39: Set up GitHub Actions CI
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 
 - [ ] **Step 1: Write the workflow**
@@ -3256,6 +3300,7 @@ Expected: deployment URL printed. Wait for the build to complete (~2-4 minutes).
 - [ ] **Step 2: Update Clerk webhook URL**
 
 In Clerk dashboard â†’ Webhooks â†’ edit your endpoint â†’ set URL to:
+
 ```
 https://<your-vercel-prod-url>/api/webhooks/clerk
 ```
@@ -3265,6 +3310,7 @@ Save.
 - [ ] **Step 3: Smoke-test the deployed URL**
 
 Open the production URL â†’ confirm:
+
 - Landing page loads with brand colors
 - Click "Get started" â†’ sign-up page renders themed
 - Sign up with a real test email â†’ confirm webhook delivery in Clerk dashboard â†’ verify a row appears in Neon â†’ confirm redirect to /onboarding
@@ -3283,6 +3329,7 @@ No commit â€” deploy state lives in Vercel.
 ### Task 42: Remove the Sentry debug route
 
 **Files:**
+
 - Delete: `app/api/_debug/sentry/route.ts`
 
 - [ ] **Step 1: Verify Sentry is wired by triggering once more**
@@ -3348,6 +3395,7 @@ If any acceptance check fails, log it before fixing â€” don't paper over.
 - [ ] **Step 1: Test at 375px (iPhone SE-ish)**
 
 Open Chrome DevTools â†’ toggle device toolbar â†’ choose iPhone SE â†’ visit `/`, `/sign-up`, `/onboarding`, `/dashboard`, `/settings`. Confirm:
+
 - No horizontal scrollbars
 - Sidebar collapses or scrolls appropriately on /dashboard
 - All buttons tappable (44Ã—44px minimum hit target)
@@ -3374,6 +3422,7 @@ DevTools â†’ Lighthouse â†’ Mobile â†’ Performance only â†’ 
 Expected: LCP < 2.5s, CLS < 0.1.
 
 If LCP exceeds 2.5s, options:
+
 - Add `loading="eager"` to above-fold images
 - Audit bundle size with `next build` output
 - Add follow-up to address in SP-2 (not blocking SP-1)
@@ -3418,16 +3467,21 @@ Create `docs/superpowers/notes/sp1-retro.md`:
 **Effort actual vs estimate:** [actual] vs 1.5-2 weeks
 
 ## What worked
+
 - [list]
 
 ## What surprised us
+
 - [list]
 
 ## What to change for SP-2
+
 - [list]
 
 ## Spec accuracy
+
 Did the spec match what we actually built? Notes for tightening future specs:
+
 - [list]
 ```
 
@@ -3446,24 +3500,24 @@ git commit -m "docs(SP-1): retrospective"
 
 After writing this plan, I scanned against the spec for coverage:
 
-| Spec section | Tasks that cover it |
-|---|---|
-| Â§ 3 Scope (item 1 repo bootstrap) | Task 1 |
-| Â§ 3 Scope (item 2 Vercel/Neon/Clerk) | Tasks 9, 10, 11 |
-| Â§ 3 Scope (item 3 Sentry) | Task 7 |
-| Â§ 3 Scope (item 4 landing) | Task 34 |
-| Â§ 3 Scope (item 5 auth pages) | Task 23 |
-| Â§ 3 Scope (item 6 onboarding) | Task 35 |
-| Â§ 3 Scope (item 7 dashboard) | Task 36 |
-| Â§ 3 Scope (item 8 settings) | Task 37 |
-| Â§ 3 Scope (item 9 webhook) | Tasks 24, 25, 26 |
-| Â§ 3 Scope (item 10 RLS) | Tasks 14, 15, 19 |
-| Â§ 3 Scope (item 11 deploy) | Task 41 |
-| Â§ 4 Data model | Tasks 14, 15 |
-| Â§ 5 Routes/middleware | Tasks 21, 22, 23 |
-| Â§ 6 Brand/components | Tasks 4, 5, 27-33 |
-| Â§ 7 Cross-cutting rules | Tasks 6 (env), 18 (access stub), 33 (onboarding gate), 39 (CI) |
-| Â§ 8 Acceptance criteria | Tasks 43-47 |
+| Spec section                          | Tasks that cover it                                            |
+| ------------------------------------- | -------------------------------------------------------------- |
+| Â§ 3 Scope (item 1 repo bootstrap)    | Task 1                                                         |
+| Â§ 3 Scope (item 2 Vercel/Neon/Clerk) | Tasks 9, 10, 11                                                |
+| Â§ 3 Scope (item 3 Sentry)            | Task 7                                                         |
+| Â§ 3 Scope (item 4 landing)           | Task 34                                                        |
+| Â§ 3 Scope (item 5 auth pages)        | Task 23                                                        |
+| Â§ 3 Scope (item 6 onboarding)        | Task 35                                                        |
+| Â§ 3 Scope (item 7 dashboard)         | Task 36                                                        |
+| Â§ 3 Scope (item 8 settings)          | Task 37                                                        |
+| Â§ 3 Scope (item 9 webhook)           | Tasks 24, 25, 26                                               |
+| Â§ 3 Scope (item 10 RLS)              | Tasks 14, 15, 19                                               |
+| Â§ 3 Scope (item 11 deploy)           | Task 41                                                        |
+| Â§ 4 Data model                       | Tasks 14, 15                                                   |
+| Â§ 5 Routes/middleware                | Tasks 21, 22, 23                                               |
+| Â§ 6 Brand/components                 | Tasks 4, 5, 27-33                                              |
+| Â§ 7 Cross-cutting rules              | Tasks 6 (env), 18 (access stub), 33 (onboarding gate), 39 (CI) |
+| Â§ 8 Acceptance criteria              | Tasks 43-47                                                    |
 
 **Coverage:** complete. Every scope item maps to one or more tasks.
 
@@ -3482,4 +3536,3 @@ Plan complete and saved to [docs/superpowers/plans/2026-05-13-sp1-platform-spine
 **2. Inline Execution** â€” Execute tasks in this session using executing-plans, batch execution with checkpoints. Best when you want to be in the loop on every step.
 
 **Which approach?**
-

@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
 /**
  * Tailwind v4 is CSS-first: the canonical Elevate brand tokens
@@ -12,10 +12,6 @@ import type { Config } from "tailwindcss";
  * Do not duplicate brand colors here — edit `app/globals.css` instead.
  */
 export default {
-  content: [
-    "./app/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./lib/**/*.{ts,tsx}",
-  ],
-  darkMode: "class",
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './lib/**/*.{ts,tsx}'],
+  darkMode: 'class',
 } satisfies Config;

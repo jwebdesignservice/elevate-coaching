@@ -32,17 +32,17 @@ SP-8 Nutrition + Progress
 
 ## 2. Locked decisions from brainstorm
 
-| # | Decision | Choice |
-|---|---|---|
-| Q1 | Category assignment model | **Self-pick at signup + request-change** — user picks during onboarding; coach approves change requests |
-| Q2 | Stack | **Next.js 16 App Router on Vercel + Neon Postgres + Clerk + Stripe + Cloudflare Stream + Vercel Blob + shadcn/ui** |
-| Q3 | Video provider | **Cloudflare Stream** — signed URLs, watermarking, 5× cheaper than Mux at every scale |
-| Q4 | Max lifts schema | **DEFERRED to coach.** Default = Big 4 (Squat / Bench / Deadlift / Overhead Press) + % of 1RM. Blocks SP-2, not SP-1. |
-| Q5 | Free tier scope | **Limited taste** — dashboard, 3 starter tutorials, Week 1 of intro program, 2 daily tasks/day, no nutrition |
-| Q6 | Admin model | **Single coach now**, but use a `role` column (`'user' \| 'admin'`) — adding more roles later is a 1-line migration |
-| Q7 | "Message Coach" button | **WhatsApp deep-link.** No in-app chat in v1 (brief says phase 2). |
-| Q8 | Goals vs Categories | **Two separate axes.** Category = admin-assigned, gates access. Goals = user-selected multi-tag, influences recommendations only. |
-| Q9 | "Schedule a Call" button | **Calendly / Cal.com link.** No in-app booking in v1. |
+| #   | Decision                  | Choice                                                                                                                            |
+| --- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Q1  | Category assignment model | **Self-pick at signup + request-change** — user picks during onboarding; coach approves change requests                           |
+| Q2  | Stack                     | **Next.js 16 App Router on Vercel + Neon Postgres + Clerk + Stripe + Cloudflare Stream + Vercel Blob + shadcn/ui**                |
+| Q3  | Video provider            | **Cloudflare Stream** — signed URLs, watermarking, 5× cheaper than Mux at every scale                                             |
+| Q4  | Max lifts schema          | **DEFERRED to coach.** Default = Big 4 (Squat / Bench / Deadlift / Overhead Press) + % of 1RM. Blocks SP-2, not SP-1.             |
+| Q5  | Free tier scope           | **Limited taste** — dashboard, 3 starter tutorials, Week 1 of intro program, 2 daily tasks/day, no nutrition                      |
+| Q6  | Admin model               | **Single coach now**, but use a `role` column (`'user' \| 'admin'`) — adding more roles later is a 1-line migration               |
+| Q7  | "Message Coach" button    | **WhatsApp deep-link.** No in-app chat in v1 (brief says phase 2).                                                                |
+| Q8  | Goals vs Categories       | **Two separate axes.** Category = admin-assigned, gates access. Goals = user-selected multi-tag, influences recommendations only. |
+| Q9  | "Schedule a Call" button  | **Calendly / Cal.com link.** No in-app booking in v1.                                                                             |
 
 ---
 

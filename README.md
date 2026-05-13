@@ -13,9 +13,6 @@ Currently building SP-1 (Platform Spine) — the vertical slice of the 8-sub-pro
 
 Next.js 16 (App Router) + Neon Postgres (RLS) + Clerk + Stripe + Cloudflare Stream + Vercel Blob + shadcn/ui.
 
-
-
-
 ---
 
 ## Getting Started
