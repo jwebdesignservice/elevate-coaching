@@ -132,20 +132,23 @@ Once the migration runs, manual verification checklist:
       the button.
 - [ ] As the coach (any account with `profiles.role = 'coach'`), open
       Supabase Studio, view `category_change_requests`. Approve a row
-      via two SQL statements:
-      `sql
-    update public.category_change_requests
-      set status='approved', resolved_at=now(), resolved_by='<coach uuid>'
-      where id='<request id>';
-    update public.profiles
-      set category='<requested>' where id='<user id>';
-    `
+      via the two SQL statements shown below.
 - [ ] Sign-in as the requester → dashboard eyebrow reflects the new
       category, settings card shows it, pending banner is gone.
 - [ ] Open the site on a mobile viewport (375px). Hamburger appears
       top-left, sidebar is hidden, TopBar title doesn't collide with the
       hamburger. Tapping hamburger slides the drawer in; backdrop / ESC
       / nav-link tap closes it.
+
+Coach approval SQL (run both statements in one transaction):
+
+```sql
+update public.category_change_requests
+  set status='approved', resolved_at=now(), resolved_by='<coach uuid>'
+  where id='<request id>';
+update public.profiles
+  set category='<requested>' where id='<user id>';
+```
 
 ## 6. Known follow-ups (not blocking SP-2 merge)
 
