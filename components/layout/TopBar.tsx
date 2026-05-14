@@ -47,7 +47,7 @@ export function TopBar({ title, subtitle, userTier, userName }: TopBarProps) {
             nativeButton={false}
             render={<Link href="/pricing" />}
             variant="outline"
-            className="text-accent border-accent/40 hover:bg-accent/10 hover:border-accent transition-colors"
+            className="text-accent border-accent hover:bg-accent/10 transition-colors"
           >
             <Zap className="h-4 w-4 fill-current" />
             <span className="hidden sm:inline">Upgrade Now</span>
