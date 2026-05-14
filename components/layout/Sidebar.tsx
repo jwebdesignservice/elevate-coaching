@@ -178,7 +178,7 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
           nativeButton={false}
           render={<a href={whatsappHref} target="_blank" rel="noopener noreferrer" />}
           variant="ghost"
-          className="bg-accent/15 text-accent hover:bg-accent/25 hover:shadow-md hover:shadow-accent/20 w-full transition-all"
+          className="bg-accent/15 text-accent hover:bg-accent/25 hover:border-accent/60 w-full transition-all"
         >
           <MessageCircle className="h-4 w-4" />
           Message Coach
