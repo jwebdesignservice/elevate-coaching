@@ -2,14 +2,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
   ChevronLeft,
-  Dumbbell,
   Video,
   Target,
   Zap,
   Layers,
   Info,
   ExternalLink,
-  ArrowRight,
   Wrench,
 } from 'lucide-react';
 import { requireUser } from '@/lib/auth';
@@ -17,7 +15,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/layout/TopBar';
 import { Card } from '@/components/ui/card';
 import { exerciseImage } from '@/lib/exercise-images';
-import type { MaxLifts } from '@/lib/lifts';
+import { ExerciseRecordCard } from '../exercise-record-card';
 
 type ExerciseRow = {
   id: string;
@@ -28,6 +26,7 @@ type ExerciseRow = {
   tags: string[];
 };
 type RelatedRow = { id: string; title: string; muscle_groups: string[]; tags: string[] };
+type RecordRow = { one_rm_kg: number | null; five_rm_kg: number | null; twelve_rm_kg: number | null };
 
 function exerciseType(tags: string[]): string | null {
   if (tags.includes('compound')) return 'Compound';
@@ -67,25 +66,25 @@ export default async function ExerciseDetailPage({ params }: { params: Promise<{
   const ex = raw as ExerciseRow;
   const img = exerciseImage(ex.title);
 
-  // Fetch related exercises that share at least one muscle group
+  // Fetch related exercises + this user's records for this exercise in parallel
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sb = supabase as any;
-  const relatedRes = ex.muscle_groups.length > 0
-    ? await (sb.from('exercises')
-        .select('id, title, muscle_groups, tags')
-        .overlaps('muscle_groups', ex.muscle_groups)
-        .neq('id', id)
-        .limit(4) as Promise<{ data: RelatedRow[] | null; error: unknown }>)
-    : { data: null };
+  const [relatedRes, recordRes] = await Promise.all([
+    ex.muscle_groups.length > 0
+      ? (sb.from('exercises')
+          .select('id, title, muscle_groups, tags')
+          .overlaps('muscle_groups', ex.muscle_groups)
+          .neq('id', id)
+          .limit(4) as Promise<{ data: RelatedRow[] | null; error: unknown }>)
+      : Promise.resolve({ data: null }),
+    sb.from('user_exercise_records')
+      .select('one_rm_kg, five_rm_kg, twelve_rm_kg')
+      .eq('user_id', profile.id)
+      .eq('exercise_id', id)
+      .maybeSingle() as Promise<{ data: RecordRow | null; error: unknown }>,
+  ]);
   const related = (relatedRes.data ?? []) as RelatedRow[];
-
-  const lifts = profile as unknown as MaxLifts;
-  const liftDisplay = [
-    { label: 'Squat', value: lifts.max_lift_squat, key: 'squat' },
-    { label: 'Bench', value: lifts.max_lift_bench, key: 'bench' },
-    { label: 'Deadlift', value: lifts.max_lift_deadlift, key: 'deadlift' },
-    { label: 'OHP', value: lifts.max_lift_ohp, key: 'ohp' },
-  ];
+  const record = (recordRes.data ?? null) as RecordRow | null;
 
   const type = exerciseType(ex.tags);
   const equipment = exerciseEquipment(ex.tags);
@@ -191,22 +190,19 @@ export default async function ExerciseDetailPage({ params }: { params: Promise<{
               )}
             </Card>
 
-            {/* Tags */}
-            {ex.tags.length > 0 && (
-              <Card className="bg-surface border-border p-5 sm:p-6">
-                <p className="text-text-dim mb-3 text-[10px] font-bold uppercase tracking-wider">Tags</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {ex.tags.map((tag) => (
-                    <span key={tag} className="bg-muted text-text-muted rounded-md px-2 py-1 text-xs capitalize">
-                      {tag.replace(/-/g, ' ')}
-                    </span>
-                  ))}
-                </div>
-              </Card>
-            )}
+            {/* Personal records — editable */}
+            <ExerciseRecordCard
+              exerciseId={ex.id}
+              exerciseTitle={ex.title}
+              defaults={{
+                one_rm_kg: record?.one_rm_kg ?? null,
+                five_rm_kg: record?.five_rm_kg ?? null,
+                twelve_rm_kg: record?.twelve_rm_kg ?? null,
+              }}
+            />
           </div>
 
-          {/* Right column: muscles + 1RM */}
+          {/* Right column: muscles */}
           <div className="space-y-4">
             {ex.muscle_groups.length > 0 && (
               <Card className="bg-surface border-border p-5 sm:p-6">
@@ -229,27 +225,6 @@ export default async function ExerciseDetailPage({ params }: { params: Promise<{
                 </div>
               </Card>
             )}
-
-            <Card className="bg-surface border-border p-5 sm:p-6">
-              <div className="mb-3 flex items-center gap-2">
-                <Dumbbell className="text-accent h-4 w-4" />
-                <h3 className="text-text font-semibold">Your 1RM reference</h3>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {liftDisplay.map(({ label, value }) => (
-                  <div key={label} className="bg-muted/40 border-border/60 rounded-md border p-3">
-                    <p className="text-text-dim text-[10px] font-bold uppercase tracking-wider">{label}</p>
-                    <p className={`mt-0.5 text-xl font-bold ${value != null ? 'text-text' : 'text-text-dim'}`}>
-                      {value != null ? `${value}kg` : '—'}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <Link href="/settings" className="text-accent hover:text-accent/80 mt-3 inline-flex items-center gap-1 text-xs font-medium transition-colors">
-                Update max lifts
-                <ArrowRight className="h-3 w-3" />
-              </Link>
-            </Card>
           </div>
         </div>
 
