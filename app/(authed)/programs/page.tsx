@@ -23,7 +23,11 @@ export default async function ProgramsPage() {
 
   const programs = (programsRes.data ?? []) as ProgramRow[];
   const enrolledIds = new Set(((enrolmentsRes.data ?? []) as EnrolmentRow[]).map((e) => e.program_id));
-  const accessible = programs.filter((p) => !profile.category || !p.category || p.category === profile.category);
+  // Coaches see all programmes (for management/preview); users see only their category.
+  const isCoach = profile.role === 'coach';
+  const accessible = isCoach
+    ? programs
+    : programs.filter((p) => !profile.category || !p.category || p.category === profile.category);
 
   return (
     <>

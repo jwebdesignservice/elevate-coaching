@@ -18,11 +18,12 @@ export default async function AuthedLayout({ children }: { children: React.React
   }
 
   const tier = (profile.subscription_tier as PlanTier) ?? 'free';
+  const role = (profile.role === 'coach' ? 'coach' : 'user') as 'user' | 'coach';
 
   return (
     <div className="bg-background flex h-screen overflow-hidden">
-      <Sidebar tier={tier} />
-      <MobileNav tier={tier} />
+      <Sidebar tier={tier} role={role} />
+      <MobileNav tier={tier} role={role} />
       <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">{children}</main>
     </div>
   );

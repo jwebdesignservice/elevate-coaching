@@ -23,7 +23,7 @@ import type { PlanTier } from '@/lib/plans';
  * absorbs clicks (closing the drawer); the Popup is the panel itself,
  * pinned to the left edge.
  */
-export function MobileNav({ tier }: { tier?: PlanTier }) {
+export function MobileNav({ tier, role }: { tier?: PlanTier; role?: 'user' | 'coach' }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -49,7 +49,7 @@ export function MobileNav({ tier }: { tier?: PlanTier }) {
           >
             <X className="h-4 w-4" aria-hidden />
           </Dialog.Close>
-          <SidebarContent onNavigate={() => setOpen(false)} tier={tier} />
+          <SidebarContent onNavigate={() => setOpen(false)} tier={tier} role={role} />
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>

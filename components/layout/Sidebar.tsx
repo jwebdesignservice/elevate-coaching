@@ -12,6 +12,7 @@ import {
   LibraryBig,
   MessageCircle,
   Settings,
+  Shield,
   Users,
   Zap,
   type LucideIcon,
@@ -60,6 +61,7 @@ const NAV_ITEMS: NavItem[] = [
 interface SidebarContentProps {
   onNavigate?: () => void;
   tier?: PlanTier;
+  role?: 'user' | 'coach';
 }
 
 /**
@@ -68,7 +70,7 @@ interface SidebarContentProps {
  * Uses usePathname() so the active state updates on client-side navigation
  * without requiring a full layout re-render.
  */
-export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProps) {
+export function SidebarContent({ onNavigate, tier = 'free', role = 'user' }: SidebarContentProps) {
   const pathname = usePathname();
   const segment = useSelectedLayoutSegment();
   const resolvedPath = pathname ?? (segment != null ? `/${segment}` : '');
@@ -80,13 +82,16 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
 
   const currentPath = optimisticHref ?? resolvedPath;
   const whatsappHref = `https://wa.me/${process.env.NEXT_PUBLIC_COACH_WHATSAPP}`;
+  const navItems: NavItem[] = role === 'coach'
+    ? [{ label: 'Admin', href: '/admin', Icon: Shield }, ...NAV_ITEMS]
+    : NAV_ITEMS;
 
   return (
     <div className="flex h-full flex-col p-6">
       <Logo variant="full" />
 
       <nav className="mt-10 flex flex-1 flex-col gap-1">
-        {NAV_ITEMS.map((item) => {
+        {navItems.map((item) => {
           const active = !item.comingSoon && currentPath.startsWith(item.href);
           const baseRow =
             'group/nav relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-all duration-150';
@@ -165,7 +170,7 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
           >
             {TIER_LABEL[tier]} Plan
           </span>
-          {tier !== 'pro' && (
+          {tier !== 'pro' ? (
             <Link
               href="/pricing"
               onClick={onNavigate}
@@ -173,6 +178,14 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
             >
               <Zap className="h-3 w-3 fill-current" />
               Upgrade
+            </Link>
+          ) : (
+            <Link
+              href="/settings"
+              onClick={onNavigate}
+              className="text-text-muted hover:text-text text-[11px] font-medium transition-colors"
+            >
+              Manage
             </Link>
           )}
         </div>
@@ -195,10 +208,10 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
  * The inline desktop sidebar. Hidden on small viewports (the MobileNav
  * drawer renders the same SidebarContent there).
  */
-export function Sidebar({ tier }: { tier?: PlanTier }) {
+export function Sidebar({ tier, role }: { tier?: PlanTier; role?: 'user' | 'coach' }) {
   return (
     <aside className="bg-surface border-border hidden w-[220px] shrink-0 border-r md:flex md:flex-col">
-      <SidebarContent tier={tier} />
+      <SidebarContent tier={tier} role={role} />
     </aside>
   );
 }
