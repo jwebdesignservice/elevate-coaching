@@ -15,6 +15,9 @@ export default function LandingPage() {
       <header className="border-border flex items-center justify-between border-b p-6">
         <Logo variant="full" />
         <nav className="flex items-center gap-4">
+          <Link href="/pricing" className="text-text-muted hover:text-text text-sm">
+            Pricing
+          </Link>
           <Link href="/sign-in" className="text-text-muted hover:text-text text-sm">
             Sign in
           </Link>
