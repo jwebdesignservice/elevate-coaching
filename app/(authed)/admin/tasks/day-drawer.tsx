@@ -128,42 +128,45 @@ export function DayDrawer({ weekId, dayOfWeek, dayLabel, tasks, readOnly, closeH
           </ul>
 
           {!readOnly && (
-            <form
-              action={upsertTaskAction}
-              className="border-border mt-6 flex items-end gap-2 border-t pt-4"
-            >
-              <input type="hidden" name="week_id" value={weekId} />
-              <input type="hidden" name="day_of_week" value={dayOfWeek} />
-              <div className="flex-1">
-                <label className="text-text-muted mb-1 block text-xs">Type</label>
-                <select
-                  name="task_type"
-                  defaultValue="workout"
-                  className="border-border bg-surface text-text w-full rounded-md border px-2 py-1.5 text-sm"
+            <div className="border-border mt-6 border-t pt-4">
+              <h4 className="text-text mb-1 text-sm font-semibold">Add task</h4>
+              <p className="text-text-muted mb-3 text-xs">
+                Pick a type and type any title — what users will see and tick off.
+              </p>
+              <form action={upsertTaskAction} className="flex items-end gap-2">
+                <input type="hidden" name="week_id" value={weekId} />
+                <input type="hidden" name="day_of_week" value={dayOfWeek} />
+                <div className="flex-1">
+                  <label className="text-text-muted mb-1 block text-xs">Type</label>
+                  <select
+                    name="task_type"
+                    defaultValue="workout"
+                    className="border-border bg-surface text-text w-full rounded-md border px-2 py-1.5 text-sm"
+                  >
+                    {TASK_TYPES.map((t) => (
+                      <option key={t} value={t}>
+                        {TASK_TYPE_LABELS[t]}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex-[2]">
+                  <label className="text-text-muted mb-1 block text-xs">Title</label>
+                  <input
+                    name="title"
+                    required
+                    placeholder="e.g. 10,000 steps"
+                    className="border-border bg-surface text-text w-full rounded-md border px-2 py-1.5 text-sm"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-accent text-accent-fg hover:bg-accent/80 rounded-md px-3 py-1.5 text-sm font-medium"
                 >
-                  {TASK_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {TASK_TYPE_LABELS[t]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex-[2]">
-                <label className="text-text-muted mb-1 block text-xs">Title</label>
-                <input
-                  name="title"
-                  required
-                  placeholder="e.g. 10,000 steps"
-                  className="border-border bg-surface text-text w-full rounded-md border px-2 py-1.5 text-sm"
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-accent text-accent-fg hover:bg-accent/80 rounded-md px-3 py-1.5 text-sm font-medium"
-              >
-                Add
-              </button>
-            </form>
+                  Add
+                </button>
+              </form>
+            </div>
           )}
         </Dialog.Popup>
       </Dialog.Portal>

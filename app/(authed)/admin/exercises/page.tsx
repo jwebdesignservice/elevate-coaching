@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus, Pencil } from 'lucide-react';
+import { ChevronLeft, Plus, Pencil } from 'lucide-react';
 import { requireCoach } from '@/lib/auth';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/layout/TopBar';
@@ -21,6 +21,12 @@ export default async function AdminExercisesPage() {
     <>
       <TopBar title="Exercises" subtitle={`${exercises.length} exercise${exercises.length !== 1 ? 's' : ''} in library`} userTier={profile.subscription_tier} userName={profile.name} />
       <div className="p-4 sm:p-6 lg:p-8">
+        <Link
+          href="/admin"
+          className="text-text-muted hover:text-text mb-6 inline-flex items-center gap-1 text-sm"
+        >
+          <ChevronLeft className="h-4 w-4" />Back to admin
+        </Link>
         <div className="mb-4 flex justify-end">
           <Link href="/admin/exercises/new" className={buttonVariants()}><Plus className="mr-1 h-4 w-4" />New Exercise</Link>
         </div>

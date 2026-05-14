@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { ChevronLeft, Plus } from 'lucide-react';
 import { requireCoach } from '@/lib/auth';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/layout/TopBar';
@@ -84,6 +84,12 @@ export default async function AdminTasksPage({
         userName={profile.name}
       />
       <div className="p-4 sm:p-6 lg:p-8">
+        <Link
+          href="/admin"
+          className="text-text-muted hover:text-text mb-6 inline-flex items-center gap-1 text-sm"
+        >
+          <ChevronLeft className="h-4 w-4" />Back to admin
+        </Link>
         {/* Category tabs */}
         <div className="mb-6 flex flex-wrap gap-2">
           {CATEGORIES.map((c) => {
