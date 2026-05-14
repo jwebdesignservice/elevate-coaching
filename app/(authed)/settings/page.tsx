@@ -12,6 +12,7 @@ import { CategoryCard } from './category-card';
 import { SubscriptionCard } from './subscription-card';
 import { ProfileEditCard } from './profile-edit-card';
 import { MaxLiftsCard } from './max-lifts-card';
+import { ExerciseRecordsSection } from './exercise-records-card';
 
 export const metadata = {
   title: 'Settings · Elevate Coaching',
@@ -31,13 +32,24 @@ export default async function SettingsPage() {
   // the most recent — older pending rows are blocked by the UI but the DB
   // doesn't enforce uniqueness (the coach may resolve and re-request).
   const supabase = await createSupabaseServerClient();
-  const { data: pendingRows } = await supabase
-    .from('category_change_requests')
-    .select('id, requested_category, created_at')
-    .eq('user_id', profile.id)
-    .eq('status', 'pending')
-    .order('created_at', { ascending: false })
-    .limit(1);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sb = supabase as any;
+  const [pendingRowsRes, exercisesRes, recordsRes] = await Promise.all([
+    supabase
+      .from('category_change_requests')
+      .select('id, requested_category, created_at')
+      .eq('user_id', profile.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(1),
+    sb.from('exercises').select('id, title').order('title') as Promise<{ data: { id: string; title: string }[] | null; error: unknown }>,
+    sb.from('user_exercise_records')
+      .select('exercise_id, one_rm_kg, five_rm_kg, twelve_rm_kg')
+      .eq('user_id', profile.id) as Promise<{ data: { exercise_id: string; one_rm_kg: number | null; five_rm_kg: number | null; twelve_rm_kg: number | null }[] | null; error: unknown }>,
+  ]);
+  const pendingRows = pendingRowsRes.data;
+  const exerciseList = (exercisesRes.data ?? []) as { id: string; title: string }[];
+  const recordList = (recordsRes.data ?? []) as { exercise_id: string; one_rm_kg: number | null; five_rm_kg: number | null; twelve_rm_kg: number | null }[];
 
   // Cast the row from the (under-inferred) Supabase chain — same pattern as
   // lib/auth.ts / app/onboarding/actions.ts.
@@ -94,6 +106,8 @@ export default async function SettingsPage() {
               max_lift_ohp: profile.max_lift_ohp,
             }}
           />
+
+          <ExerciseRecordsSection exercises={exerciseList} records={recordList} />
 
           <SubscriptionCard
             tier={(profile.subscription_tier as PlanTier) ?? 'free'}
