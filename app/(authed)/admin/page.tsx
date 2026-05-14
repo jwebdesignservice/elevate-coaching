@@ -8,7 +8,6 @@ import {
   Sparkles,
   ArrowRight,
   Plus,
-  Activity,
 } from 'lucide-react';
 import { TopBar } from '@/components/layout/TopBar';
 import { Card } from '@/components/ui/card';
@@ -136,29 +135,6 @@ export default async function AdminPage() {
           </div>
         </section>
 
-        {/* Activity summary card (read-only for now) */}
-        <section>
-          <Card className="bg-surface border-border p-5 sm:p-6">
-            <div className="mb-3 flex items-center gap-2">
-              <Activity className="text-accent h-4 w-4" />
-              <h3 className="text-text font-semibold">Platform health</h3>
-            </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <Bullet>
-                <span className="text-text font-medium">{exerciseCount} exercise{exerciseCount === 1 ? '' : 's'} live</span>
-                <span className="text-text-muted block text-xs">Available across all programmes</span>
-              </Bullet>
-              <Bullet>
-                <span className="text-text font-medium">{activeProgrammes} active programme{activeProgrammes === 1 ? '' : 's'}</span>
-                <span className="text-text-muted block text-xs">{draftProgrammes} draft awaiting publish</span>
-              </Bullet>
-              <Bullet>
-                <span className="text-text font-medium">{userCount} member{userCount === 1 ? '' : 's'}</span>
-                <span className="text-text-muted block text-xs">{completionCount} session{completionCount === 1 ? '' : 's'} completed</span>
-              </Bullet>
-            </div>
-          </Card>
-        </section>
       </div>
     </>
   );
@@ -175,13 +151,3 @@ function StatTile({ icon: Icon, value, label, sub }: { icon: React.ComponentType
   );
 }
 
-function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="border-border bg-muted/20 flex items-start gap-2 rounded-md border p-3">
-      <div className="bg-accent/15 text-accent mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full">
-        <span className="text-[10px]">✓</span>
-      </div>
-      <div className="min-w-0 text-sm">{children}</div>
-    </div>
-  );
-}
