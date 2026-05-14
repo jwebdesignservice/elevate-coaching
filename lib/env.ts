@@ -15,6 +15,12 @@ const schema = z.object({
 
   // Runtime
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+
+  // Stripe (server-only — no publishable key needed for server-redirect Checkout)
+  STRIPE_SECRET_KEY:      z.string().min(1),
+  STRIPE_WEBHOOK_SECRET:  z.string().min(1),
+  STRIPE_BASIC_PRICE_ID:  z.string().min(1),
+  STRIPE_PRO_PRICE_ID:    z.string().min(1),
 });
 
 const parsed = schema.safeParse(process.env);
