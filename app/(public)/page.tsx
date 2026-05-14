@@ -23,7 +23,7 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/sign-up"
-            className={cn(buttonVariants(), 'bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent/60')}
+            className={cn(buttonVariants(), 'bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent')}
           >
             Get started
           </Link>
@@ -54,7 +54,7 @@ export default function LandingPage() {
               href="/sign-up"
               className={cn(
                 buttonVariants({ size: 'lg' }),
-                'bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent/60',
+                'bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent',
               )}
             >
               Start your transformation

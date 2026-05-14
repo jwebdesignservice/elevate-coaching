@@ -70,7 +70,7 @@ export function ProgramForm({ action, defaultValues, submitLabel = 'Create progr
       )}
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={isPending} className="bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent/60">
+        <Button type="submit" disabled={isPending} className="bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent">
           {isPending ? 'Saving…' : submitLabel}{!isPending && <ArrowRight className="ml-1 h-4 w-4" />}
         </Button>
       </div>
