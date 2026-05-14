@@ -1,0 +1,90 @@
+<h2>SP-4 Routes — Revised</h2>
+<p class="subtitle">Two additions vs previous version: /exercises/[id] (exercise detail was missing) and phone + avatar in /settings (brief §11 gaps, practical to close now since we're already touching settings for max lifts).</p>
+
+<div class="split" style="gap:24px;align-items:start">
+
+  <div>
+    <h3 style="margin-bottom:12px">User-facing</h3>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/dashboard</div>
+      <div style="opacity:0.7">Updated: hero card with active program + "Continue" CTA. Program progress metric card.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/programs</div>
+      <div style="opacity:0.7">Grid of programs matching user's category + plan. Shows progress % if enrolled. Locked programs show upgrade CTA.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/programs/[id]</div>
+      <div style="opacity:0.7">Program detail: cover, description, week list. "Start Program" enrolls the user. "Continue Week X" if already enrolled.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/programs/[id]/week/[n]</div>
+      <div style="opacity:0.7">Week detail: sessions list with complete/incomplete state.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/programs/[id]/week/[n]/session/[s]</div>
+      <div style="opacity:0.7">Session view: exercises with sets/reps, auto-calculated weight from user's 1RM. Completion checkbox per exercise. "Mark session complete" CTA writes to user_session_completions.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/exercises</div>
+      <div style="opacity:0.7">Exercise library. Filter by muscle group + tags. Card grid.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/exercises/[id] <span style="color:#f4a261;font-size:11px">NEW</span></div>
+      <div style="opacity:0.7">Exercise detail: name, muscle groups, instructions, sets/reps context, video placeholder (SP-6 fills in). Was missing from previous version.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/settings <span style="color:#f4a261;font-size:11px">UPDATED</span></div>
+      <div style="opacity:0.7">
+        New fields from brief §11:<br>
+        • Max lifts card (squat/bench/deadlift/OHP in kg)<br>
+        • Phone number field<br>
+        • Avatar upload<br>
+        • Name + email editing (brief §11 — currently read-only, closing the gap now since we're here)
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h3 style="margin-bottom:12px">Coach / Admin</h3>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin</div>
+      <div style="opacity:0.7">Admin index. Links to exercises and programs. Role-gated (profiles.role = 'admin').</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin/exercises<br>/admin/exercises/new<br>/admin/exercises/[id]/edit</div>
+      <div style="opacity:0.7">Exercise library management. Table view + create/edit form (title, description, muscle groups, tags, video URL).</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin/programs<br>/admin/programs/new</div>
+      <div style="opacity:0.7">Program list + create form (title, description, cover image URL, category, plan_access, status).</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin/programs/[id]/edit</div>
+      <div style="opacity:0.7">Programme builder: add weeks → sessions → pick exercises from library → set sets/reps/weight/notes. Form-based (SP-7 upgrades to drag-and-drop builder).</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(180,180,180,0.05);border:1px solid rgba(180,180,180,0.15);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#aaa;margin-bottom:4px">Deferred to later SPs</div>
+      <div style="opacity:0.6">
+        /admin/tasks → SP-5<br>
+        /admin/tutorials → SP-6<br>
+        /admin/nutrition → SP-8<br>
+        /admin/users (full user management) → SP-7<br>
+        Bulk publish / mass-upload → SP-7
+      </div>
+    </div>
+  </div>
+</div>

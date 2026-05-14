@@ -119,7 +119,7 @@ export function SubscriptionCard({ tier, periodEnd, cancelAtPeriodEnd }: Props) 
               href="/pricing"
               className={cn(
                 buttonVariants(),
-                'bg-accent text-accent-fg hover:bg-accent/90',
+                'bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent/60',
               )}
             >
               <Zap className="h-4 w-4 fill-current" />
@@ -149,7 +149,7 @@ export function SubscriptionCard({ tier, periodEnd, cancelAtPeriodEnd }: Props) 
               href="/pricing"
               className={cn(
                 buttonVariants(),
-                'bg-accent text-accent-fg hover:bg-accent/90',
+                'bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent/60',
               )}
             >
               <Zap className="h-4 w-4 fill-current" />

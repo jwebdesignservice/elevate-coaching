@@ -114,7 +114,7 @@ export function OnboardingForm() {
               type="button"
               disabled={category === null}
               onClick={() => setStep(2)}
-              className="bg-accent text-accent-fg hover:bg-accent/90 h-11 px-6 font-medium sm:w-auto"
+              className="bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent/60 h-11 px-6 font-medium sm:w-auto"
             >
               Next step
               <ArrowRight className="h-4 w-4" />
@@ -241,7 +241,7 @@ export function OnboardingForm() {
             <Button
               type="submit"
               disabled={isPending || experience === null}
-              className="bg-accent text-accent-fg hover:bg-accent/90 h-11 px-6 font-medium sm:w-auto"
+              className="bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent/60 h-11 px-6 font-medium sm:w-auto"
             >
               {isPending ? 'Saving…' : 'Continue to dashboard'}
               {!isPending && <ArrowRight className="h-4 w-4" />}

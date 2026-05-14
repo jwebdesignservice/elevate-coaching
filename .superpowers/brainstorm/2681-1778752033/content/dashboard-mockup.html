@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Mockup — SP-4</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0f12; color: #e8eaed; min-height: 100vh; display: flex; }
+
+  /* Sidebar */
+  .sidebar { width: 220px; min-height: 100vh; background: #111418; border-right: 1px solid #1e2228; display: flex; flex-direction: column; padding: 24px 0; flex-shrink: 0; }
+  .sidebar-logo { padding: 0 20px 28px; font-size: 16px; font-weight: 700; letter-spacing: -0.3px; color: #fff; }
+  .sidebar-logo span { color: #4ecb8c; }
+  .nav-section { padding: 0 12px; margin-bottom: 4px; }
+  .nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #4a5160; padding: 0 8px; margin-bottom: 6px; margin-top: 16px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 7px; font-size: 13px; color: #8892a4; cursor: pointer; margin-bottom: 2px; }
+  .nav-item.active { background: rgba(78,203,140,0.1); color: #4ecb8c; }
+  .nav-item:hover:not(.active) { background: rgba(255,255,255,0.04); color: #c8d0dc; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+  .sidebar-bottom { margin-top: auto; padding: 16px 20px 0; border-top: 1px solid #1e2228; }
+  .user-chip { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg,#4ecb8c,#2a9d6f); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #0d0f12; flex-shrink: 0; }
+  .user-info { font-size: 12px; }
+  .user-name { color: #c8d0dc; font-weight: 500; }
+  .user-plan { color: #4a5160; font-size: 11px; }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .topbar { height: 56px; border-bottom: 1px solid #1e2228; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: #0d0f12; flex-shrink: 0; }
+  .topbar-title { font-size: 14px; color: #8892a4; }
+  .topbar-title strong { color: #e8eaed; font-weight: 600; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .badge { background: rgba(78,203,140,0.12); color: #4ecb8c; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; border: 1px solid rgba(78,203,140,0.2); }
+
+  .content { padding: 28px; overflow-y: auto; flex: 1; }
+
+  /* Hero card */
+  .hero-card { background: linear-gradient(135deg, #141820 0%, #1a2235 100%); border: 1px solid #252d3a; border-radius: 14px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 20px; position: relative; overflow: hidden; }
+  .hero-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(78,203,140,0.08) 0%, transparent 70%); }
+  .hero-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #4ecb8c; margin-bottom: 8px; font-weight: 600; }
+  .hero-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px; letter-spacing: -0.4px; }
+  .hero-sub { font-size: 13px; color: #6b7788; margin-bottom: 20px; }
+  .progress-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .progress-bar-wrap { flex: 1; max-width: 220px; }
+  .progress-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: #6b7788; margin-bottom: 6px; }
+  .progress-bar { height: 5px; background: #252d3a; border-radius: 10px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg,#4ecb8c,#2dc77a); border-radius: 10px; }
+  .progress-stat { font-size: 12px; color: #8892a4; }
+  .progress-stat strong { color: #e8eaed; }
+  .cta-btn { background: #4ecb8c; color: #0d1a12; font-size: 13px; font-weight: 700; padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer; white-space: nowrap; }
+  .hero-img { width: 100px; height: 100px; background: linear-gradient(135deg,#1e2d20,#2a3d2e); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .hero-img-inner { font-size: 36px; opacity: 0.6; }
+
+  /* Metric cards */
+  .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .metric-card { background: #111418; border: 1px solid #1e2228; border-radius: 12px; padding: 18px 20px; }
+  .metric-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: #4a5160; margin-bottom: 10px; font-weight: 600; }
+  .metric-value { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.5px; margin-bottom: 4px; }
+  .metric-sub { font-size: 12px; color: #4a5160; }
+  .metric-card.live .metric-value { color: #4ecb8c; }
+  .metric-card.placeholder { opacity: 0.4; }
+  .metric-bar { height: 3px; background: #1e2228; border-radius: 10px; margin-top: 10px; }
+  .metric-bar-fill { height: 100%; background: #4ecb8c; border-radius: 10px; }
+
+  /* Two column below */
+  .two-col { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+
+  /* Program section */
+  .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-title { font-size: 14px; font-weight: 600; color: #c8d0dc; }
+  .section-link { font-size: 12px; color: #4ecb8c; cursor: pointer; }
+  .week-list { display: flex; flex-direction: column; gap: 10px; }
+  .week-card { background: #111418; border: 1px solid #1e2228; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
+  .week-card.current { border-color: rgba(78,203,140,0.3); background: rgba(78,203,140,0.04); }
+  .week-card.locked { opacity: 0.4; }
+  .week-num { width: 36px; height: 36px; border-radius: 8px; background: #1e2228; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #6b7788; flex-shrink: 0; }
+  .week-card.current .week-num { background: rgba(78,203,140,0.15); color: #4ecb8c; }
+  .week-info { flex: 1; }
+  .week-title { font-size: 13px; font-weight: 600; color: #c8d0dc; margin-bottom: 2px; }
+  .week-card.current .week-title { color: #fff; }
+  .week-sessions { font-size: 11px; color: #4a5160; }
+  .week-status { font-size: 11px; }
+  .week-status.done { color: #4ecb8c; }
+  .week-status.active { color: #4ecb8c; font-weight: 600; }
+  .week-status.locked-label { color: #4a5160; }
+  .lock-icon { font-size: 13px; }
+
+  /* Right column */
+  .right-col { display: flex; flex-direction: column; gap: 16px; }
+  .side-card { background: #111418; border: 1px solid #1e2228; border-radius: 12px; padding: 18px; }
+  .side-card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; color: #4a5160; margin-bottom: 14px; }
+  .placeholder-block { background: #1a1e24; border-radius: 8px; padding: 24px 16px; text-align: center; }
+  .placeholder-block p { font-size: 12px; color: #4a5160; }
+  .placeholder-block .ph-label { font-size: 11px; color: #3a4050; margin-top: 4px; }
+
+  .note { font-size: 11px; color: #3a4050; text-align: center; margin-top: 28px; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">Elevate<span>.</span></div>
+  <div class="nav-section">
+    <div class="nav-item active"><div class="nav-dot"></div> Dashboard</div>
+    <div class="nav-item"><div class="nav-dot"></div> Programs</div>
+    <div class="nav-item"><div class="nav-dot"></div> Exercises</div>
+    <div class="nav-label">Coming soon</div>
+    <div class="nav-item" style="opacity:0.35"><div class="nav-dot"></div> Tasks</div>
+    <div class="nav-item" style="opacity:0.35"><div class="nav-dot"></div> Tutorials</div>
+    <div class="nav-item" style="opacity:0.35"><div class="nav-dot"></div> Nutrition</div>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="user-chip">
+      <div class="avatar">JW</div>
+      <div class="user-info">
+        <div class="user-name">Jack Wilson</div>
+        <div class="user-plan">Basic · Cat C</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Good morning, <strong>Jack</strong></div>
+    <div class="topbar-right">
+      <div class="badge">Category C — Strength</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Hero -->
+    <div class="hero-card">
+      <div>
+        <div class="hero-eyebrow">Active Program · Week 3 of 8</div>
+        <div class="hero-title">Cat C Strength Foundation</div>
+        <div class="hero-sub">3 sessions this week · Next: Lower Body Day</div>
+        <div class="progress-row">
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-label"><span>Programme progress</span><span>37%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:37%"></div></div>
+          </div>
+          <div class="progress-stat"><strong>2</strong> / 3 sessions done this week</div>
+        </div>
+        <button class="cta-btn">Continue Program →</button>
+      </div>
+      <div class="hero-img"><div class="hero-img-inner">🏋️</div></div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-row">
+      <div class="metric-card live">
+        <div class="metric-label">Programme %</div>
+        <div class="metric-value">37%</div>
+        <div class="metric-sub">Week 3 of 8</div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:37%"></div></div>
+      </div>
+      <div class="metric-card live">
+        <div class="metric-label">Sessions done</div>
+        <div class="metric-value">14</div>
+        <div class="metric-sub">All time</div>
+      </div>
+      <div class="metric-card placeholder">
+        <div class="metric-label">Tasks done %</div>
+        <div class="metric-value">—</div>
+        <div class="metric-sub">Available in SP-5</div>
+      </div>
+      <div class="metric-card placeholder">
+        <div class="metric-label">Daily streak</div>
+        <div class="metric-value">—</div>
+        <div class="metric-sub">Available in SP-5</div>
+      </div>
+    </div>
+
+    <!-- Two col -->
+    <div class="two-col">
+      <div>
+        <div class="section-head">
+          <div class="section-title">Current Program — Weeks</div>
+          <div class="section-link">View all programs →</div>
+        </div>
+        <div class="week-list">
+          <div class="week-card" style="opacity:0.6">
+            <div class="week-num">W1</div>
+            <div class="week-info"><div class="week-title">Foundation</div><div class="week-sessions">3 sessions · 9 exercises</div></div>
+            <div class="week-status done">✓ Complete</div>
+          </div>
+          <div class="week-card" style="opacity:0.6">
+            <div class="week-num">W2</div>
+            <div class="week-info"><div class="week-title">Load Introduction</div><div class="week-sessions">3 sessions · 9 exercises</div></div>
+            <div class="week-status done">✓ Complete</div>
+          </div>
+          <div class="week-card current">
+            <div class="week-num">W3</div>
+            <div class="week-info"><div class="week-title">Progressive Overload</div><div class="week-sessions">3 sessions · 12 exercises</div></div>
+            <div class="week-status active">▶ In progress</div>
+          </div>
+          <div class="week-card">
+            <div class="week-num">W4</div>
+            <div class="week-info"><div class="week-title">Intensity Block</div><div class="week-sessions">3 sessions · 12 exercises</div></div>
+            <div class="week-status" style="color:#6b7788">Upcoming</div>
+          </div>
+          <div class="week-card locked">
+            <div class="week-num">W5</div>
+            <div class="week-info"><div class="week-title">Deload</div><div class="week-sessions">3 sessions</div></div>
+            <div class="lock-icon">🔒</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="side-card">
+          <div class="side-card-title">Today's Tasks</div>
+          <div class="placeholder-block">
+            <p>Daily tasks coming in SP-5</p>
+            <p class="ph-label">Accountability layer ships next sprint</p>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-card-title">Tutorials</div>
+          <div class="placeholder-block">
+            <p>Video library coming in SP-6</p>
+            <p class="ph-label">Exercise videos ship after tasks</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">This mockup shows SP-4 state — programmes and exercises are live, tasks/tutorials are placeholders until SP-5/SP-6.</div>
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-accent text-accent-fg hover:bg-accent/90 inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-colors"
+          className="bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent/60 inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-colors"
         >
           <MessageCircle className="h-4 w-4" />
           Message your coach on WhatsApp

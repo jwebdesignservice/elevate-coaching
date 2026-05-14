@@ -1,0 +1,96 @@
+<h2>SP-4 Data Model</h2>
+<p class="subtitle">The full schema for exercises, programmes, sessions, progress tracking, and max lifts. Does this look right?</p>
+
+<div class="section">
+  <h3>Exercise Library</h3>
+  <p>Global library — not tied to a category. Coach creates exercises once, reuses them across any programme.</p>
+  <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+    <strong>exercises</strong><br>
+    &nbsp;&nbsp;id · uuid PK<br>
+    &nbsp;&nbsp;name · text (e.g. "Back Squat")<br>
+    &nbsp;&nbsp;description · text (optional coaching notes)<br>
+    &nbsp;&nbsp;video_url · text (optional — SP-6 will expand this)<br>
+    &nbsp;&nbsp;muscle_groups · text[] (e.g. ["quads","glutes"])<br>
+    &nbsp;&nbsp;tags · text[] (for filtering: "compound", "upper", "lower")<br>
+    &nbsp;&nbsp;created_at · timestamptz
+  </div>
+</div>
+
+<div class="section">
+  <h3>Programme Structure (4 tables)</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px">
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>programs</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;title · text<br>
+      &nbsp;&nbsp;description · text<br>
+      &nbsp;&nbsp;category · user_category (A/B/C/D)<br>
+      &nbsp;&nbsp;is_active · boolean<br>
+      &nbsp;&nbsp;created_at · timestamptz
+    </div>
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>program_weeks</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;program_id · FK → programs<br>
+      &nbsp;&nbsp;week_number · int (1, 2, 3…)<br>
+      &nbsp;&nbsp;title · text (e.g. "Foundation")<br>
+      &nbsp;&nbsp;description · text<br>
+      &nbsp;&nbsp;is_free_preview · boolean
+    </div>
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>program_sessions</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;week_id · FK → program_weeks<br>
+      &nbsp;&nbsp;session_number · int (1, 2…)<br>
+      &nbsp;&nbsp;title · text (e.g. "Lower Body")<br>
+      &nbsp;&nbsp;description · text
+    </div>
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>session_exercises</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;session_id · FK → program_sessions<br>
+      &nbsp;&nbsp;exercise_id · FK → exercises<br>
+      &nbsp;&nbsp;order_index · int<br>
+      &nbsp;&nbsp;sets · int<br>
+      &nbsp;&nbsp;reps · text ("5" or "8–12")<br>
+      &nbsp;&nbsp;pct_of_1rm · int (null = no % prescribed)<br>
+      &nbsp;&nbsp;rest_seconds · int<br>
+      &nbsp;&nbsp;notes · text
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Max Lifts + Progress Tracking</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px">
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>profiles (additions)</strong><br>
+      &nbsp;&nbsp;max_lift_squat · numeric (kg)<br>
+      &nbsp;&nbsp;max_lift_bench · numeric (kg)<br>
+      &nbsp;&nbsp;max_lift_deadlift · numeric (kg)<br>
+      &nbsp;&nbsp;max_lift_ohp · numeric (kg)<br>
+      <span style="opacity:0.5">— user updates these in settings<br>
+      — used to calculate session weights</span>
+    </div>
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>user_session_completions</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;user_id · FK → profiles<br>
+      &nbsp;&nbsp;session_id · FK → program_sessions<br>
+      &nbsp;&nbsp;program_id · FK → programs<br>
+      &nbsp;&nbsp;week_number · int<br>
+      &nbsp;&nbsp;completed_at · timestamptz<br>
+      <span style="opacity:0.5">— marks a session done<br>
+      — drives the % completion calc</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Plan gating logic</h3>
+  <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:13px; line-height:2">
+    <strong>Free:</strong> Can view programme overview + any week where <code>is_free_preview = true</code>. Locked weeks show an upgrade prompt.<br>
+    <strong>Basic+:</strong> Full programme access. All weeks and sessions unlocked.<br>
+    <strong>Pro:</strong> Basic + nutrition (SP-8). No difference in programme access vs Basic.
+  </div>
+</div>

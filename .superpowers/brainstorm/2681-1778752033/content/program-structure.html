@@ -1,0 +1,68 @@
+<h2>SP-4 Programme Architecture</h2>
+<p class="subtitle">How deep should the content structure go? Pick the model that fits how the coach thinks about sessions.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Flat — Program → Weeks → Exercises</h3>
+      <p>Each week has a direct list of exercises with sets/reps. No "sessions" or "days" layer. Coach adds exercises to a week, users work through them at their own pace.</p>
+      <div style="margin-top:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:6px; font-size:12px; font-family:monospace; line-height:1.8">
+        Program: Cat C Strength<br>
+        └─ Week 1: Foundation<br>
+        &nbsp;&nbsp;&nbsp;├─ Squat — 3×5 @ 70% 1RM<br>
+        &nbsp;&nbsp;&nbsp;├─ Bench — 3×5 @ 70% 1RM<br>
+        &nbsp;&nbsp;&nbsp;└─ Deadlift — 1×5 @ 75% 1RM<br>
+        └─ Week 2: Load<br>
+        &nbsp;&nbsp;&nbsp;├─ Squat — 3×5 @ 75% 1RM<br>
+        &nbsp;&nbsp;&nbsp;└─ ...
+      </div>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>Pros</h4><ul><li>Simple to build</li><li>Coach fills it in fast</li><li>Clean user view</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>No day structure</li><li>Can't distinguish "Day 1 push / Day 2 pull"</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Sessions — Program → Weeks → Sessions → Exercises</h3>
+      <p>Each week has named sessions (e.g. Day 1, Day 2, or "Push Day", "Pull Day"). Exercises live inside sessions. This is how real training programmes are structured.</p>
+      <div style="margin-top:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:6px; font-size:12px; font-family:monospace; line-height:1.8">
+        Program: Cat C Strength<br>
+        └─ Week 1: Foundation<br>
+        &nbsp;&nbsp;&nbsp;├─ Session 1: Lower Body<br>
+        &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;├─ Squat 3×5 @ 70%<br>
+        &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;└─ Deadlift 1×5 @ 75%<br>
+        &nbsp;&nbsp;&nbsp;└─ Session 2: Upper Body<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ Bench 3×5 @ 70%<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ OHP 3×8 @ 65%
+      </div>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>Pros</h4><ul><li>Mirrors real training splits</li><li>Users complete one session at a time</li><li>Better % tracking per session</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>More complex admin UI</li><li>More DB tables</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Sessions now, flexible later — ship B but keep it minimal</h3>
+      <p>Build the sessions layer (Option B's structure) but keep the admin UI dead simple for now — no drag-and-drop, just forms. SP-7 (Admin Panel v1) adds the polished builder. The data model is correct from day one.</p>
+      <div style="margin-top:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:6px; font-size:12px; font-family:monospace; line-height:1.8">
+        Same structure as B — but admin creates<br>
+        sessions via a plain form, not a builder.<br>
+        <br>
+        Coach: "Add session" → types name → <br>
+        "Add exercise" → picks from library → <br>
+        sets sets/reps/% → saves.
+      </div>
+      <div class="pros-cons" style="margin-top:12px">
+        <div class="pros"><h4>Pros</h4><ul><li>Right data model from day one</li><li>No schema rework in SP-7</li><li>Functional for the coach immediately</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Admin UX is basic (forms only)</li><li>Larger SP-4 scope than Option A</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

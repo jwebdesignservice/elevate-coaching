@@ -1,0 +1,126 @@
+<h2>SP-4 Data Model — Brief-Aligned</h2>
+<p class="subtitle">Updated from the full brief (sections 8, 11, 13). Key changes: cover image on programs, plan_access at program level, tutorial link on session exercises, progress log table, user enrollment tracking.</p>
+
+<div class="section">
+  <h3>Exercise Library (global, reusable)</h3>
+  <p style="font-size:13px;opacity:0.7;margin-bottom:8px">From brief §13: "title, muscle_group, tutorial_relation, notes". Sets/reps/weight live on the session prescription, not the exercise itself — exercises are reusable across any session.</p>
+  <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+    <strong>exercises</strong><br>
+    &nbsp;&nbsp;id · uuid PK<br>
+    &nbsp;&nbsp;title · text (e.g. "Back Squat")<br>
+    &nbsp;&nbsp;description · text<br>
+    &nbsp;&nbsp;muscle_group · text[] (e.g. ["quads","glutes","core"])<br>
+    &nbsp;&nbsp;tags · text[] (filtering: "compound", "push", "pull", "lower")<br>
+    &nbsp;&nbsp;video_url · text <span style="opacity:0.5">← placeholder; SP-6 Tutorial Library links here</span><br>
+    &nbsp;&nbsp;created_at · timestamptz
+  </div>
+</div>
+
+<div class="section">
+  <h3>Programme Structure (4 tables)</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px">
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>programs</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;title · text<br>
+      &nbsp;&nbsp;description · text<br>
+      &nbsp;&nbsp;cover_image_url · text <span style="opacity:0.5">← brief §8</span><br>
+      &nbsp;&nbsp;category · user_category (A/B/C/D) <span style="opacity:0.5">nullable = all</span><br>
+      &nbsp;&nbsp;plan_access · subscription_tier <span style="opacity:0.5">free/basic/pro — brief §8</span><br>
+      &nbsp;&nbsp;status · text (draft / active)<br>
+      &nbsp;&nbsp;created_at · timestamptz
+    </div>
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>program_weeks</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;program_id · FK → programs<br>
+      &nbsp;&nbsp;week_number · int<br>
+      &nbsp;&nbsp;title · text (e.g. "Foundation")<br>
+      &nbsp;&nbsp;description · text
+    </div>
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>program_sessions</strong> <span style="opacity:0.5">(workouts)</span><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;week_id · FK → program_weeks<br>
+      &nbsp;&nbsp;session_number · int<br>
+      &nbsp;&nbsp;title · text (e.g. "Lower Body")<br>
+      &nbsp;&nbsp;instructions · text <span style="opacity:0.5">← brief §8</span><br>
+      &nbsp;&nbsp;estimated_duration_mins · int<br>
+      &nbsp;&nbsp;completion_rule · text <span style="opacity:0.5">← brief §8</span>
+    </div>
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>session_exercises</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;session_id · FK → program_sessions<br>
+      &nbsp;&nbsp;exercise_id · FK → exercises<br>
+      &nbsp;&nbsp;order_index · int<br>
+      &nbsp;&nbsp;sets · int<br>
+      &nbsp;&nbsp;reps · text ("5" or "8–12")<br>
+      &nbsp;&nbsp;weight · text ("70% 1RM" or "60kg") <span style="opacity:0.5">← brief §13</span><br>
+      &nbsp;&nbsp;pct_of_1rm · int <span style="opacity:0.5">nullable — auto-calc weight</span><br>
+      &nbsp;&nbsp;rest_seconds · int<br>
+      &nbsp;&nbsp;notes · text<br>
+      &nbsp;&nbsp;tutorial_id · FK → tutorials <span style="opacity:0.5">nullable — SP-6</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>User Progress Tracking (3 tables)</h3>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px">
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>user_program_enrollments</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;user_id · FK → profiles<br>
+      &nbsp;&nbsp;program_id · FK → programs<br>
+      &nbsp;&nbsp;enrolled_at · timestamptz<br>
+      &nbsp;&nbsp;current_week_number · int<br>
+      &nbsp;&nbsp;last_session_id · FK → program_sessions<br>
+      <span style="opacity:0.5">— "continue from where they left off" — brief §8</span>
+    </div>
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>user_session_completions</strong><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;user_id · FK → profiles<br>
+      &nbsp;&nbsp;session_id · FK → program_sessions<br>
+      &nbsp;&nbsp;program_id · FK → programs<br>
+      &nbsp;&nbsp;week_number · int<br>
+      &nbsp;&nbsp;completed_at · timestamptz<br>
+      <span style="opacity:0.5">— drives % completion calc on dashboard</span>
+    </div>
+    <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+      <strong>progress_logs</strong> <span style="opacity:0.5">— brief §13</span><br>
+      &nbsp;&nbsp;id · uuid PK<br>
+      &nbsp;&nbsp;user_id · FK → profiles<br>
+      &nbsp;&nbsp;date · date<br>
+      &nbsp;&nbsp;metric_type · text<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="opacity:0.6">'session_completed' | 'streak_day'</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="opacity:0.6">'workout_completed' | 'program_enrolled'</span><br>
+      &nbsp;&nbsp;value · numeric<br>
+      &nbsp;&nbsp;related_program_id · FK (nullable)<br>
+      &nbsp;&nbsp;related_session_id · FK (nullable)
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Max Lifts on Profiles (additions) — brief §11</h3>
+  <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:12px; font-family:monospace; line-height:2">
+    <strong>profiles</strong> (4 new columns)<br>
+    &nbsp;&nbsp;max_lift_squat · numeric (kg) — nullable<br>
+    &nbsp;&nbsp;max_lift_bench · numeric (kg) — nullable<br>
+    &nbsp;&nbsp;max_lift_deadlift · numeric (kg) — nullable<br>
+    &nbsp;&nbsp;max_lift_ohp · numeric (kg) — nullable<br>
+    <span style="opacity:0.5">User updates these in /settings. Used in session view to calculate actual weight from % of 1RM.</span>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Plan gating — brief §5</h3>
+  <div style="padding:14px; background:rgba(255,255,255,0.05); border-radius:8px; font-size:13px; line-height:2">
+    Gating is at the <strong>program level</strong> via <code>programs.plan_access</code>:<br>
+    <strong>Free:</strong> Can only see programs where plan_access = 'free'. Others show upgrade CTA.<br>
+    <strong>Basic:</strong> Can access programs where plan_access ∈ ('free', 'basic').<br>
+    <strong>Pro:</strong> Full access to all programs. + nutrition (SP-8).
+  </div>
+</div>

@@ -52,7 +52,7 @@ export default function AppError({
           <Button
             type="button"
             onClick={() => reset()}
-            className="bg-accent text-accent-fg hover:bg-accent/90"
+            className="bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent/60"
           >
             <RotateCw className="h-4 w-4" />
             Try again

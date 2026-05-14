@@ -1,0 +1,78 @@
+<h2>SP-4 Routes</h2>
+<p class="subtitle">Every new page being built. User-facing on the left, coach admin on the right.</p>
+
+<div class="split" style="gap:24px;align-items:start">
+
+  <div>
+    <h3 style="margin-bottom:12px">User-facing</h3>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/dashboard</div>
+      <div style="opacity:0.7">Updated: hero card shows active program + "Continue" CTA. New program progress metric card.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/programs</div>
+      <div style="opacity:0.7">Grid of programs matching user's category + plan. Shows progress % if enrolled. Locked programs show upgrade CTA.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/programs/[id]</div>
+      <div style="opacity:0.7">Program detail: cover, description, week list with lock state. "Start" or "Continue Week X" CTA.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/programs/[id]/week/[n]</div>
+      <div style="opacity:0.7">Week detail: title, description, session list. Each session shows exercises preview + complete/incomplete state.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/programs/[id]/week/[n]/session/[s]</div>
+      <div style="opacity:0.7">Session view: exercise list with sets/reps, auto-calculated weight from 1RM %, completion checkbox per exercise. "Mark session complete" CTA.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/exercises</div>
+      <div style="opacity:0.7">Exercise library. Filter by muscle group + tags. Each card shows name, muscle groups. Tap to see detail + instructions.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(99,200,150,0.08);border:1px solid rgba(99,200,150,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#6bc88a;margin-bottom:4px">/settings</div>
+      <div style="opacity:0.7">Updated: new Max Lifts card where user enters squat/bench/deadlift/OHP in kg.</div>
+    </div>
+  </div>
+
+  <div>
+    <h3 style="margin-bottom:12px">Coach / Admin</h3>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin</div>
+      <div style="opacity:0.7">Admin dashboard/index. Links to exercises and programs. Role-gated: profiles.role = 'admin'.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin/exercises</div>
+      <div style="opacity:0.7">Table of all exercises. Create, edit, delete. Filter by muscle group/tags.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin/exercises/new<br>/admin/exercises/[id]/edit</div>
+      <div style="opacity:0.7">Form: title, description, muscle groups (multi-select), tags, optional video URL.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin/programs</div>
+      <div style="opacity:0.7">Table of all programs. Create, edit, delete. Filter by category + status. Toggle active/draft.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin/programs/new</div>
+      <div style="opacity:0.7">Form: title, description, cover image URL, category, plan access, status. Creates the program shell — weeks/sessions added in edit view.</div>
+    </div>
+
+    <div style="margin-bottom:8px;padding:12px 14px;background:rgba(120,130,255,0.08);border:1px solid rgba(120,130,255,0.2);border-radius:8px;font-size:13px">
+      <div style="font-family:monospace;color:#9a9fff;margin-bottom:4px">/admin/programs/[id]/edit</div>
+      <div style="opacity:0.7">The main builder: add/edit/delete weeks → sessions → exercises. Each session_exercise has sets/reps/weight/notes. Plain form-based (SP-7 adds drag-and-drop).</div>
+    </div>
+  </div>
+</div>

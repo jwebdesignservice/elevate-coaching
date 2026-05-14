@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Programme Builder</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #07090c; --surface: #0d1017; --surface-2: #121620; --surface-3: #161c26;
+    --border: rgba(255,255,255,0.06); --border-strong: rgba(255,255,255,0.1);
+    --accent: #3ddc84; --accent-dim: rgba(61,220,132,0.08); --accent-mid: rgba(61,220,132,0.15);
+    --text: #f0f2f5; --text-2: #8d96a8; --text-3: #404957; --text-4: #2a3040;
+    --admin: #7c8fff; --admin-dim: rgba(124,143,255,0.08);
+    --radius: 12px; --radius-sm: 8px; --radius-xs: 6px;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; font-size: 13px; -webkit-font-smoothing: antialiased; }
+
+  /* Sidebar */
+  .sidebar { width: 232px; min-height: 100vh; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar-logo { padding: 26px 22px 22px; font-size: 17px; font-weight: 800; letter-spacing: -0.6px; border-bottom: 1px solid var(--border); }
+  .sidebar-logo span { color: var(--accent); }
+  .admin-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; background: var(--admin-dim); color: var(--admin); border: 1px solid rgba(124,143,255,0.15); padding: 2px 7px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
+  .sidebar-nav { padding: 16px 12px; flex: 1; }
+  .nav-group-label { font-size: 10px; font-weight: 600; letter-spacing: 0.9px; text-transform: uppercase; color: var(--text-3); padding: 0 10px; margin: 18px 0 6px; }
+  .nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; margin-bottom: 1px; }
+  .nav-item.active { background: var(--admin-dim); color: var(--admin); }
+  .nav-item:hover:not(.active) { background: rgba(255,255,255,0.04); color: #c4cad6; }
+  .nav-icon { width: 16px; text-align: center; font-size: 14px; flex-shrink: 0; }
+  .sidebar-footer { padding: 16px 14px; border-top: 1px solid var(--border); }
+  .user-row { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: var(--radius-sm); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,var(--admin),#5a5fff); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .user-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .user-meta { font-size: 11px; color: var(--text-3); }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .topbar { height: 54px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; flex-shrink: 0; }
+  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); }
+  .breadcrumb a { color: var(--text-3); cursor: pointer; }
+  .breadcrumb a:hover { color: var(--text-2); }
+  .breadcrumb-sep { opacity: 0.4; }
+  .breadcrumb-current { color: var(--text-2); font-weight: 500; }
+  .topbar-actions { display: flex; gap: 8px; }
+  .btn { font-size: 12px; font-weight: 600; padding: 7px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer; letter-spacing: -0.1px; }
+  .btn-ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--border-strong); color: var(--text); }
+  .btn-primary { background: var(--accent); color: #06120d; font-weight: 700; }
+  .btn-admin { background: var(--admin-dim); color: var(--admin); border: 1px solid rgba(124,143,255,0.15); font-weight: 600; }
+
+  .layout { display: flex; flex: 1; overflow: hidden; }
+
+  /* Left: programme meta */
+  .meta-panel { width: 280px; border-right: 1px solid var(--border); padding: 24px 20px; overflow-y: auto; flex-shrink: 0; background: var(--surface); }
+  .meta-section { margin-bottom: 24px; }
+  .meta-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
+  .meta-input { width: 100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; color: var(--text); font-size: 13px; font-family: inherit; outline: none; transition: border-color 0.15s; resize: none; }
+  .meta-input:focus { border-color: var(--border-strong); }
+  .meta-input::placeholder { color: var(--text-4); }
+  .meta-select { width: 100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; color: var(--text); font-size: 13px; font-family: inherit; outline: none; appearance: none; cursor: pointer; }
+  .select-wrap { position: relative; }
+  .select-wrap::after { content: '⌄'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; font-size: 14px; }
+
+  .status-row { display: flex; gap: 8px; }
+  .status-pill { flex: 1; padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border); text-align: center; font-size: 12px; font-weight: 600; color: var(--text-3); cursor: pointer; background: var(--surface-2); }
+  .status-pill.selected { border-color: rgba(61,220,132,0.3); background: var(--accent-dim); color: var(--accent); }
+
+  .cover-upload { width: 100%; height: 100px; background: var(--surface-2); border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; gap: 6px; transition: border-color 0.15s; }
+  .cover-upload:hover { border-color: rgba(255,255,255,0.2); }
+  .cover-upload-icon { font-size: 22px; opacity: 0.3; }
+  .cover-upload-text { font-size: 12px; color: var(--text-3); }
+
+  .stat-row { display: flex; gap: 8px; margin-top: 16px; }
+  .stat-mini { flex: 1; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+  .stat-mini-val { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+  .stat-mini-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
+
+  /* Right: builder */
+  .builder { flex: 1; padding: 24px 28px; overflow-y: auto; }
+
+  .builder-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .builder-title { font-size: 14px; font-weight: 600; color: var(--text-2); }
+
+  /* Week block */
+  .week-block { margin-bottom: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+
+  .week-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px; cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .week-head:hover { background: rgba(255,255,255,0.02); }
+  .week-chevron { font-size: 11px; color: var(--text-3); transition: transform 0.2s; }
+  .week-block.open .week-chevron { transform: rotate(90deg); }
+  .week-num-badge { width: 26px; height: 26px; border-radius: 6px; background: var(--surface-3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-3); flex-shrink: 0; }
+  .week-name-input { flex: 1; background: transparent; border: none; font-size: 13px; font-weight: 600; color: var(--text); font-family: inherit; outline: none; min-width: 0; }
+  .week-name-input::placeholder { color: var(--text-3); font-weight: 400; }
+  .week-meta-info { font-size: 11px; color: var(--text-3); white-space: nowrap; }
+  .week-actions { display: flex; gap: 6px; }
+  .icon-btn { width: 28px; height: 28px; border-radius: 6px; background: transparent; border: 1px solid var(--border); color: var(--text-3); font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .icon-btn:hover { border-color: var(--border-strong); color: var(--text-2); background: rgba(255,255,255,0.04); }
+  .icon-btn.danger:hover { border-color: rgba(255,80,80,0.3); color: #ff6060; background: rgba(255,80,80,0.06); }
+
+  .week-body { padding: 14px 18px; }
+
+  /* Session block */
+  .session-block { margin-bottom: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .session-head { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: var(--surface-3); border-bottom: 1px solid var(--border); }
+  .session-num { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-3); }
+  .session-name-input { flex: 1; background: transparent; border: none; font-size: 13px; font-weight: 600; color: var(--text); font-family: inherit; outline: none; }
+  .session-name-input::placeholder { color: var(--text-3); font-weight: 400; }
+
+  .session-body { padding: 10px 14px; }
+
+  /* Exercise row */
+  .ex-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-xs); margin-bottom: 4px; border: 1px solid var(--border); background: var(--surface-2); }
+  .ex-row:hover { border-color: var(--border-strong); }
+  .ex-drag { color: var(--text-4); font-size: 14px; cursor: grab; flex-shrink: 0; }
+  .ex-pick { flex: 1; min-width: 0; }
+  .ex-pick-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .ex-pick-muscle { font-size: 11px; color: var(--text-3); }
+  .ex-fields { display: flex; gap: 6px; flex-shrink: 0; }
+  .ex-field { width: 64px; }
+  .ex-field input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 12px; font-family: inherit; color: var(--text); outline: none; text-align: center; }
+  .ex-field input:focus { border-color: var(--border-strong); }
+  .ex-field-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-4); text-align: center; margin-top: 3px; }
+  .ex-field.wide { width: 90px; }
+  .ex-field.wide input { text-align: left; }
+
+  .add-ex-btn { display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: var(--radius-xs); border: 1px dashed var(--border-strong); color: var(--text-3); font-size: 12px; font-weight: 500; cursor: pointer; margin-top: 6px; transition: all 0.15s; width: 100%; background: transparent; font-family: inherit; }
+  .add-ex-btn:hover { border-color: rgba(61,220,132,0.3); color: var(--accent); background: var(--accent-dim); }
+
+  .add-session-btn { display: flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: var(--radius-sm); border: 1px dashed var(--border-strong); color: var(--text-3); font-size: 12px; font-weight: 500; cursor: pointer; margin-top: 10px; transition: all 0.15s; width: 100%; background: transparent; font-family: inherit; }
+  .add-session-btn:hover { border-color: rgba(124,143,255,0.3); color: var(--admin); background: var(--admin-dim); }
+
+  .add-week-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: var(--radius); border: 1px dashed var(--border-strong); color: var(--text-3); font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 4px; transition: all 0.15s; width: 100%; background: transparent; font-family: inherit; }
+  .add-week-btn:hover { border-color: rgba(124,143,255,0.3); color: var(--admin); background: var(--admin-dim); }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">Elevate<span>.</span><span class="admin-badge">Admin</span></div>
+  <div class="sidebar-nav">
+    <div class="nav-group-label">Content</div>
+    <div class="nav-item active"><div class="nav-icon">▤</div> Programmes</div>
+    <div class="nav-item"><div class="nav-icon">◎</div> Exercises</div>
+    <div class="nav-group-label">Coming soon</div>
+    <div class="nav-item" style="opacity:0.35"><div class="nav-icon">✓</div> Tasks</div>
+    <div class="nav-item" style="opacity:0.35"><div class="nav-icon">▶</div> Tutorials</div>
+    <div class="nav-item" style="opacity:0.35"><div class="nav-icon">◑</div> Nutrition</div>
+    <div class="nav-item" style="opacity:0.35"><div class="nav-icon">👤</div> Users</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar">BW</div>
+      <div>
+        <div class="user-name">BW Studio</div>
+        <div class="user-meta">Coach · Admin</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+  <header class="topbar">
+    <div class="breadcrumb">
+      <a>Admin</a>
+      <span class="breadcrumb-sep">›</span>
+      <a>Programmes</a>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Cat C Strength Foundation</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">Preview as user</button>
+      <button class="btn btn-primary">Save changes</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- Left meta panel -->
+    <div class="meta-panel">
+
+      <div class="meta-section">
+        <div class="meta-label">Programme title</div>
+        <input class="meta-input" type="text" value="Cat C Strength Foundation">
+      </div>
+
+      <div class="meta-section">
+        <div class="meta-label">Description</div>
+        <textarea class="meta-input" rows="3" placeholder="Describe this programme...">8-week strength foundation for intermediate lifters. Progressive overload on the Big 3 with accessory hypertrophy work.</textarea>
+      </div>
+
+      <div class="meta-section">
+        <div class="meta-label">Category</div>
+        <div class="select-wrap">
+          <select class="meta-select">
+            <option>All categories</option>
+            <option selected>Category C — Strength</option>
+            <option>Category A — Beginner</option>
+            <option>Category B — Fat Loss</option>
+            <option>Category D — Advanced</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="meta-section">
+        <div class="meta-label">Plan access</div>
+        <div class="select-wrap">
+          <select class="meta-select">
+            <option>Free (preview)</option>
+            <option selected>Basic +</option>
+            <option>Pro only</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="meta-section">
+        <div class="meta-label">Status</div>
+        <div class="status-row">
+          <div class="status-pill">Draft</div>
+          <div class="status-pill selected">Active</div>
+        </div>
+      </div>
+
+      <div class="meta-section">
+        <div class="meta-label">Cover image</div>
+        <div class="cover-upload">
+          <div class="cover-upload-icon">⊕</div>
+          <div class="cover-upload-text">Upload or paste URL</div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-mini">
+          <div class="stat-mini-val">8</div>
+          <div class="stat-mini-label">Weeks</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-val">24</div>
+          <div class="stat-mini-label">Sessions</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-val">14</div>
+          <div class="stat-mini-label">Users</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Builder -->
+    <div class="builder">
+
+      <div class="builder-header">
+        <span class="builder-title">Programme weeks & sessions</span>
+        <button class="btn btn-admin">+ Add week</button>
+      </div>
+
+      <!-- Week 1 - collapsed -->
+      <div class="week-block">
+        <div class="week-head">
+          <span class="week-chevron">›</span>
+          <div class="week-num-badge">W1</div>
+          <input class="week-name-input" type="text" value="Foundation" placeholder="Week title...">
+          <span class="week-meta-info">3 sessions · 9 exercises</span>
+          <div class="week-actions">
+            <button class="icon-btn danger">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Week 2 - collapsed -->
+      <div class="week-block">
+        <div class="week-head">
+          <span class="week-chevron">›</span>
+          <div class="week-num-badge">W2</div>
+          <input class="week-name-input" type="text" value="Load Introduction" placeholder="Week title...">
+          <span class="week-meta-info">3 sessions · 9 exercises</span>
+          <div class="week-actions">
+            <button class="icon-btn danger">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Week 3 - open -->
+      <div class="week-block open">
+        <div class="week-head">
+          <span class="week-chevron">›</span>
+          <div class="week-num-badge" style="background:var(--accent-mid);color:var(--accent)">W3</div>
+          <input class="week-name-input" type="text" value="Progressive Overload" placeholder="Week title...">
+          <span class="week-meta-info">3 sessions · 12 exercises</span>
+          <div class="week-actions">
+            <button class="icon-btn danger">✕</button>
+          </div>
+        </div>
+
+        <div class="week-body">
+
+          <!-- Session 1 -->
+          <div class="session-block">
+            <div class="session-head">
+              <span class="session-num">Session 1</span>
+              <input class="session-name-input" type="text" value="Lower Body" placeholder="Session name...">
+              <div class="week-actions">
+                <button class="icon-btn danger">✕</button>
+              </div>
+            </div>
+            <div class="session-body">
+
+              <div class="ex-row">
+                <span class="ex-drag">⠿</span>
+                <div class="ex-pick">
+                  <div class="ex-pick-name">Back Squat</div>
+                  <div class="ex-pick-muscle">Quads · Glutes · Core</div>
+                </div>
+                <div class="ex-fields">
+                  <div class="ex-field">
+                    <input type="text" value="3">
+                    <div class="ex-field-label">Sets</div>
+                  </div>
+                  <div class="ex-field">
+                    <input type="text" value="5">
+                    <div class="ex-field-label">Reps</div>
+                  </div>
+                  <div class="ex-field wide">
+                    <input type="text" value="75% 1RM">
+                    <div class="ex-field-label">Weight</div>
+                  </div>
+                  <div class="ex-field">
+                    <input type="text" value="180">
+                    <div class="ex-field-label">Rest (s)</div>
+                  </div>
+                </div>
+                <button class="icon-btn danger">✕</button>
+              </div>
+
+              <div class="ex-row">
+                <span class="ex-drag">⠿</span>
+                <div class="ex-pick">
+                  <div class="ex-pick-name">Romanian Deadlift</div>
+                  <div class="ex-pick-muscle">Hamstrings · Glutes</div>
+                </div>
+                <div class="ex-fields">
+                  <div class="ex-field"><input type="text" value="3"><div class="ex-field-label">Sets</div></div>
+                  <div class="ex-field"><input type="text" value="8"><div class="ex-field-label">Reps</div></div>
+                  <div class="ex-field wide"><input type="text" value="65% 1RM"><div class="ex-field-label">Weight</div></div>
+                  <div class="ex-field"><input type="text" value="120"><div class="ex-field-label">Rest (s)</div></div>
+                </div>
+                <button class="icon-btn danger">✕</button>
+              </div>
+
+              <div class="ex-row">
+                <span class="ex-drag">⠿</span>
+                <div class="ex-pick">
+                  <div class="ex-pick-name">Bulgarian Split Squat</div>
+                  <div class="ex-pick-muscle">Quads · Glutes</div>
+                </div>
+                <div class="ex-fields">
+                  <div class="ex-field"><input type="text" value="3"><div class="ex-field-label">Sets</div></div>
+                  <div class="ex-field"><input type="text" value="8–10"><div class="ex-field-label">Reps</div></div>
+                  <div class="ex-field wide"><input type="text" value="+20 kg"><div class="ex-field-label">Weight</div></div>
+                  <div class="ex-field"><input type="text" value="90"><div class="ex-field-label">Rest (s)</div></div>
+                </div>
+                <button class="icon-btn danger">✕</button>
+              </div>
+
+              <button class="add-ex-btn">＋ Add exercise from library</button>
+            </div>
+          </div>
+
+          <!-- Session 2 - collapsed -->
+          <div class="session-block">
+            <div class="session-head">
+              <span class="session-num">Session 2</span>
+              <input class="session-name-input" type="text" value="Upper Body — Push" placeholder="Session name...">
+              <div class="week-actions"><button class="icon-btn danger">✕</button></div>
+            </div>
+          </div>
+
+          <!-- Session 3 - collapsed -->
+          <div class="session-block">
+            <div class="session-head">
+              <span class="session-num">Session 3</span>
+              <input class="session-name-input" type="text" value="Upper Body — Pull" placeholder="Session name...">
+              <div class="week-actions"><button class="icon-btn danger">✕</button></div>
+            </div>
+          </div>
+
+          <button class="add-session-btn">＋ Add session</button>
+        </div>
+      </div>
+
+      <!-- Add week -->
+      <button class="add-week-btn">＋ Add week</button>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

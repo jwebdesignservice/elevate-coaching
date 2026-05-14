@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session View — Elevate Coaching</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #07090c; --surface: #0d1017; --surface-2: #121620;
+    --border: rgba(255,255,255,0.06); --border-strong: rgba(255,255,255,0.1);
+    --accent: #3ddc84; --accent-dim: rgba(61,220,132,0.08); --accent-mid: rgba(61,220,132,0.15);
+    --text: #f0f2f5; --text-2: #8d96a8; --text-3: #404957; --text-4: #2a3040;
+    --radius: 12px; --radius-sm: 8px;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; font-size: 13px; -webkit-font-smoothing: antialiased; }
+
+  /* Sidebar - same as dashboard */
+  .sidebar { width: 232px; min-height: 100vh; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar-logo { padding: 26px 22px 22px; font-size: 17px; font-weight: 800; letter-spacing: -0.6px; border-bottom: 1px solid var(--border); }
+  .sidebar-logo span { color: var(--accent); }
+  .sidebar-nav { padding: 16px 12px; flex: 1; }
+  .nav-group-label { font-size: 10px; font-weight: 600; letter-spacing: 0.9px; text-transform: uppercase; color: var(--text-3); padding: 0 10px; margin: 18px 0 6px; }
+  .nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; color: var(--text-2); cursor: pointer; margin-bottom: 1px; }
+  .nav-item.active { background: var(--accent-dim); color: var(--accent); }
+  .nav-item.dim { opacity: 0.3; pointer-events: none; }
+  .nav-icon { width: 16px; text-align: center; font-size: 14px; flex-shrink: 0; }
+  .sidebar-footer { padding: 16px 14px; border-top: 1px solid var(--border); }
+  .user-row { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: var(--radius-sm); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,var(--accent),#1fa85c); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #07120d; flex-shrink: 0; }
+  .user-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .user-meta { font-size: 11px; color: var(--text-3); }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .topbar { height: 54px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; gap: 12px; flex-shrink: 0; }
+  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); }
+  .breadcrumb a { color: var(--text-3); cursor: pointer; }
+  .breadcrumb a:hover { color: var(--text-2); }
+  .breadcrumb-sep { opacity: 0.4; }
+  .breadcrumb-current { color: var(--text-2); font-weight: 500; }
+
+  .content { padding: 28px 32px; overflow-y: auto; flex: 1; max-width: 860px; }
+
+  /* Session header */
+  .session-header { margin-bottom: 28px; }
+  .session-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .session-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.4px; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(61,220,132,0.12); padding: 3px 10px; border-radius: 20px; }
+  .session-week-tag { font-size: 11px; font-weight: 500; color: var(--text-3); background: var(--surface); border: 1px solid var(--border); padding: 3px 10px; border-radius: 20px; }
+  .session-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); margin-bottom: 6px; }
+  .session-sub { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 16px; }
+  .session-sub span { display: flex; align-items: center; gap: 5px; }
+
+  /* Progress bar */
+  .session-progress { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 20px; }
+  .sp-label { font-size: 12px; color: var(--text-2); white-space: nowrap; font-weight: 500; }
+  .sp-track { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 10px; }
+  .sp-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #28c470); border-radius: 10px; transition: width 0.4s; }
+  .sp-count { font-size: 12px; color: var(--text-3); white-space: nowrap; }
+  .sp-count b { color: var(--accent); }
+
+  /* Exercise cards */
+  .exercise-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+
+  .ex-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .ex-card:hover { border-color: var(--border-strong); }
+  .ex-card.is-done { border-color: rgba(61,220,132,0.15); background: rgba(61,220,132,0.03); }
+
+  .ex-card-inner { padding: 16px 20px; display: flex; align-items: flex-start; gap: 16px; }
+
+  .ex-checkbox {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 1.5px solid var(--text-3);
+    flex-shrink: 0; margin-top: 1px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .ex-card.is-done .ex-checkbox { background: var(--accent); border-color: var(--accent); }
+  .ex-checkbox-tick { font-size: 11px; color: #07120d; font-weight: 700; opacity: 0; }
+  .ex-card.is-done .ex-checkbox-tick { opacity: 1; }
+
+  .ex-body { flex: 1; min-width: 0; }
+  .ex-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: -0.2px; }
+  .ex-card.is-done .ex-name { color: var(--text-2); }
+
+  .ex-stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .ex-stat {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 6px;
+    background: var(--surface-2); color: var(--text-2);
+    border: 1px solid var(--border);
+  }
+  .ex-stat.weight { background: rgba(61,220,132,0.06); color: var(--accent); border-color: rgba(61,220,132,0.12); }
+  .ex-stat.rest { color: var(--text-3); }
+
+  .ex-1rm { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+  .ex-1rm-calc { color: var(--text-2); font-weight: 600; }
+  .ex-1rm-badge { background: rgba(61,220,132,0.06); color: var(--accent); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(61,220,132,0.1); }
+
+  .ex-notes { margin-top: 8px; font-size: 12px; color: var(--text-3); font-style: italic; line-height: 1.5; padding-top: 8px; border-top: 1px solid var(--border); }
+
+  .ex-order { font-size: 11px; font-weight: 700; color: var(--text-4); min-width: 18px; text-align: right; margin-top: 3px; }
+
+  /* CTA */
+  .session-cta-row { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .session-cta-info { font-size: 13px; color: var(--text-2); }
+  .session-cta-info b { color: var(--text); }
+  .btn-primary { background: var(--accent); color: #06120d; font-size: 13px; font-weight: 700; padding: 11px 28px; border-radius: var(--radius-sm); border: none; cursor: pointer; letter-spacing: -0.1px; }
+  .btn-secondary { background: transparent; color: var(--text-2); font-size: 13px; font-weight: 500; padding: 11px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); cursor: pointer; }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">Elevate<span>.</span></div>
+  <div class="sidebar-nav">
+    <div class="nav-group-label">Main</div>
+    <div class="nav-item"><div class="nav-icon">◈</div> Dashboard</div>
+    <div class="nav-item active"><div class="nav-icon">▤</div> Programs</div>
+    <div class="nav-item"><div class="nav-icon">◎</div> Exercises</div>
+    <div class="nav-group-label">Coming soon</div>
+    <div class="nav-item dim"><div class="nav-icon">✓</div> Tasks</div>
+    <div class="nav-item dim"><div class="nav-icon">▶</div> Tutorials</div>
+    <div class="nav-item dim"><div class="nav-icon">◑</div> Nutrition</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar">JW</div>
+      <div>
+        <div class="user-name">Jack Wilson</div>
+        <div class="user-meta">Basic · Category C</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+  <header class="topbar">
+    <div class="breadcrumb">
+      <a>Programs</a>
+      <span class="breadcrumb-sep">›</span>
+      <a>Cat C Strength Foundation</a>
+      <span class="breadcrumb-sep">›</span>
+      <a>Week 3</a>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Session 1 — Lower Body</span>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Header -->
+    <div class="session-header">
+      <div class="session-meta">
+        <span class="session-tag">Session 1 of 3</span>
+        <span class="session-week-tag">Week 3 · Progressive Overload</span>
+      </div>
+      <div class="session-title">Lower Body</div>
+      <div class="session-sub">
+        <span>⏱ ~55 min</span>
+        <span>🏋️ 4 exercises</span>
+        <span>📋 12 sets total</span>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="session-progress">
+      <span class="sp-label">Session progress</span>
+      <div class="sp-track"><div class="sp-fill" style="width:50%"></div></div>
+      <span class="sp-count"><b>2</b> / 4 exercises done</span>
+    </div>
+
+    <!-- Exercises -->
+    <div class="exercise-list">
+
+      <!-- Done -->
+      <div class="ex-card is-done">
+        <div class="ex-card-inner">
+          <div class="ex-checkbox"><span class="ex-checkbox-tick">✓</span></div>
+          <div class="ex-body">
+            <div class="ex-name">Back Squat</div>
+            <div class="ex-stats">
+              <span class="ex-stat">3 sets</span>
+              <span class="ex-stat">5 reps</span>
+              <span class="ex-stat weight">75% 1RM → 97.5 kg</span>
+              <span class="ex-stat rest">Rest 3 min</span>
+            </div>
+            <div class="ex-1rm">
+              <span class="ex-1rm-badge">1RM</span>
+              Your max: <span class="ex-1rm-calc">130 kg</span> · 75% = <span class="ex-1rm-calc">97.5 kg</span>
+            </div>
+          </div>
+          <div class="ex-order">01</div>
+        </div>
+      </div>
+
+      <!-- Done -->
+      <div class="ex-card is-done">
+        <div class="ex-card-inner">
+          <div class="ex-checkbox"><span class="ex-checkbox-tick">✓</span></div>
+          <div class="ex-body">
+            <div class="ex-name">Romanian Deadlift</div>
+            <div class="ex-stats">
+              <span class="ex-stat">3 sets</span>
+              <span class="ex-stat">8 reps</span>
+              <span class="ex-stat weight">65% 1RM → 114 kg</span>
+              <span class="ex-stat rest">Rest 2 min</span>
+            </div>
+            <div class="ex-1rm">
+              <span class="ex-1rm-badge">1RM</span>
+              Your max: <span class="ex-1rm-calc">175 kg</span> · 65% = <span class="ex-1rm-calc">114 kg</span>
+            </div>
+          </div>
+          <div class="ex-order">02</div>
+        </div>
+      </div>
+
+      <!-- Active -->
+      <div class="ex-card">
+        <div class="ex-card-inner">
+          <div class="ex-checkbox"></div>
+          <div class="ex-body">
+            <div class="ex-name">Bulgarian Split Squat</div>
+            <div class="ex-stats">
+              <span class="ex-stat">3 sets</span>
+              <span class="ex-stat">8–10 reps each</span>
+              <span class="ex-stat weight">Bodyweight + 20 kg</span>
+              <span class="ex-stat rest">Rest 90 sec</span>
+            </div>
+            <div class="ex-notes">Keep front shin vertical. Drive through heel on the way up. Coach note: if balance is off, hold a fixed point in front of you.</div>
+          </div>
+          <div class="ex-order">03</div>
+        </div>
+      </div>
+
+      <!-- Upcoming -->
+      <div class="ex-card">
+        <div class="ex-card-inner">
+          <div class="ex-checkbox"></div>
+          <div class="ex-body">
+            <div class="ex-name">Leg Press</div>
+            <div class="ex-stats">
+              <span class="ex-stat">3 sets</span>
+              <span class="ex-stat">12 reps</span>
+              <span class="ex-stat rest">Rest 90 sec</span>
+            </div>
+            <div class="ex-notes">Finish with a pump set. Feet shoulder-width, toes slightly out.</div>
+          </div>
+          <div class="ex-order">04</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CTA -->
+    <div class="session-cta-row">
+      <div class="session-cta-info">
+        Complete all exercises then mark the session done.<br>
+        <span style="font-size:11px;color:var(--text-3)">Your programme progress will update automatically.</span>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-secondary">Save & exit</button>
+        <button class="btn-primary">Mark session complete ✓</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
