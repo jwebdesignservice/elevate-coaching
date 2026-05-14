@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Dumbbell, LayoutList } from 'lucide-react';
+import { CalendarDays, Dumbbell, LayoutList } from 'lucide-react';
 import { TopBar } from '@/components/layout/TopBar';
 import { Card } from '@/components/ui/card';
 import { requireCoach } from '@/lib/auth';
@@ -9,6 +9,7 @@ export const metadata = { title: 'Admin · Elevate Coaching' };
 const tiles = [
   { href: '/admin/exercises', Icon: Dumbbell, title: 'Exercises', description: 'Create and manage the global exercise library.' },
   { href: '/admin/programs', Icon: LayoutList, title: 'Programmes', description: 'Build and publish training programmes.' },
+  { href: '/admin/tasks', Icon: CalendarDays, title: 'Daily Tasks', description: 'Schedule weekly task batches per category.' },
 ];
 
 export default async function AdminPage() {
