@@ -20,10 +20,10 @@ export default async function AuthedLayout({ children }: { children: React.React
   const tier = (profile.subscription_tier as PlanTier) ?? 'free';
 
   return (
-    <div className="bg-background flex min-h-screen">
+    <div className="bg-background flex h-screen overflow-hidden">
       <Sidebar tier={tier} />
       <MobileNav tier={tier} />
-      <main className="flex min-w-0 flex-1 flex-col">{children}</main>
+      <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">{children}</main>
     </div>
   );
 }
