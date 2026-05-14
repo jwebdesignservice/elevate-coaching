@@ -110,7 +110,7 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
   return (
     <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3">
       {/* ── Free card ── */}
-      <div className="border-border bg-surface hover:-translate-y-1 hover:border-accent/30 hover:shadow-xl hover:shadow-black/30 relative flex flex-col rounded-2xl border p-8 transition-all duration-300">
+      <div className="border-border bg-surface relative flex flex-col rounded-2xl border p-8">
         <div className="mb-2 text-xs font-semibold tracking-[0.3em] uppercase text-text-muted">
           Free
         </div>
@@ -145,7 +145,6 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
               className={cn(
                 buttonVariants(),
                 'bg-accent text-accent-fg hover:bg-accent/90 w-full',
-                plan.popular && 'shadow-md shadow-accent/20',
               )}
             >
               Get started
@@ -179,7 +178,7 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
               disabled={loading !== null}
               className={cn(
                 buttonVariants(),
-                'bg-accent text-accent-fg hover:bg-accent/90 w-full shadow-md shadow-accent/20',
+                'bg-accent text-accent-fg hover:bg-accent/90 w-full',
               )}
             >
               <Zap className="h-4 w-4 fill-current" />
@@ -202,8 +201,8 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
             className={cn(
               'relative flex flex-col rounded-2xl border p-8 transition-all duration-300',
               plan.popular
-                ? 'border-accent bg-surface shadow-2xl shadow-accent/10 ring-1 ring-accent/20 hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/25 hover:ring-accent/50'
-                : 'border-border bg-surface hover:-translate-y-1 hover:border-accent/30 hover:shadow-xl hover:shadow-black/30',
+                ? 'border-accent bg-surface shadow-lg shadow-accent/10 ring-1 ring-accent/20'
+                : 'border-border bg-surface',
             )}
           >
             {plan.popular && (
