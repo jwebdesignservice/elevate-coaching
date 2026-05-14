@@ -99,7 +99,7 @@ export function ProgramHero({
               nativeButton={false}
               render={<Link href={secondary.href} />}
               variant="outline"
-              className="border-border text-text hover:border-accent/40 transition-colors"
+              className="border-border text-text hover:border-accent/60 transition-colors"
             >
               {secondary.label}
             </Button>
