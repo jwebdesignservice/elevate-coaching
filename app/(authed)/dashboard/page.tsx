@@ -51,23 +51,44 @@ export const metadata = {
 //   • performance series     → SP-4
 // ─────────────────────────────────────────────────────────────────────────
 
-const DEMO_PERFORMANCE = {
-  '7D': {
-    value: '712',
-    delta: '+3% vs last 7 days',
-    data: [690, 695, 692, 700, 705, 708, 712],
-  },
-  '30D': {
-    value: '725',
-    delta: '+8% vs last 30 days',
-    data: [670, 668, 675, 680, 678, 685, 690, 692, 695, 700, 698, 705, 710, 715, 720, 725],
-  },
-  '90D': {
-    value: '748',
-    delta: '+14% vs last 90 days',
-    data: [650, 655, 660, 665, 670, 678, 685, 690, 695, 700, 710, 718, 725, 732, 740, 748],
-  },
-};
+/**
+ * Build 7D / 30D / 90D series for the PerformanceOverview chart from the
+ * 90-day rollup. Headline = mean completion % over the window; delta =
+ * mean vs the prior equivalent window. Rest days are excluded from both
+ * the mean and the chart line.
+ */
+function periodAverages(rollup: DayRollup[], todayIso: string) {
+  const sorted = [...rollup].sort((a, b) => a.date.localeCompare(b.date));
+  const idxOfToday = sorted.findIndex((d) => d.date === todayIso);
+  const meanPct = (days: DayRollup[]) => {
+    const valid = days.filter((d) => d.total > 0);
+    if (valid.length === 0) return 0;
+    return Math.round(valid.reduce((s, d) => s + (d.done / d.total) * 100, 0) / valid.length);
+  };
+  const seriesData = (days: DayRollup[]) =>
+    days.filter((d) => d.total > 0).map((d) => Math.round((d.done / d.total) * 100));
+
+  function build(n: number) {
+    if (idxOfToday < 0) return { value: '0%', delta: 'No data', data: [] as number[] };
+    const curStart = Math.max(0, idxOfToday - n + 1);
+    const cur = sorted.slice(curStart, idxOfToday + 1);
+    const prevStart = Math.max(0, idxOfToday - 2 * n + 1);
+    const prevEnd = Math.max(0, idxOfToday - n + 1);
+    const prev = sorted.slice(prevStart, prevEnd);
+    const curMean = meanPct(cur);
+    const prevMean = meanPct(prev);
+    const hasPrev = prev.some((d) => d.total > 0);
+    const delta = curMean - prevMean;
+    const sign = delta > 0 ? '+' : '';
+    return {
+      value: `${curMean}%`,
+      delta: hasPrev ? `${sign}${delta}% vs prior ${n} days` : 'No prior data',
+      data: seriesData(cur),
+    };
+  }
+
+  return { '7D': build(7), '30D': build(30), '90D': build(90) };
+}
 
 const DEMO_VIDEOS = [
   {
@@ -240,6 +261,8 @@ export default async function DashboardPage() {
   const streak = currentStreak(adjustedRollup, todayIso);
   const best = bestStreak(adjustedRollup);
 
+  const dailyTasksSeries = periodAverages(adjustedRollup, todayIso);
+
   return (
     <>
       <TopBar
@@ -335,8 +358,8 @@ export default async function DashboardPage() {
           <TodaysTasks tasks={todayTasks} completedTaskIds={completedTaskIds} todayIso={todayIso} />
           <WeeklyStreak weekStartIso={mondayIso} todayIso={todayIso} rollup={adjustedRollup} />
           <PerformanceOverview
-            metricLabel="Strength Score"
-            series={DEMO_PERFORMANCE}
+            metricLabel="Daily Tasks"
+            series={dailyTasksSeries}
             defaultPeriod="30D"
           />
         </RightRail>
