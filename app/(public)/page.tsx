@@ -54,7 +54,7 @@ export default function LandingPage() {
               href="/sign-up"
               className={cn(
                 buttonVariants({ size: 'lg' }),
-                'bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/40',
+                'bg-accent text-accent-fg hover:bg-accent/90',
               )}
             >
               Start your transformation

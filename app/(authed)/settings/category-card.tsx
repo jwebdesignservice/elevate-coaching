@@ -186,7 +186,7 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
                 <Button
                   type="submit"
                   disabled={isPending || picked === null}
-                  className="bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/40"
+                  className="bg-accent text-accent-fg hover:bg-accent/90"
                 >
                   {isPending ? 'Submitting…' : 'Submit request'}
                   {!isPending && <ArrowRight className="ml-1 h-4 w-4" aria-hidden />}
