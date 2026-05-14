@@ -91,9 +91,8 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
               href={`/sign-up?plan=${plan.key}`}
               className={cn(
                 buttonVariants(),
-                plan.popular
-                  ? 'bg-accent text-accent-fg hover:bg-accent/90 w-full shadow-lg shadow-accent/20'
-                  : 'w-full',
+                'bg-accent text-accent-fg hover:bg-accent/90 w-full',
+                plan.popular && 'shadow-lg shadow-accent/20',
               )}
             >
               Get started
@@ -121,19 +120,24 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
             </Link>
           );
         } else {
-          cta = (
+          cta = plan.popular ? (
             <button
               onClick={() => handleCheckout(plan)}
               disabled={loading !== null}
               className={cn(
                 buttonVariants(),
-                plan.popular
-                  ? 'bg-accent text-accent-fg hover:bg-accent/90 w-full shadow-lg shadow-accent/20'
-                  : 'w-full',
-                !plan.popular && 'bg-surface-hover text-text hover:bg-white/[0.06]',
+                'bg-accent text-accent-fg hover:bg-accent/90 w-full shadow-lg shadow-accent/20',
               )}
             >
               <Zap className="h-4 w-4 fill-current" />
+              {loading === plan.key ? 'Redirecting…' : `Upgrade to ${plan.name}`}
+            </button>
+          ) : (
+            <button
+              onClick={() => handleCheckout(plan)}
+              disabled={loading !== null}
+              className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
+            >
               {loading === plan.key ? 'Redirecting…' : `Upgrade to ${plan.name}`}
             </button>
           );

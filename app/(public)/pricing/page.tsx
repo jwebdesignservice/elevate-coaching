@@ -26,23 +26,34 @@ export default async function PricingPage() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-20">
-      {/* Background halos */}
+      {/* Background — top centre halo */}
       <div
         aria-hidden
-        className="pointer-events-none absolute top-0 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[120px]"
+        className="pointer-events-none absolute -top-40 left-1/2 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-accent/20 blur-[140px]"
       />
+      {/* Bottom-right accent bleed */}
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-0 right-1/4 h-[400px] w-[400px] translate-y-1/2 rounded-full bg-accent/6 blur-[100px]"
+        className="pointer-events-none absolute -bottom-20 -right-20 h-[500px] w-[500px] rounded-full bg-accent/12 blur-[120px]"
       />
-      {/* Subtle dot grid */}
+      {/* Bottom-left warm bleed for depth */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        className="pointer-events-none absolute -bottom-10 -left-10 h-[350px] w-[350px] rounded-full bg-accent/8 blur-[100px]"
+      />
+      {/* Dot grid */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
         style={{
           backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
           backgroundSize: '28px 28px',
         }}
+      />
+      {/* Top vignette to ground the header text */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background to-transparent"
       />
 
       <div className="relative z-10 w-full">

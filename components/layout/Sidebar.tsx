@@ -155,19 +155,16 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
 
         {/* Plan status */}
         <div className="border-border mb-3 flex items-center justify-between rounded-md border px-3 py-2">
-          <div className="flex items-center gap-2">
-            <span
-              className={cn(
-                'rounded-pill inline-flex items-center px-2 py-0.5 text-[10px] font-semibold',
-                tier === 'free'  && 'bg-surface-hover text-text-muted',
-                tier === 'basic' && 'bg-accent/15 text-accent',
-                tier === 'pro'   && 'bg-accent text-accent-fg',
-              )}
-            >
-              {TIER_LABEL[tier]}
-            </span>
-            <span className="text-text-dim text-xs">{TIER_LABEL[tier]} Plan</span>
-          </div>
+          <span
+            className={cn(
+              'rounded-pill inline-flex items-center px-2.5 py-0.5 text-[10px] font-semibold',
+              tier === 'free'  && 'bg-surface-hover text-text-muted',
+              tier === 'basic' && 'bg-accent/15 text-accent',
+              tier === 'pro'   && 'bg-accent text-accent-fg',
+            )}
+          >
+            {TIER_LABEL[tier]} Plan
+          </span>
           {tier !== 'pro' && (
             <Link
               href="/pricing"
