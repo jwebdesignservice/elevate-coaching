@@ -31,7 +31,16 @@ interface DayDrawerProps {
  */
 export function DayDrawer({ weekId, dayOfWeek, dayLabel, tasks, readOnly, closeHref }: DayDrawerProps) {
   const router = useRouter();
-  const close = () => router.replace(closeHref);
+  // `router.push` was used to open the drawer (via Link href), so navigating
+  // back is the natural close. Fall back to `replace(closeHref)` if there's no
+  // history entry to pop (direct deep-link to a drawer URL).
+  const close = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      router.replace(closeHref);
+    }
+  };
 
   return (
     <Dialog.Root

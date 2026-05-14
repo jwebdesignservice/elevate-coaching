@@ -44,6 +44,9 @@ export async function POST(
     .maybeSingle();
 
   if (existing) {
+    // DELETE — if the row was already gone (concurrent untick from another tab),
+    // PostgREST returns success with zero rows affected. Either way the end state
+    // is "not done".
     const { error } = await supabase
       .from('user_task_completions')
       .delete()
@@ -52,9 +55,17 @@ export async function POST(
     return NextResponse.json({ done: false });
   }
 
+  // INSERT — a concurrent insert from another tab will violate the unique
+  // (user_id, task_id, completion_date) constraint and return 23505. The desired
+  // state ("done") is achieved either way, so treat 23505 as idempotent success.
   const { error } = await supabase
     .from('user_task_completions')
     .insert({ user_id: profile.id, task_id: taskId, completion_date: date } as never);
-  if (error) return NextResponse.json({ error: 'failed to insert' }, { status: 500 });
+  if (error) {
+    // PostgrestError carries the SQLSTATE in `.code`. 23505 = unique_violation.
+    const code = (error as { code?: string }).code;
+    if (code === '23505') return NextResponse.json({ done: true });
+    return NextResponse.json({ error: 'failed to insert' }, { status: 500 });
+  }
   return NextResponse.json({ done: true });
 }

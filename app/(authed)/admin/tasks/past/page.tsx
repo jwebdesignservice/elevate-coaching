@@ -74,17 +74,24 @@ export default async function AdminTasksPastPage({
                 </tr>
               )}
               {weeks.map((w) => (
-                <tr key={w.id} className="border-border border-b last:border-0">
-                  <td className="text-text px-4 py-3 font-medium">Category {w.category}</td>
-                  <td className="text-text-muted px-4 py-3">
-                    {new Date(w.start_date + 'T00:00:00').toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </td>
-                  <td className="text-text-muted px-4 py-3 text-right">
-                    {w.daily_tasks?.[0]?.count ?? 0}
+                <tr
+                  key={w.id}
+                  className="border-border border-b transition-colors last:border-0 hover:bg-white/[0.03]"
+                >
+                  <td className="px-0 py-0" colSpan={3}>
+                    <Link href={`/admin/tasks/past/${w.id}`} className="grid w-full grid-cols-[1fr_1fr_auto] gap-4 px-4 py-3">
+                      <span className="text-text font-medium">Category {w.category}</span>
+                      <span className="text-text-muted">
+                        {new Date(w.start_date + 'T00:00:00').toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </span>
+                      <span className="text-text-muted text-right">
+                        {w.daily_tasks?.[0]?.count ?? 0} task{(w.daily_tasks?.[0]?.count ?? 0) === 1 ? '' : 's'}
+                      </span>
+                    </Link>
                   </td>
                 </tr>
               ))}
