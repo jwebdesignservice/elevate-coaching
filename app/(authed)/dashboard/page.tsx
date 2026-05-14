@@ -12,10 +12,11 @@ import {
   Zap,
 } from 'lucide-react';
 import { requireUser } from '@/lib/auth';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { CATEGORY_INFO, type Category } from '@/lib/categories';
+import { programProgressPct } from '@/lib/programs';
 import { CircularProgress } from '@/components/charts/CircularProgress';
 import { MiniBars } from '@/components/charts/MiniBars';
-import { Sparkline } from '@/components/charts/Sparkline';
 import { TopBar } from '@/components/layout/TopBar';
 import { RightRail } from '@/components/layout/RightRail';
 import { ProgramHero } from '@/components/branded/ProgramHero';
@@ -152,11 +153,45 @@ const DEMO_VIDEOS = [
 export default async function DashboardPage() {
   const { profile } = await requireUser();
   const firstName = profile.name?.split(/\s+/)[0]?.trim() || 'there';
-
-  // The authed-layout gate guarantees category is non-null here. Narrow once
-  // up top so the dashboard reads the user's real lane name in the eyebrow.
   const category = profile.category as Category;
   const categoryInfo = CATEGORY_INFO[category];
+  const supabase = await createSupabaseServerClient();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sb = supabase as any;
+  const enrolmentRes = await (sb
+    .from('user_program_enrollments')
+    .select('program_id, current_week_number, programs(title, program_weeks(id))')
+    .eq('user_id', profile.id)
+    .order('enrolled_at', { ascending: false })
+    .limit(1)
+    .maybeSingle() as Promise<{ data: { program_id: string; current_week_number: number; programs: { title: string; program_weeks: { id: string }[] } | null } | null; error: unknown }>);
+
+  const { count: totalSessionsDone } = await supabase
+    .from('user_session_completions')
+    .select('session_id', { count: 'exact', head: true })
+    .eq('user_id', profile.id);
+
+  const enrolment = enrolmentRes.data ?? null;
+
+  let heroTitle = 'Start a programme';
+  let heroMeta = 'Explore the programme library to begin your journey.';
+  let heroPct = 0;
+  let programProgressValue = 0;
+  let primaryCta = { label: 'Browse programmes', href: '/programs' };
+  const secondaryCta = { label: 'View exercises', href: '/exercises' };
+
+  if (enrolment?.programs) {
+    const prog = enrolment.programs;
+    const totalWeeks = prog.program_weeks?.length ?? 0;
+    heroTitle = prog.title;
+    heroMeta = `Week ${enrolment.current_week_number} of ${totalWeeks} · ${categoryInfo.name}`;
+    heroPct = programProgressPct(totalWeeks, enrolment.current_week_number - 1);
+    programProgressValue = heroPct;
+    primaryCta = { label: 'Continue programme', href: `/programs/${enrolment.program_id}` };
+  }
+
+  const sessionsDone = totalSessionsDone ?? 0;
 
   return (
     <>
@@ -169,51 +204,48 @@ export default async function DashboardPage() {
 
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          {/* Current Program hero — eyebrow is the user's real category lane.
-              Title/meta/progress remain demo data until SP-5 lands real
-              programmes filtered by category. */}
           <ProgramHero
             eyebrow={`Category ${category} · ${categoryInfo.name}`}
-            title="Hybrid Performance Blueprint"
-            meta="Week 4 of 12 · Strength · Conditioning · Mindset"
-            progressPct={67}
-            primary={{ label: 'Continue Program', href: '/dashboard' }}
-            secondary={{ label: 'View Program', href: '/dashboard' }}
+            title={heroTitle}
+            meta={heroMeta}
+            progressPct={heroPct}
+            primary={primaryCta}
+            secondary={secondaryCta}
           />
 
           {/* Stat row */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
             <StatCard
               icon={<TrendingUp className="h-3.5 w-3.5" />}
-              label="Weekly Progress"
-              value="67%"
-              caption="+12% vs last week"
-              captionTone="accent"
-              visual={<Sparkline data={[40, 45, 42, 50, 55, 60, 67]} id="weekly" />}
+              label="Programme Progress"
+              value={`${programProgressValue}%`}
+              caption={enrolment ? 'Current programme' : 'No programme started'}
+              captionTone={enrolment ? 'accent' : 'muted'}
+              visual={<CircularProgress value={programProgressValue} size={48} strokeWidth={4} label={`${programProgressValue}%`} />}
             />
             <StatCard
               icon={<Dumbbell className="h-3.5 w-3.5" />}
-              label="Workouts Completed"
-              value="14"
-              caption="of 20 this week"
+              label="Sessions Done"
+              value={String(sessionsDone)}
+              caption="All time"
               captionTone="muted"
-              visual={<CircularProgress value={70} size={48} strokeWidth={4} label="70%" />}
+              visual={<CircularProgress value={Math.min(sessionsDone * 5, 100)} size={48} strokeWidth={4} label={String(sessionsDone)} />}
             />
             <StatCard
               icon={<Flame className="h-3.5 w-3.5" />}
               label="Active Streak"
-              value="18"
-              caption="days in a row"
+              value="—"
+              caption="Coming in SP-5"
               captionTone="muted"
-              visual={<MiniBars data={[6, 8, 10, 11, 13, 15, 18]} />}
+              visual={<MiniBars data={[1, 1, 1, 1, 1, 1, 1]} />}
             />
             <StatCard
               icon={<Bookmark className="h-3.5 w-3.5" />}
-              label="Current Program"
-              value="Week 4"
-              caption="of 12"
+              label="Tasks Done"
+              value="—"
+              caption="Coming in SP-5"
               captionTone="muted"
-              visual={<CircularProgress value={33} size={48} strokeWidth={4} label="33%" />}
+              visual={<CircularProgress value={0} size={48} strokeWidth={4} label="—" />}
             />
           </div>
 
