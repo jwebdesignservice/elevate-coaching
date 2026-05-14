@@ -5,7 +5,6 @@ import type { PlanTier } from '@/lib/plans';
 // Singleton — instantiated once per cold start on the server.
 export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2026-04-22.dahlia',
-  typescript: true,
 });
 
 export const PRICE_IDS: Record<'basic' | 'pro', string> = {
