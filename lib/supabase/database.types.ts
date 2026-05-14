@@ -65,6 +65,47 @@ export type Database = {
           },
         ]
       }
+      daily_tasks: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          id: string
+          order_index: number
+          task_type: Database["public"]["Enums"]["task_type"]
+          title: string
+          updated_at: string
+          week_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          id?: string
+          order_index?: number
+          task_type: Database["public"]["Enums"]["task_type"]
+          title: string
+          updated_at?: string
+          week_id: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          id?: string
+          order_index?: number
+          task_type?: Database["public"]["Enums"]["task_type"]
+          title?: string
+          updated_at?: string
+          week_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_tasks_week_id_fkey"
+            columns: ["week_id"]
+            isOneToOne: false
+            referencedRelation: "task_weeks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exercises: {
         Row: {
           created_at: string
@@ -376,6 +417,75 @@ export type Database = {
           },
         ]
       }
+      task_weeks: {
+        Row: {
+          category: Database["public"]["Enums"]["user_category"]
+          created_at: string
+          id: string
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["user_category"]
+          created_at?: string
+          id?: string
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["user_category"]
+          created_at?: string
+          id?: string
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_exercise_records: {
+        Row: {
+          exercise_id: string
+          five_rm_kg: number | null
+          id: string
+          one_rm_kg: number | null
+          twelve_rm_kg: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          exercise_id: string
+          five_rm_kg?: number | null
+          id?: string
+          one_rm_kg?: number | null
+          twelve_rm_kg?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          exercise_id?: string
+          five_rm_kg?: number | null
+          id?: string
+          one_rm_kg?: number | null
+          twelve_rm_kg?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_exercise_records_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_exercise_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_program_enrollments: {
         Row: {
           current_week_number: number
@@ -474,16 +584,75 @@ export type Database = {
           },
         ]
       }
+      user_task_completions: {
+        Row: {
+          completed_at: string
+          completion_date: string
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          completion_date: string
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          completion_date?: string
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_task_completions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "daily_tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_task_completions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      get_task_rollup: {
+        Args: {
+          cat: Database["public"]["Enums"]["user_category"]
+          from_date: string
+          to_date: string
+          uid: string
+        }
+        Returns: {
+          date: string
+          done: number
+          total: number
+        }[]
+      }
       is_coach: { Args: never; Returns: boolean }
     }
     Enums: {
       change_request_status: "pending" | "approved" | "denied"
       subscription_tier: "free" | "basic" | "pro"
+      task_type:
+        | "workout"
+        | "nutrition"
+        | "mindset"
+        | "recovery"
+        | "steps"
+        | "other"
       user_category: "A" | "B" | "C" | "D"
       user_role: "user" | "coach"
     }
@@ -615,6 +784,14 @@ export const Constants = {
     Enums: {
       change_request_status: ["pending", "approved", "denied"],
       subscription_tier: ["free", "basic", "pro"],
+      task_type: [
+        "workout",
+        "nutrition",
+        "mindset",
+        "recovery",
+        "steps",
+        "other",
+      ],
       user_category: ["A", "B", "C", "D"],
       user_role: ["user", "coach"],
     },
