@@ -118,3 +118,71 @@ export async function requestCategoryChangeAction(
     message: "Change request submitted. We'll be in touch.",
   };
 }
+
+type ProfileActionState = { status: 'idle' | 'error' | 'success'; error: string | null; message: string | null };
+
+export async function updateProfileAction(_prev: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/sign-in');
+
+  const name = (formData.get('name') as string)?.trim() || null;
+  const phone = (formData.get('phone') as string)?.trim() || null;
+  const newEmail = (formData.get('email') as string)?.trim();
+
+  const { error } = await supabase.from('profiles').update({ name, phone } as never).eq('id', user.id);
+  if (error) return { status: 'error', error: 'Failed to update profile.', message: null };
+
+  if (newEmail && newEmail !== user.email) {
+    const { error: emailError } = await supabase.auth.updateUser({ email: newEmail });
+    if (emailError) return { status: 'error', error: emailError.message, message: null };
+    revalidatePath('/settings');
+    return { status: 'success', error: null, message: 'Profile saved. A verification link has been sent to your new email.' };
+  }
+
+  revalidatePath('/settings');
+  return { status: 'success', error: null, message: 'Profile saved.' };
+}
+
+export async function updateMaxLiftsAction(_prev: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/sign-in');
+
+  const parse = (key: string) => { const v = parseFloat(formData.get(key) as string); return isNaN(v) || v <= 0 ? null : v; };
+
+  const { error } = await supabase.from('profiles').update({
+    max_lift_squat: parse('max_lift_squat'),
+    max_lift_bench: parse('max_lift_bench'),
+    max_lift_deadlift: parse('max_lift_deadlift'),
+    max_lift_ohp: parse('max_lift_ohp'),
+  } as never).eq('id', user.id);
+
+  if (error) return { status: 'error', error: 'Failed to save lifts.', message: null };
+  revalidatePath('/settings');
+  return { status: 'success', error: null, message: 'Max lifts saved.' };
+}
+
+export async function uploadAvatarAction(_prev: ProfileActionState, formData: FormData): Promise<ProfileActionState> {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/sign-in');
+
+  const file = formData.get('avatar') as File | null;
+  if (!file || file.size === 0) return { status: 'error', error: 'No file selected.', message: null };
+  if (file.size > 2 * 1024 * 1024) return { status: 'error', error: 'File must be under 2MB.', message: null };
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) return { status: 'error', error: 'Only JPEG, PNG, or WebP allowed.', message: null };
+
+  const ext = file.type.split('/')[1];
+  const path = `${user.id}/avatar.${ext}`;
+  const arrayBuffer = await file.arrayBuffer();
+  const { error: uploadError } = await supabase.storage.from('avatars').upload(path, arrayBuffer, { contentType: file.type, upsert: true });
+  if (uploadError) return { status: 'error', error: 'Upload failed. Please try again.', message: null };
+
+  const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+  const { error: profileError } = await supabase.from('profiles').update({ avatar_url: urlData.publicUrl } as never).eq('id', user.id);
+  if (profileError) return { status: 'error', error: 'Failed to save avatar URL.', message: null };
+
+  revalidatePath('/settings');
+  return { status: 'success', error: null, message: 'Photo updated.' };
+}
