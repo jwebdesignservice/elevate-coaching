@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       category_change_requests: {
@@ -90,8 +65,39 @@ export type Database = {
           },
         ]
       }
+      exercises: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          muscle_groups: string[]
+          tags: string[]
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          muscle_groups?: string[]
+          tags?: string[]
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          muscle_groups?: string[]
+          tags?: string[]
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          avatar_url: string | null
           category: Database["public"]["Enums"]["user_category"] | null
           created_at: string
           email: string
@@ -112,6 +118,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
           category?: Database["public"]["Enums"]["user_category"] | null
           created_at?: string
           email: string
@@ -132,6 +139,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
           category?: Database["public"]["Enums"]["user_category"] | null
           created_at?: string
           email?: string
@@ -152,6 +160,319 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      program_sessions: {
+        Row: {
+          completion_rule: string | null
+          estimated_duration_mins: number | null
+          id: string
+          instructions: string | null
+          session_number: number
+          title: string
+          week_id: string
+        }
+        Insert: {
+          completion_rule?: string | null
+          estimated_duration_mins?: number | null
+          id?: string
+          instructions?: string | null
+          session_number: number
+          title: string
+          week_id: string
+        }
+        Update: {
+          completion_rule?: string | null
+          estimated_duration_mins?: number | null
+          id?: string
+          instructions?: string | null
+          session_number?: number
+          title?: string
+          week_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_sessions_week_id_fkey"
+            columns: ["week_id"]
+            isOneToOne: false
+            referencedRelation: "program_weeks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      program_weeks: {
+        Row: {
+          description: string | null
+          id: string
+          program_id: string
+          title: string
+          week_number: number
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          program_id: string
+          title: string
+          week_number: number
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          program_id?: string
+          title?: string
+          week_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_weeks_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      programs: {
+        Row: {
+          category: Database["public"]["Enums"]["user_category"] | null
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          plan_access: Database["public"]["Enums"]["subscription_tier"]
+          status: string
+          title: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["user_category"] | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          plan_access?: Database["public"]["Enums"]["subscription_tier"]
+          status?: string
+          title: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["user_category"] | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          plan_access?: Database["public"]["Enums"]["subscription_tier"]
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      progress_logs: {
+        Row: {
+          date: string
+          id: string
+          metric_type: string
+          related_program_id: string | null
+          related_session_id: string | null
+          user_id: string
+          value: number
+        }
+        Insert: {
+          date?: string
+          id?: string
+          metric_type: string
+          related_program_id?: string | null
+          related_session_id?: string | null
+          user_id: string
+          value?: number
+        }
+        Update: {
+          date?: string
+          id?: string
+          metric_type?: string
+          related_program_id?: string | null
+          related_session_id?: string | null
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progress_logs_related_program_id_fkey"
+            columns: ["related_program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "progress_logs_related_session_id_fkey"
+            columns: ["related_session_id"]
+            isOneToOne: false
+            referencedRelation: "program_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "progress_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_exercises: {
+        Row: {
+          exercise_id: string
+          id: string
+          lift_key: string | null
+          notes: string | null
+          order_index: number
+          pct_of_1rm: number | null
+          reps: string | null
+          rest_seconds: number | null
+          session_id: string
+          sets: number | null
+          tutorial_id: string | null
+          weight: string | null
+        }
+        Insert: {
+          exercise_id: string
+          id?: string
+          lift_key?: string | null
+          notes?: string | null
+          order_index?: number
+          pct_of_1rm?: number | null
+          reps?: string | null
+          rest_seconds?: number | null
+          session_id: string
+          sets?: number | null
+          tutorial_id?: string | null
+          weight?: string | null
+        }
+        Update: {
+          exercise_id?: string
+          id?: string
+          lift_key?: string | null
+          notes?: string | null
+          order_index?: number
+          pct_of_1rm?: number | null
+          reps?: string | null
+          rest_seconds?: number | null
+          session_id?: string
+          sets?: number | null
+          tutorial_id?: string | null
+          weight?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_exercises_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "program_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_program_enrollments: {
+        Row: {
+          current_week_number: number
+          enrolled_at: string
+          id: string
+          last_session_id: string | null
+          program_id: string
+          user_id: string
+        }
+        Insert: {
+          current_week_number?: number
+          enrolled_at?: string
+          id?: string
+          last_session_id?: string | null
+          program_id: string
+          user_id: string
+        }
+        Update: {
+          current_week_number?: number
+          enrolled_at?: string
+          id?: string
+          last_session_id?: string | null
+          program_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_program_enrollments_last_session_id_fkey"
+            columns: ["last_session_id"]
+            isOneToOne: false
+            referencedRelation: "program_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_program_enrollments_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_program_enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_session_completions: {
+        Row: {
+          completed_at: string
+          id: string
+          program_id: string
+          session_id: string
+          user_id: string
+          week_number: number
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          program_id: string
+          session_id: string
+          user_id: string
+          week_number: number
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          program_id?: string
+          session_id?: string
+          user_id?: string
+          week_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_session_completions_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_session_completions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "program_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_session_completions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -290,9 +611,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       change_request_status: ["pending", "approved", "denied"],
