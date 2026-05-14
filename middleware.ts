@@ -67,7 +67,12 @@ export async function middleware(request: NextRequest) {
   }
 
   const isAuthPage = pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up');
-  const isProtectedPage = pathname.startsWith('/dashboard') || pathname.startsWith('/settings');
+  const isProtectedPage =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/settings') ||
+    pathname.startsWith('/programs') ||
+    pathname.startsWith('/exercises') ||
+    pathname.startsWith('/admin');
 
   if (!user && isProtectedPage) {
     const url = request.nextUrl.clone();
