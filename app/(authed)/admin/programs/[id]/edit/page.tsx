@@ -104,7 +104,7 @@ export default async function EditProgramPage({ params }: { params: Promise<{ id
               </select>
             </div>
             <div className="flex justify-end">
-              <Button type="submit" className="bg-accent text-accent-fg hover:bg-accent/90">Save metadata</Button>
+              <Button type="submit" className="bg-accent text-accent-fg hover:bg-accent/80 hover:text-white hover:border-accent">Save metadata</Button>
             </div>
           </form>
         </Card>
@@ -200,7 +200,7 @@ export default async function EditProgramPage({ params }: { params: Promise<{ id
           <h3 className="text-text mb-3 font-semibold">Add week</h3>
           <form action={addWeek} className="flex gap-3">
             <input name="week_title" required placeholder="Week title (e.g. Foundation)" className={`${INPUT} flex-1`} />
-            <Button type="submit" className="bg-accent text-accent-fg hover:bg-accent/90">
+            <Button type="submit" className="bg-accent text-accent-fg hover:bg-accent/80 hover:text-white hover:border-accent">
               <Plus className="mr-1 h-4 w-4" />Add week
             </Button>
           </form>
