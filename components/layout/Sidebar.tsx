@@ -49,8 +49,8 @@ interface NavItem {
  */
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', Icon: LayoutDashboard },
-  { label: 'Programs', href: '#', Icon: LibraryBig, comingSoon: true },
-  { label: 'Exercises', href: '#', Icon: Dumbbell, comingSoon: true },
+  { label: 'Programs', href: '/programs', Icon: LibraryBig },
+  { label: 'Exercises', href: '/exercises', Icon: Dumbbell },
   { label: 'Nutrition', href: '#', Icon: Apple, comingSoon: true },
   { label: 'Tasks', href: '#', Icon: CheckSquare, comingSoon: true },
   { label: 'Coaches', href: '#', Icon: Users, comingSoon: true },
