@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useSelectedLayoutSegment } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import {
   Apple,
   BadgeCheck,
@@ -68,15 +69,16 @@ interface SidebarContentProps {
  * without requiring a full layout re-render.
  */
 export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProps) {
-  // usePathname() is the primary source — it returns the full URL path and
-  // updates reactively on client-side navigation.
-  // useSelectedLayoutSegment() is a belt-and-suspenders fallback: it reads
-  // the active child segment from the nearest parent layout context (a
-  // different internal signal in Next.js), so if one hook doesn't fire the
-  // other should catch it.
   const pathname = usePathname();
   const segment = useSelectedLayoutSegment();
-  const currentPath = pathname ?? (segment != null ? `/${segment}` : '');
+  const resolvedPath = pathname ?? (segment != null ? `/${segment}` : '');
+
+  // Optimistic active href — set immediately on click so the active indicator
+  // moves without waiting for the server component to resolve.
+  const [optimisticHref, setOptimisticHref] = useState<string | null>(null);
+  useEffect(() => { setOptimisticHref(null); }, [pathname]);
+
+  const currentPath = optimisticHref ?? resolvedPath;
   const whatsappHref = `https://wa.me/${process.env.NEXT_PUBLIC_COACH_WHATSAPP}`;
 
   return (
@@ -87,7 +89,7 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
         {NAV_ITEMS.map((item) => {
           const active = !item.comingSoon && currentPath.startsWith(item.href);
           const baseRow =
-            'group/nav relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-all duration-200';
+            'group/nav relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-all duration-150';
 
           if (active) {
             return (
@@ -95,14 +97,15 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
                 key={item.href}
                 href={item.href}
                 aria-current="page"
-                onClick={onNavigate}
-                className={`${baseRow} text-text from-accent/15 via-accent/5 bg-gradient-to-r to-transparent font-semibold`}
+                onClick={() => { setOptimisticHref(item.href); onNavigate?.(); }}
+                className={`${baseRow} bg-gradient-to-r from-accent/[0.18] via-accent/[0.07] to-transparent font-semibold text-white`}
               >
+                {/* Left indicator bar with soft glow */}
                 <span
                   aria-hidden
-                  className="bg-accent absolute inset-y-1 left-0 w-[3px] rounded-r-md"
+                  className="absolute inset-y-1.5 left-0 w-1 rounded-r-full bg-accent shadow-[2px_0_10px_0] shadow-accent/50"
                 />
-                <item.Icon className="text-accent h-4 w-4" />
+                <item.Icon className="h-[18px] w-[18px] shrink-0 text-accent" />
                 <span>{item.label}</span>
               </Link>
             );
@@ -114,9 +117,9 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
                 key={item.label}
                 aria-disabled="true"
                 title="Coming soon"
-                className={`${baseRow} text-text-muted/70 cursor-not-allowed select-none`}
+                className={`${baseRow} cursor-not-allowed select-none text-text-muted/70`}
               >
-                <item.Icon className="h-4 w-4" />
+                <item.Icon className="h-4 w-4 shrink-0" />
                 <span>{item.label}</span>
               </div>
             );
@@ -126,10 +129,10 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
             <Link
               key={item.href}
               href={item.href}
-              onClick={onNavigate}
-              className={`${baseRow} text-text-muted hover:text-text hover:bg-white/[0.03]`}
+              onClick={() => { setOptimisticHref(item.href); onNavigate?.(); }}
+              className={`${baseRow} text-text-muted hover:bg-white/[0.04] hover:text-text`}
             >
-              <item.Icon className="h-4 w-4" />
+              <item.Icon className="h-4 w-4 shrink-0" />
               <span>{item.label}</span>
             </Link>
           );
