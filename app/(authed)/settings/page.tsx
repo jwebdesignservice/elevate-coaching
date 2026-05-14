@@ -8,7 +8,9 @@ import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { env } from '@/lib/env';
 import type { Category } from '@/lib/categories';
+import type { PlanTier } from '@/lib/plans';
 import { CategoryCard } from './category-card';
+import { SubscriptionCard } from './subscription-card';
 
 export const metadata = {
   title: 'Settings · Elevate Coaching',
@@ -160,12 +162,11 @@ export default async function SettingsPage() {
           {/* Training category — set at onboarding, change via coach review */}
           <CategoryCard currentCategory={currentCategory} pendingRequest={pendingRequest} />
 
-          <Card className="bg-surface border-border p-6">
-            <h2 className="text-text mb-4 text-xl font-semibold tracking-tight">Billing</h2>
-            <p className="text-text-muted text-sm">
-              Stripe checkout, plan upgrades, and downgrades land in SP-3.
-            </p>
-          </Card>
+          <SubscriptionCard
+            tier={(profile.subscription_tier as PlanTier) ?? 'free'}
+            periodEnd={profile.subscription_period_end ?? null}
+            cancelAtPeriodEnd={profile.subscription_cancel_at_period_end ?? false}
+          />
         </div>
 
         <RightRail>
