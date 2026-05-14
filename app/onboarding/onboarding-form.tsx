@@ -102,7 +102,7 @@ export function OnboardingForm() {
         <Button
           type="submit"
           disabled={isPending || selected === null}
-          className="bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-accent/20 h-11 px-6 font-medium transition-all hover:shadow-lg sm:w-auto"
+          className="bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-accent/40 h-11 px-6 font-medium transition-all hover:shadow-lg sm:w-auto"
         >
           {isPending ? 'Saving…' : 'Continue to dashboard'}
         </Button>

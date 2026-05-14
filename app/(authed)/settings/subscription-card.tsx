@@ -59,7 +59,7 @@ export function SubscriptionCard({ tier, periodEnd, cancelAtPeriodEnd }: Props) 
     : null;
 
   return (
-    <Card className="bg-surface border-border p-6">
+    <Card className="bg-surface border-border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-white/[0.08]">
       {/* Header row */}
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -119,7 +119,7 @@ export function SubscriptionCard({ tier, periodEnd, cancelAtPeriodEnd }: Props) 
               href="/pricing"
               className={cn(
                 buttonVariants(),
-                'bg-accent text-accent-fg hover:bg-accent/90',
+                'bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/40',
               )}
             >
               <Zap className="h-4 w-4 fill-current" />
@@ -149,7 +149,7 @@ export function SubscriptionCard({ tier, periodEnd, cancelAtPeriodEnd }: Props) 
               href="/pricing"
               className={cn(
                 buttonVariants(),
-                'bg-accent text-accent-fg hover:bg-accent/90',
+                'bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/40',
               )}
             >
               <Zap className="h-4 w-4 fill-current" />

@@ -85,7 +85,7 @@ export default async function SettingsPage() {
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 lg:p-8">
           {/* Profile card — visual hero of the page */}
-          <Card className="from-surface to-surface-hover border-border relative overflow-hidden bg-gradient-to-br p-8">
+          <Card className="from-surface to-surface-hover border-border relative overflow-hidden bg-gradient-to-br p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-white/[0.08]">
             <div
               aria-hidden
               className="bg-accent/15 pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full blur-3xl"
@@ -170,7 +170,7 @@ export default async function SettingsPage() {
         </div>
 
         <RightRail>
-          <Card className="bg-surface border-border p-5">
+          <Card className="bg-surface border-border p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20 hover:border-white/[0.08]">
             <h3 className="text-text mb-4 font-semibold tracking-tight">Quick Preferences</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -185,7 +185,7 @@ export default async function SettingsPage() {
             <p className="text-text-dim mt-3 text-xs">Preferences become editable in SP-2.</p>
           </Card>
 
-          <Card className="bg-surface border-border p-5">
+          <Card className="bg-surface border-border p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20 hover:border-white/[0.08]">
             <h3 className="text-text mb-3 font-semibold tracking-tight">Coach Support</h3>
             <p className="text-text-muted mb-3 text-xs">
               Book a 1:1 call or send a message anytime you need guidance.

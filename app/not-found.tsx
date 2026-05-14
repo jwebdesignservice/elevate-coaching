@@ -25,7 +25,7 @@ export default function NotFound() {
         <Button
           nativeButton={false}
           render={<Link href="/" />}
-          className="bg-accent text-accent-fg hover:bg-accent/90"
+          className="bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/40"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to home

@@ -46,7 +46,7 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
   const otherCategories = CATEGORIES.filter((c) => c !== currentCategory);
 
   return (
-    <Card className="bg-surface border-border p-6">
+    <Card className="bg-surface border-border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-white/[0.08]">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <span className="text-accent text-[11px] font-semibold tracking-[0.25em] uppercase">
@@ -115,9 +115,9 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
                       <label
                         key={code}
                         className={[
-                          'bg-surface-hover/60 border-border relative flex cursor-pointer flex-col gap-1 rounded-md border p-3 transition-colors',
+                          'bg-surface-hover/60 border-border relative flex cursor-pointer flex-col gap-1 rounded-md border p-3 transition-all duration-200',
                           'focus-within:border-accent/60 focus-within:ring-accent/30 focus-within:ring-2',
-                          'hover:border-white/10',
+                          'hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md hover:shadow-black/20 hover:bg-accent/[0.04]',
                           isPicked ? 'border-accent/70 bg-accent/[0.08]' : '',
                         ].join(' ')}
                       >
@@ -186,7 +186,7 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
                 <Button
                   type="submit"
                   disabled={isPending || picked === null}
-                  className="bg-accent text-accent-fg hover:bg-accent/90"
+                  className="bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/40"
                 >
                   {isPending ? 'Submitting…' : 'Submit request'}
                   {!isPending && <ArrowRight className="ml-1 h-4 w-4" aria-hidden />}

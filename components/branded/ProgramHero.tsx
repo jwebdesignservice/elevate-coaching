@@ -89,7 +89,7 @@ export function ProgramHero({
           <Button
             nativeButton={false}
             render={<Link href={primary.href} />}
-            className="bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-accent/20 transition-all hover:shadow-lg"
+            className="bg-accent text-accent-fg hover:bg-accent/90 hover:shadow-accent/40 transition-all hover:shadow-lg"
           >
             <Play className="h-4 w-4" />
             {primary.label}
