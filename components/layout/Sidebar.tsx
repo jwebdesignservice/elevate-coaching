@@ -150,9 +150,6 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
             <div className="text-text-dim truncate text-[11px]">Elite Performance Coach</div>
           </div>
         </div>
-        <div className="text-text-muted mb-0.5 text-xs">Discipline today,</div>
-        <div className="text-accent mb-4 text-sm font-medium italic">Freedom tomorrow.</div>
-
         {/* Plan status */}
         <div className="border-border mb-3 flex items-center justify-between rounded-md border px-3 py-2">
           <span
@@ -180,8 +177,8 @@ export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProp
         <Button
           nativeButton={false}
           render={<a href={whatsappHref} target="_blank" rel="noopener noreferrer" />}
-          variant="outline"
-          className="border-border text-text hover:border-accent/40 w-full transition-colors hover:bg-white/[0.03]"
+          variant="ghost"
+          className="bg-accent/15 text-accent hover:bg-accent/25 hover:shadow-md hover:shadow-accent/20 w-full transition-all"
         >
           <MessageCircle className="h-4 w-4" />
           Message Coach
