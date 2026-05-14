@@ -184,11 +184,11 @@ $$;
 
 | Table | Read | Write |
 |---|---|---|
-| `task_weeks` | `auth.role() = 'authenticated'` | service role / admin (enforced at app layer like SP-4 programmes) |
-| `daily_tasks` | `auth.role() = 'authenticated'` | service role / admin |
+| `task_weeks` | All authenticated users | Service-role only — admin writes go through `createSupabaseAdminClient()` from server actions gated by `requireCoach()` (same pattern as SP-4 exercises/programs). No table-level write policy. |
+| `daily_tasks` | All authenticated users | Service-role only — same pattern. |
 | `user_task_completions` | `auth.uid() = user_id` | INSERT and DELETE where `auth.uid() = user_id` |
 
-The admin app-layer check uses `requireAdmin()` from SP-4. No new middleware required.
+The coach gate uses `requireCoach()` from `lib/auth.ts` (existing SP-4 helper). No new auth helpers needed.
 
 ### Key invariants
 
@@ -296,7 +296,7 @@ export function bestStreak(rollups: DayRollup[]): number {
 
 No new user pages — tasks live inside the dashboard right rail.
 
-### Admin (`profile.role = 'admin'`, existing SP-4 middleware)
+### Admin (`profile.role = 'coach'`, gated by `requireCoach()`)
 
 | Route | Description |
 |---|---|
@@ -553,7 +553,7 @@ For SP-5 we accept this minor surface. Tightening to "today only" can be added i
 
 ### Admin
 
-- [ ] Non-admin hitting `/admin/tasks` redirects to `/dashboard`.
+- [ ] Non-coach hitting `/admin/tasks` redirects to `/dashboard` (per `requireCoach()`).
 - [ ] Category tab switching uses `?cat=` and preserves browser back/forward.
 - [ ] Live + Draft columns render the correct weeks based on today's date.
 - [ ] "Create draft week" creates a `task_weeks` row dated next Monday (idempotent).
