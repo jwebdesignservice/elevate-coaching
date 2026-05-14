@@ -65,7 +65,7 @@ export function ProfileEditCard({ name, email, phone, avatarUrl, initials }: Pro
           <p role="status" className="text-accent flex items-center gap-2 text-sm"><Check className="h-4 w-4" />{state.message}</p>
         )}
         <div className="flex justify-end">
-          <Button type="submit" disabled={isPending} className="bg-accent text-accent-fg hover:bg-accent/80 hover:text-white hover:border-accent">
+          <Button type="submit" disabled={isPending} className="bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent">
             {isPending ? 'Saving…' : 'Save changes'}{!isPending && <ArrowRight className="ml-1 h-4 w-4" />}
           </Button>
         </div>

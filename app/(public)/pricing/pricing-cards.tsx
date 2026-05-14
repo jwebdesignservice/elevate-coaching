@@ -144,7 +144,7 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
               href={`/sign-up?plan=${plan.key}`}
               className={cn(
                 buttonVariants(),
-                'bg-accent text-accent-fg hover:bg-accent/80 hover:text-white hover:border-accent w-full',
+                'bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent w-full',
               )}
             >
               Get started
@@ -178,7 +178,7 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
               disabled={loading !== null}
               className={cn(
                 buttonVariants(),
-                'bg-accent text-accent-fg hover:bg-accent/80 hover:text-white hover:border-accent w-full',
+                'bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent w-full',
               )}
             >
               <Zap className="h-4 w-4 fill-current" />

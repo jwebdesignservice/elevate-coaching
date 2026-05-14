@@ -88,7 +88,7 @@ export function SignUpForm() {
       <Button
         type="submit"
         disabled={isPending}
-        className="bg-accent text-accent-fg hover:bg-accent/80 hover:text-white hover:border-accent h-10 w-full font-medium"
+        className="bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent h-10 w-full font-medium"
       >
         {isPending ? 'Creating account…' : 'Create account'}
       </Button>

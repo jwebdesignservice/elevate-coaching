@@ -76,9 +76,9 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
             {canAccess && (
               <div className="flex items-center gap-3">
                 {isEnrolled ? (
-                  <Link href={continueHref} className={buttonVariants({ className: 'bg-accent text-accent-fg hover:bg-accent/80 hover:text-white hover:border-accent' })}>Continue programme →</Link>
+                  <Link href={continueHref} className={buttonVariants({ className: 'bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent' })}>Continue programme →</Link>
                 ) : (
-                  <form action={enrol}><Button type="submit" className="bg-accent text-accent-fg hover:bg-accent/80 hover:text-white hover:border-accent">Start programme</Button></form>
+                  <form action={enrol}><Button type="submit" className="bg-accent text-accent-fg hover:bg-accent/25 hover:text-white hover:border-accent">Start programme</Button></form>
                 )}
               </div>
             )}
