@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/layout/TopBar';
 import { Card } from '@/components/ui/card';
 import { Dumbbell } from 'lucide-react';
+import { EXERCISE_IMAGES } from '@/lib/exercise-images';
 
 export const metadata = { title: 'Exercise Library · Elevate Coaching' };
 
@@ -19,22 +20,6 @@ const FILTERS = [
   { key: 'glutes',     label: 'Glutes',      values: ['glutes'] },
   { key: 'core',       label: 'Core',        values: ['core', 'lower-back'] },
 ];
-
-// Placeholder images per exercise title — admin can later add real images via edit form
-const EXERCISE_IMAGES: Record<string, string> = {
-  'Back Squat':            'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=480&h=260&fit=crop&auto=format',
-  'Bench Press':           'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=480&h=260&fit=crop&auto=format',
-  'Conventional Deadlift': 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=480&h=260&fit=crop&auto=format',
-  'Overhead Press':        'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=480&h=260&fit=crop&auto=format',
-  'Barbell Row':           'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=480&h=260&fit=crop&auto=format',
-  'Romanian Deadlift':     'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=480&h=260&fit=crop&auto=format',
-  'Bulgarian Split Squat': 'https://images.unsplash.com/photo-1584466977773-e625c37cdd50?w=480&h=260&fit=crop&auto=format',
-  'Dumbbell Lateral Raise':'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=480&h=260&fit=crop&auto=format',
-  'Cable Row':             'https://images.unsplash.com/photo-1534258936925-c58bed479fcb?w=480&h=260&fit=crop&auto=format',
-  'Leg Press':             'https://images.unsplash.com/photo-1576678927484-cc907957088c?w=480&h=260&fit=crop&auto=format',
-  'Face Pull':             'https://images.unsplash.com/photo-1580261450046-d0a30080dc9b?w=480&h=260&fit=crop&auto=format',
-  'Incline Dumbbell Press':'https://images.unsplash.com/photo-1546483875-ad9014c88eba?w=480&h=260&fit=crop&auto=format',
-};
 
 type ExerciseRow = { id: string; title: string; description: string | null; muscle_groups: string[]; tags: string[] };
 
