@@ -1,59 +1,58 @@
-import Link from 'next/link';
-import { ArrowRight, Check } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { Card } from '@/components/ui/card';
+import { TaskRow } from './TaskRow';
+import type { TaskType } from '@/lib/task-types';
 
-export interface TaskItem {
-  label: string;
-  done: boolean;
+export interface DashboardTaskItem {
+  id: string;
+  title: string;
+  task_type: TaskType;
 }
 
 interface TodaysTasksProps {
-  tasks: TaskItem[];
-  viewAllHref?: string;
+  tasks: DashboardTaskItem[];
+  completedTaskIds: Set<string>;
+  todayIso: string;
 }
 
 /**
- * Today's Tasks rail card. Empty/filled circle for each task plus a
- * count badge in the header (e.g. "+ 4/6" — done over total).
+ * Today's Tasks rail card (SP-5).
+ *
+ * Renders one TaskRow per scheduled task. The row owns optimistic state and
+ * triggers a router.refresh() after toggling, which re-runs the dashboard's
+ * server fetch so the streak strip and stat cards stay in sync.
+ *
+ * Empty state: "No tasks today — rest day." (per spec §3.5).
  */
-export function TodaysTasks({ tasks, viewAllHref = '/dashboard' }: TodaysTasksProps) {
-  const done = tasks.filter((t) => t.done).length;
+export function TodaysTasks({ tasks, completedTaskIds, todayIso }: TodaysTasksProps): ReactNode {
+  const done = tasks.filter((t) => completedTaskIds.has(t.id)).length;
+  const total = tasks.length;
 
   return (
     <Card className="bg-surface border-border p-5">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-text font-semibold tracking-tight">Today&apos;s Tasks</h3>
-        <span className="text-text-muted rounded-md bg-white/[0.04] px-2 py-0.5 text-[11px] font-medium">
-          + {done}/{tasks.length}
-        </span>
+        {total > 0 && (
+          <span className="text-text-muted rounded-md bg-white/[0.04] px-2 py-0.5 text-[11px] font-medium">
+            {done}/{total}
+          </span>
+        )}
       </div>
 
-      <ul className="space-y-3">
-        {tasks.map((task) => (
-          <li key={task.label} className="flex items-center gap-3">
-            {task.done ? (
-              <span className="bg-accent text-accent-fg flex h-5 w-5 shrink-0 items-center justify-center rounded-full">
-                <Check className="h-3 w-3" strokeWidth={3} />
-              </span>
-            ) : (
-              <span className="border-text-dim/50 h-5 w-5 shrink-0 rounded-full border" />
-            )}
-            <span
-              className={`text-sm ${task.done ? 'text-text-muted decoration-text-dim/60 line-through' : 'text-text'}`}
-            >
-              {task.label}
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      <Link
-        href={viewAllHref}
-        className="text-accent mt-4 inline-flex items-center gap-1 text-xs font-medium hover:underline"
-      >
-        View all tasks
-        <ArrowRight className="h-3 w-3" />
-      </Link>
+      {total === 0 ? (
+        <p className="text-text-muted text-sm">No tasks today — rest day.</p>
+      ) : (
+        <ul className="space-y-3">
+          {tasks.map((task) => (
+            <TaskRow
+              key={task.id}
+              task={task}
+              initialDone={completedTaskIds.has(task.id)}
+              todayIso={todayIso}
+            />
+          ))}
+        </ul>
+      )}
     </Card>
   );
 }

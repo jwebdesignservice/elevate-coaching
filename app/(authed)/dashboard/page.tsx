@@ -15,6 +15,8 @@ import { requireUser } from '@/lib/auth';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { CATEGORY_INFO, type Category } from '@/lib/categories';
 import { programProgressPct } from '@/lib/programs';
+import { getMondayOf, isoDayOfWeek, todayCompletionPct, toIsoDate } from '@/lib/tasks';
+import type { TaskType } from '@/lib/task-types';
 import { CircularProgress } from '@/components/charts/CircularProgress';
 import { MiniBars } from '@/components/charts/MiniBars';
 import { TopBar } from '@/components/layout/TopBar';
@@ -22,7 +24,7 @@ import { RightRail } from '@/components/layout/RightRail';
 import { ProgramHero } from '@/components/branded/ProgramHero';
 import { StatCard } from '@/components/branded/StatCard';
 import { VideoTutorialCard } from '@/components/branded/VideoTutorialCard';
-import { TodaysTasks, type TaskItem } from '@/components/dashboard/TodaysTasks';
+import { TodaysTasks, type DashboardTaskItem } from '@/components/dashboard/TodaysTasks';
 import { WeeklySchedule, type ScheduleItem } from '@/components/dashboard/WeeklySchedule';
 import { PerformanceOverview } from '@/components/dashboard/PerformanceOverview';
 
@@ -40,15 +42,6 @@ export const metadata = {
 //   • weekly schedule        → SP-4
 //   • performance series     → SP-4
 // ─────────────────────────────────────────────────────────────────────────
-
-const DEMO_TASKS: TaskItem[] = [
-  { label: 'Complete Lower Body Workout', done: true },
-  { label: 'Watch Video: Mobility & Recovery', done: true },
-  { label: 'Log Nutrition', done: false },
-  { label: '10,000 Steps', done: false },
-  { label: 'Cold Shower', done: false },
-  { label: 'Evening Mindset Journal', done: false },
-];
 
 const DEMO_DAYS = [
   { letter: 'M', date: 19 },
@@ -193,6 +186,48 @@ export default async function DashboardPage() {
 
   const sessionsDone = totalSessionsDone ?? 0;
 
+  // SP-5 — today's tasks for the user's category.
+  const today = new Date();
+  const todayIso = toIsoDate(today);
+  const monday = getMondayOf(today);
+  const dow = isoDayOfWeek(today);
+  const mondayIso = toIsoDate(monday);
+
+  const weekRes = await (sb
+    .from('task_weeks')
+    .select('id, daily_tasks(id, title, task_type, order_index, day_of_week)')
+    .eq('category', category)
+    .eq('start_date', mondayIso)
+    .maybeSingle() as Promise<{
+      data: {
+        id: string;
+        daily_tasks: {
+          id: string;
+          title: string;
+          task_type: TaskType;
+          order_index: number;
+          day_of_week: number;
+        }[];
+      } | null;
+      error: unknown;
+    }>);
+
+  const todayTasks: DashboardTaskItem[] = (weekRes.data?.daily_tasks ?? [])
+    .filter((t) => t.day_of_week === dow)
+    .sort((a, b) => a.order_index - b.order_index)
+    .map(({ id, title, task_type }) => ({ id, title, task_type }));
+
+  const { data: todayCompletionsRaw } = await supabase
+    .from('user_task_completions')
+    .select('task_id')
+    .eq('user_id', profile.id)
+    .eq('completion_date', todayIso);
+  const completedTaskIds = new Set(
+    ((todayCompletionsRaw ?? []) as { task_id: string }[]).map((c) => c.task_id),
+  );
+  const todayPct = todayCompletionPct(todayTasks.length, completedTaskIds.size);
+  const allDone = todayTasks.length > 0 && completedTaskIds.size === todayTasks.length;
+
   return (
     <>
       <TopBar
@@ -242,10 +277,17 @@ export default async function DashboardPage() {
             <StatCard
               icon={<Bookmark className="h-3.5 w-3.5" />}
               label="Tasks Done"
-              value="—"
-              caption="Coming in SP-5"
-              captionTone="muted"
-              visual={<CircularProgress value={0} size={48} strokeWidth={4} label="—" />}
+              value={todayTasks.length === 0 ? '—' : `${todayPct}%`}
+              caption={todayTasks.length === 0 ? 'Rest day' : `${completedTaskIds.size}/${todayTasks.length} today`}
+              captionTone={allDone ? 'accent' : 'muted'}
+              visual={
+                <CircularProgress
+                  value={todayPct}
+                  size={48}
+                  strokeWidth={4}
+                  label={todayTasks.length === 0 ? '—' : `${todayPct}%`}
+                />
+              }
             />
           </div>
 
@@ -278,7 +320,7 @@ export default async function DashboardPage() {
         </div>
 
         <RightRail>
-          <TodaysTasks tasks={DEMO_TASKS} />
+          <TodaysTasks tasks={todayTasks} completedTaskIds={completedTaskIds} todayIso={todayIso} />
           <WeeklySchedule days={DEMO_DAYS} activeDayIndex={3} items={DEMO_SCHEDULE} />
           <PerformanceOverview
             metricLabel="Strength Score"
