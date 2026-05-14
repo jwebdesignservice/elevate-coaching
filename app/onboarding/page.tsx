@@ -3,7 +3,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { OnboardingForm } from './onboarding-form';
 
 export const metadata = {
-  title: 'Pick your training category · Elevate Coaching',
+  title: 'Set up your profile · Elevate Coaching',
 };
 
 /**
@@ -32,12 +32,11 @@ export default async function OnboardingPage() {
           Welcome, {firstName}
         </p>
         <h1 className="text-text text-3xl font-bold tracking-tight md:text-4xl">
-          Pick your training category
+          Set up your profile
         </h1>
         <p className="text-text-muted mx-auto max-w-xl text-sm leading-relaxed">
-          Choose the lane that fits where you are now. Your coach builds programmes, tutorials, and
-          weekly tasks for each category — picking accurately means everything that follows is built
-          for you.
+          Two quick steps so your coach can build the right programmes, tasks, and intensity for
+          where you are now. Takes under a minute.
         </p>
       </header>
 

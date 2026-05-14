@@ -1,4 +1,4 @@
-import { BadgeCheck, Calendar, Mail, Shield, User as UserIcon } from 'lucide-react';
+import { BadgeCheck, Calendar, Mail, Phone, Shield, User as UserIcon, Dumbbell } from 'lucide-react';
 import { requireUser } from '@/lib/auth';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/layout/TopBar';
@@ -151,6 +151,15 @@ export default async function SettingsPage() {
                   </dd>
                 </div>
               </div>
+              <div className="flex items-start gap-3">
+                <Phone className="text-text-dim mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <dt className="text-text-dim text-[11px] font-medium tracking-[0.15em] uppercase">
+                    Phone
+                  </dt>
+                  <dd className="text-text mt-1 text-sm">{profile.phone || '—'}</dd>
+                </div>
+              </div>
             </dl>
 
             <p className="text-text-dim relative mt-6 text-xs">
@@ -161,6 +170,47 @@ export default async function SettingsPage() {
 
           {/* Training category — set at onboarding, change via coach review */}
           <CategoryCard currentCategory={currentCategory} pendingRequest={pendingRequest} />
+
+          {/* Performance baselines — set during onboarding, editable in later sprint */}
+          <Card className="bg-surface border-border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-white/[0.08]">
+            <div className="mb-5 flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-text text-xl font-semibold tracking-tight">Performance Baselines</h2>
+                <p className="text-text-muted mt-1 text-sm">Your 1-rep max lifts, tracked over time to measure progress.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {(
+                [
+                  { key: 'max_lift_squat',    label: 'Back Squat' },
+                  { key: 'max_lift_bench',    label: 'Bench Press' },
+                  { key: 'max_lift_deadlift', label: 'Deadlift' },
+                  { key: 'max_lift_ohp',      label: 'Overhead Press' },
+                ] as const
+              ).map(({ key, label }) => {
+                const value = profile[key];
+                return (
+                  <div key={key} className="bg-surface-hover/50 border-border flex flex-col gap-1 rounded-md border px-4 py-3">
+                    <span className="text-text-dim text-[11px] font-medium tracking-[0.15em] uppercase">{label}</span>
+                    <div className="flex items-baseline gap-1">
+                      {value ? (
+                        <>
+                          <span className="text-text text-2xl font-bold">{value}</span>
+                          <span className="text-text-muted text-xs">kg</span>
+                        </>
+                      ) : (
+                        <span className="text-text-dim text-sm">—</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-text-dim mt-4 text-xs">
+              <Dumbbell className="mr-1 inline h-3 w-3" />
+              Max lifts are set during onboarding. Editing them directly lands in a later sprint.
+            </p>
+          </Card>
 
           <SubscriptionCard
             tier={(profile.subscription_tier as PlanTier) ?? 'free'}

@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -95,8 +95,14 @@ export type Database = {
           category: Database["public"]["Enums"]["user_category"] | null
           created_at: string
           email: string
+          experience_level: string | null
           id: string
+          max_lift_bench: number | null
+          max_lift_deadlift: number | null
+          max_lift_ohp: number | null
+          max_lift_squat: number | null
           name: string | null
+          phone: string | null
           role: Database["public"]["Enums"]["user_role"]
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -109,8 +115,14 @@ export type Database = {
           category?: Database["public"]["Enums"]["user_category"] | null
           created_at?: string
           email: string
+          experience_level?: string | null
           id: string
+          max_lift_bench?: number | null
+          max_lift_deadlift?: number | null
+          max_lift_ohp?: number | null
+          max_lift_squat?: number | null
           name?: string | null
+          phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -123,8 +135,14 @@ export type Database = {
           category?: Database["public"]["Enums"]["user_category"] | null
           created_at?: string
           email?: string
+          experience_level?: string | null
           id?: string
+          max_lift_bench?: number | null
+          max_lift_deadlift?: number | null
+          max_lift_ohp?: number | null
+          max_lift_squat?: number | null
           name?: string | null
+          phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null

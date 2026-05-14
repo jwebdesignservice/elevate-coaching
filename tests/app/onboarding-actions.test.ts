@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { onboardingInitialState } from '@/app/onboarding/state';
 
 /**
- * Tests for app/onboarding/actions.ts — setCategoryAction.
+ * Tests for app/onboarding/actions.ts — completeOnboardingAction.
  *
  * The action's two side effects (DB update + redirect) are both stubbed:
  *   - createSupabaseServerClient → returns a chained mock that records the
@@ -11,8 +11,6 @@ import { onboardingInitialState } from '@/app/onboarding/state';
  *   - redirect from next/navigation → throws a marker error so the test can
  *     assert the path. (Next does this in production too — redirect() never
  *     "returns".)
- *
- * See tests/lib/auth.test.ts for the same mock skeleton applied to lib/auth.
  */
 
 class RedirectError extends Error {
@@ -26,6 +24,8 @@ function makeFormData(entries: Record<string, string>) {
   for (const [k, v] of Object.entries(entries)) fd.set(k, v);
   return fd;
 }
+
+const VALID_DATA = { category: 'B', experience_level: 'intermediate' };
 
 interface UpdateOpts {
   user: { id: string } | null;
@@ -81,22 +81,31 @@ afterEach(() => {
 });
 
 describe('app/onboarding/actions', () => {
-  describe('setCategoryAction', () => {
-    it('returns an error state when no category is submitted', async () => {
-      // No call into Supabase expected when validation fails.
+  describe('completeOnboardingAction', () => {
+    it('returns an error state when no fields are submitted', async () => {
       mocks.createSupabaseServerClient.mockResolvedValue({});
-      const { setCategoryAction } = await import('@/app/onboarding/actions');
-      const result = await setCategoryAction(onboardingInitialState, makeFormData({}));
+      const { completeOnboardingAction } = await import('@/app/onboarding/actions');
+      const result = await completeOnboardingAction(onboardingInitialState, makeFormData({}));
       expect(result.status).toBe('error');
       expect(mocks.redirect).not.toHaveBeenCalled();
     });
 
     it('returns an error state when category is invalid', async () => {
       mocks.createSupabaseServerClient.mockResolvedValue({});
-      const { setCategoryAction } = await import('@/app/onboarding/actions');
-      const result = await setCategoryAction(
+      const { completeOnboardingAction } = await import('@/app/onboarding/actions');
+      const result = await completeOnboardingAction(
         onboardingInitialState,
-        makeFormData({ category: 'Z' }),
+        makeFormData({ category: 'Z', experience_level: 'beginner' }),
+      );
+      expect(result.status).toBe('error');
+    });
+
+    it('returns an error state when experience_level is missing', async () => {
+      mocks.createSupabaseServerClient.mockResolvedValue({});
+      const { completeOnboardingAction } = await import('@/app/onboarding/actions');
+      const result = await completeOnboardingAction(
+        onboardingInitialState,
+        makeFormData({ category: 'A' }),
       );
       expect(result.status).toBe('error');
     });
@@ -104,25 +113,54 @@ describe('app/onboarding/actions', () => {
     it('redirects to /sign-in when there is no session', async () => {
       const mock = makeSupabaseMock({ user: null });
       mocks.createSupabaseServerClient.mockResolvedValue(mock.client);
-      const { setCategoryAction } = await import('@/app/onboarding/actions');
+      const { completeOnboardingAction } = await import('@/app/onboarding/actions');
       await expect(
-        setCategoryAction(onboardingInitialState, makeFormData({ category: 'A' })),
+        completeOnboardingAction(onboardingInitialState, makeFormData(VALID_DATA)),
       ).rejects.toThrow('NEXT_REDIRECT;/sign-in');
     });
 
-    it('writes the category and redirects to /dashboard on success', async () => {
+    it('writes profile fields and redirects to /dashboard on success', async () => {
       const mock = makeSupabaseMock({ user: { id: 'user-1' } });
       mocks.createSupabaseServerClient.mockResolvedValue(mock.client);
-      const { setCategoryAction } = await import('@/app/onboarding/actions');
+      const { completeOnboardingAction } = await import('@/app/onboarding/actions');
       await expect(
-        setCategoryAction(onboardingInitialState, makeFormData({ category: 'B' })),
+        completeOnboardingAction(onboardingInitialState, makeFormData(VALID_DATA)),
       ).rejects.toThrow('NEXT_REDIRECT;/dashboard');
 
-      // Check the filter chain: profiles → update({category:'B'}) → eq(id, 'user-1') → is(category, null)
       expect(mock.fromFn).toHaveBeenCalledWith('profiles');
-      expect(mock.updateFn).toHaveBeenCalledWith({ category: 'B' });
+      // The update payload must include category and experience_level
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updatePayload = (mock.updateFn.mock.calls as any)[0][0];
+      expect(updatePayload).toMatchObject({ category: 'B', experience_level: 'intermediate' });
       expect(mock.eqFn).toHaveBeenCalledWith('id', 'user-1');
       expect(mock.isFn).toHaveBeenCalledWith('category', null);
+    });
+
+    it('saves optional max lift values when provided', async () => {
+      const mock = makeSupabaseMock({ user: { id: 'user-1' } });
+      mocks.createSupabaseServerClient.mockResolvedValue(mock.client);
+      const { completeOnboardingAction } = await import('@/app/onboarding/actions');
+      await expect(
+        completeOnboardingAction(
+          onboardingInitialState,
+          makeFormData({
+            ...VALID_DATA,
+            max_lift_squat: '140',
+            max_lift_bench: '100',
+            max_lift_deadlift: '180',
+            max_lift_ohp: '70',
+          }),
+        ),
+      ).rejects.toThrow('NEXT_REDIRECT;/dashboard');
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updatePayload = (mock.updateFn.mock.calls as any)[0][0];
+      expect(updatePayload).toMatchObject({
+        max_lift_squat: 140,
+        max_lift_bench: 100,
+        max_lift_deadlift: 180,
+        max_lift_ohp: 70,
+      });
     });
 
     it('returns an error state when the DB write fails', async () => {
@@ -131,10 +169,10 @@ describe('app/onboarding/actions', () => {
         updateError: { message: 'rls violation' },
       });
       mocks.createSupabaseServerClient.mockResolvedValue(mock.client);
-      const { setCategoryAction } = await import('@/app/onboarding/actions');
-      const result = await setCategoryAction(
+      const { completeOnboardingAction } = await import('@/app/onboarding/actions');
+      const result = await completeOnboardingAction(
         onboardingInitialState,
-        makeFormData({ category: 'C' }),
+        makeFormData(VALID_DATA),
       );
       expect(result.status).toBe('error');
       expect(mocks.redirect).not.toHaveBeenCalled();

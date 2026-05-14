@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import type { PlanTier } from '@/lib/plans';
 
-interface Plan {
+interface PaidPlan {
   key: 'basic' | 'pro';
   name: string;
   price: string;
@@ -18,7 +18,14 @@ interface Plan {
   popular?: boolean;
 }
 
-const PLANS: Omit<Plan, 'priceId'>[] = [
+const FREE_FEATURES = [
+  'Dashboard & progress overview',
+  'Preview of workout programmes',
+  'Exercise library preview',
+  'Community access',
+];
+
+const PAID_PLAN_DEFS: Omit<PaidPlan, 'priceId'>[] = [
   {
     key: 'basic',
     name: 'Basic',
@@ -56,12 +63,12 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState<'basic' | 'pro' | null>(null);
 
-  const plans: Plan[] = [
-    { ...PLANS[0]!, priceId: basicPriceId },
-    { ...PLANS[1]!, priceId: proPriceId },
+  const paidPlans: PaidPlan[] = [
+    { ...PAID_PLAN_DEFS[0]!, priceId: basicPriceId },
+    { ...PAID_PLAN_DEFS[1]!, priceId: proPriceId },
   ];
 
-  async function handleCheckout(plan: Plan) {
+  async function handleCheckout(plan: PaidPlan) {
     setLoading(plan.key);
     try {
       const res = await fetch('/api/stripe/checkout', {
@@ -77,9 +84,55 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
     }
   }
 
+  const freeCta = !tier ? (
+    <Link
+      href="/sign-up"
+      className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
+    >
+      Get started free
+    </Link>
+  ) : tier === 'free' ? (
+    <button
+      disabled
+      className={cn(buttonVariants({ variant: 'outline' }), 'w-full cursor-not-allowed opacity-60')}
+    >
+      Current plan
+    </button>
+  ) : (
+    <button
+      disabled
+      className={cn(buttonVariants({ variant: 'outline' }), 'w-full cursor-not-allowed opacity-40')}
+    >
+      Included in your plan
+    </button>
+  );
+
   return (
-    <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
-      {plans.map((plan) => {
+    <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3">
+      {/* ── Free card ── */}
+      <div className="border-border bg-surface hover:-translate-y-1 hover:border-accent/30 hover:shadow-xl hover:shadow-black/30 relative flex flex-col rounded-2xl border p-8 transition-all duration-300">
+        <div className="mb-2 text-xs font-semibold tracking-[0.3em] uppercase text-text-muted">
+          Free
+        </div>
+        <div className="mb-1 flex items-end gap-1">
+          <span className="text-5xl font-bold tracking-tight text-text">£0</span>
+          <span className="mb-1.5 text-sm text-text-muted">/ month</span>
+        </div>
+        <p className="mb-6 mt-2 text-sm text-text-muted">Try the platform before you commit.</p>
+        <div className="mb-6 h-px bg-border" />
+        <ul className="mb-8 flex-1 space-y-3">
+          {FREE_FEATURES.map((f) => (
+            <li key={f} className="flex items-start gap-2.5 text-sm text-text">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent/70" />
+              {f}
+            </li>
+          ))}
+        </ul>
+        {freeCta}
+      </div>
+
+      {/* ── Basic & Pro cards ── */}
+      {paidPlans.map((plan) => {
         const isCurrent = tier === plan.key;
         const isProOnBasicCard = tier === 'pro' && plan.key === 'basic';
 
@@ -153,7 +206,6 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
                 : 'border-border bg-surface hover:-translate-y-1 hover:border-accent/30 hover:shadow-xl hover:shadow-black/30',
             )}
           >
-            {/* Most popular badge */}
             {plan.popular && (
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                 <span className="inline-flex items-center gap-1 rounded-pill bg-accent px-3 py-1 text-xs font-semibold text-accent-fg shadow-lg shadow-accent/30">
@@ -163,7 +215,6 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
               </div>
             )}
 
-            {/* Plan name */}
             <div
               className={cn(
                 'mb-2 text-xs font-semibold tracking-[0.3em] uppercase',
@@ -173,19 +224,15 @@ export function PricingCards({ tier, basicPriceId, proPriceId }: Props) {
               {plan.name}
             </div>
 
-            {/* Price */}
             <div className="mb-1 flex items-end gap-1">
               <span className="text-5xl font-bold tracking-tight text-text">{plan.price}</span>
               <span className="mb-1.5 text-sm text-text-muted">/ month</span>
             </div>
 
-            {/* Tagline */}
             <p className="mb-6 mt-2 text-sm text-text-muted">{plan.tagline}</p>
 
-            {/* Divider */}
             <div className={cn('mb-6 h-px', plan.popular ? 'bg-accent/20' : 'bg-border')} />
 
-            {/* Features */}
             <ul className="mb-8 flex-1 space-y-3">
               {plan.features.map((f) => (
                 <li key={f} className="flex items-start gap-2.5 text-sm text-text">
