@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ChevronLeft, Clock, Dumbbell, Timer, Repeat, Weight, Info, ExternalLink, Sparkles } from 'lucide-react';
+import { ChevronLeft, Clock, Dumbbell, Timer, Repeat, Info, ExternalLink, Sparkles } from 'lucide-react';
 import { requireUser } from '@/lib/auth';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/layout/TopBar';
@@ -104,75 +104,52 @@ export default async function SessionViewPage({ params }: { params: Promise<{ id
           <StatTile icon={Timer} value={muscleList.length || '—'} label="Muscle groups" />
         </div>
 
-        {/* Muscle group tags */}
-        {muscleList.length > 0 && (
-          <Card className="bg-surface border-border p-4 sm:p-5">
-            <p className="text-text-dim mb-2 text-[10px] font-bold uppercase tracking-wider">Today&apos;s targets</p>
-            <div className="flex flex-wrap gap-1.5">
-              {muscleList.map((mg) => (
-                <span key={mg} className="bg-muted text-text rounded-md px-2 py-1 text-xs font-medium capitalize">
-                  {mg.replace(/-/g, ' ')}
-                </span>
-              ))}
-            </div>
-          </Card>
-        )}
-
         {/* Exercise list */}
         <section className="space-y-3">
           <div className="flex items-baseline justify-between">
             <h2 className="text-text text-lg font-semibold">Today&apos;s workout</h2>
             <span className="text-text-dim text-xs">{sessionExercises.length} exercises</span>
           </div>
-          <div className="space-y-4">
+          <div className="flex flex-col gap-3">
             {sessionExercises.map((se, i) => {
               const exTitle = se.exercises?.title ?? 'Unknown exercise';
               const img = exerciseImage(exTitle);
               const weightDisplay = se.pct_of_1rm != null ? calcWeight(se.pct_of_1rm, se.lift_key, maxLifts) : se.weight ?? null;
               const exMuscles = (se.exercises?.muscle_groups ?? []).slice(0, 3);
               return (
-                <Card key={se.id} className="bg-surface border-border overflow-hidden p-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr]">
-                    {/* Image with overlay number */}
-                    <div className="relative h-40 sm:h-auto sm:min-h-[180px]">
+                <Card key={se.id} className="bg-surface border-border hover:border-accent/30 group overflow-hidden p-0 transition-colors">
+                  <div className="flex items-stretch">
+                    {/* Compact image with number */}
+                    <div className="relative h-28 w-28 shrink-0 overflow-hidden sm:h-32 sm:w-32">
                       {se.exercises?.id ? (
-                        <Link href={`/exercises/${se.exercises.id}`}>
+                        <Link href={`/exercises/${se.exercises.id}`} className="block h-full w-full">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={img} alt={exTitle} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
+                          <img src={img} alt={exTitle} className="block h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
                         </Link>
                       ) : (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={img} alt={exTitle} className="h-full w-full object-cover" />
+                        <img src={img} alt={exTitle} className="block h-full w-full object-cover" />
                       )}
-                      <div className="absolute left-3 top-3">
-                        <span className="bg-accent text-accent-fg flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold shadow-lg">
-                          {i + 1}
-                        </span>
-                      </div>
+                      <span className="bg-accent text-accent-fg absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold shadow-md">
+                        {i + 1}
+                      </span>
                     </div>
+
                     {/* Body */}
-                    <div className="flex flex-col gap-3 p-5">
+                    <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 px-4 py-3 sm:px-5">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
                           {se.exercises?.id ? (
-                            <Link href={`/exercises/${se.exercises.id}`} className="hover:text-accent">
-                              <h3 className="text-text text-lg font-semibold leading-snug transition-colors">{exTitle}</h3>
+                            <Link href={`/exercises/${se.exercises.id}`} className="hover:text-accent transition-colors">
+                              <h3 className="text-text text-[15px] font-semibold leading-tight sm:text-base">{exTitle}</h3>
                             </Link>
                           ) : (
-                            <h3 className="text-text text-lg font-semibold leading-snug">{exTitle}</h3>
+                            <h3 className="text-text text-[15px] font-semibold leading-tight sm:text-base">{exTitle}</h3>
                           )}
                           {exMuscles.length > 0 && (
-                            <div className="mt-1 flex flex-wrap gap-1">
-                              {exMuscles.map((mg) => (
-                                <span key={mg} className="text-text-dim text-[10px] capitalize">
-                                  {mg.replace(/-/g, ' ')}
-                                </span>
-                              )).reduce<React.ReactNode[]>((acc, el, idx) => {
-                                if (idx > 0) acc.push(<span key={`d-${idx}`} className="text-text-dim text-[10px]">·</span>);
-                                acc.push(el);
-                                return acc;
-                              }, [])}
-                            </div>
+                            <p className="text-text-dim mt-0.5 text-[11px] capitalize">
+                              {exMuscles.map((m) => m.replace(/-/g, ' ')).join(' · ')}
+                            </p>
                           )}
                         </div>
                         {se.exercises?.video_url && (
@@ -180,7 +157,7 @@ export default async function SessionViewPage({ params }: { params: Promise<{ id
                             href={se.exercises.video_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-text-muted hover:text-accent flex items-center gap-1 text-xs"
+                            className="text-text-dim hover:text-accent flex shrink-0 items-center gap-1 text-[11px] transition-colors"
                           >
                             <ExternalLink className="h-3 w-3" />
                             Tutorial
@@ -188,27 +165,19 @@ export default async function SessionViewPage({ params }: { params: Promise<{ id
                         )}
                       </div>
 
-                      {/* Stat pills */}
-                      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                        {se.sets != null && (
-                          <StatPill label="Sets" value={String(se.sets)} icon={Repeat} />
-                        )}
-                        {se.reps && (
-                          <StatPill label="Reps" value={se.reps} icon={Dumbbell} />
-                        )}
-                        {weightDisplay && (
-                          <StatPill label="Load" value={weightDisplay} icon={Weight} accent />
-                        )}
-                        {se.rest_seconds != null && (
-                          <StatPill label="Rest" value={`${se.rest_seconds}s`} icon={Timer} />
-                        )}
+                      {/* Compact stat row with subtle dividers */}
+                      <div className="border-border/60 flex flex-wrap items-center gap-x-5 gap-y-1 border-t pt-2">
+                        {se.sets != null && <Stat label="Sets" value={String(se.sets)} />}
+                        {se.reps && <Stat label="Reps" value={se.reps} />}
+                        {weightDisplay && <Stat label="Load" value={weightDisplay} accent />}
+                        {se.rest_seconds != null && <Stat label="Rest" value={`${se.rest_seconds}s`} />}
                       </div>
 
                       {se.notes && (
-                        <div className="bg-muted/40 text-text-muted flex items-start gap-2 rounded-md p-3 text-xs italic">
+                        <p className="text-text-dim flex items-start gap-1.5 text-[11px] italic">
                           <Info className="text-text-dim mt-0.5 h-3 w-3 shrink-0" />
-                          <span>{se.notes}</span>
-                        </div>
+                          {se.notes}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -242,14 +211,11 @@ function StatTile({ icon: Icon, value, label }: { icon: React.ComponentType<{ cl
   );
 }
 
-function StatPill({ icon: Icon, label, value, accent }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string; accent?: boolean }) {
+function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className="border-border bg-muted/30 flex items-center gap-2 rounded-md border p-2">
-      <Icon className={`h-3.5 w-3.5 shrink-0 ${accent ? 'text-accent' : 'text-text-dim'}`} />
-      <div className="min-w-0">
-        <p className="text-text-dim text-[9px] font-medium uppercase leading-none tracking-wider">{label}</p>
-        <p className={`mt-0.5 text-sm font-semibold leading-tight ${accent ? 'text-accent' : 'text-text'}`}>{value}</p>
-      </div>
+    <div className="flex flex-col leading-tight">
+      <span className="text-text-dim text-[9px] font-semibold uppercase tracking-wider">{label}</span>
+      <span className={`text-sm font-bold ${accent ? 'text-accent' : 'text-text'}`}>{value}</span>
     </div>
   );
 }

@@ -156,20 +156,20 @@ export default async function ProgramsPage() {
                 <Link key={p.id} href={`/programs/${p.id}`}>
                   <Card className={`bg-surface border-border group relative flex h-full flex-col overflow-hidden p-0 transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 ${canAccess ? 'hover:border-accent/40' : 'opacity-80'}`}>
                     {/* Image with gradient overlay */}
-                    <div className="relative h-44 overflow-hidden">
+                    <div className="relative h-44 overflow-hidden transform-gpu">
                       {p.cover_image_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={p.cover_image_url}
                           alt={p.title}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          className="absolute inset-0 block h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="bg-muted flex h-full w-full items-center justify-center">
+                        <div className="bg-muted absolute inset-0 flex items-center justify-center">
                           <LayoutList className="text-text-dim h-10 w-10" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent" />
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface via-surface/10 to-transparent" />
                       {/* Top-left badges */}
                       <div className="absolute left-3 top-3 flex gap-1.5">
                         {p.category && (
@@ -221,21 +221,33 @@ export default async function ProgramsPage() {
                           <span className="text-text-dim text-[9px] uppercase tracking-wider">{totalHours ? 'hours' : 'hrs'}</span>
                         </div>
                       </div>
-                      {/* Progress bar (enrolled only) */}
-                      {isEnrolled && (
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between text-[10px]">
-                            <span className="text-text-dim flex items-center gap-1">
-                              <CheckCircle2 className="text-accent h-3 w-3" />
-                              Progress
-                            </span>
-                            <span className="text-accent font-bold">{p.progressPct}%</span>
-                          </div>
-                          <div className="bg-muted h-1 w-full overflow-hidden rounded-full">
-                            <div className="bg-accent h-full rounded-full transition-all" style={{ width: `${p.progressPct}%` }} />
-                          </div>
+                      {/* Status footer — always present so card heights stay uniform */}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-[10px]">
+                          {isEnrolled ? (
+                            <>
+                              <span className="text-text-dim flex items-center gap-1">
+                                <CheckCircle2 className="text-accent h-3 w-3" />
+                                Progress
+                              </span>
+                              <span className="text-accent font-bold">{p.progressPct}%</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-text-dim">{canAccess ? 'Not started' : `Requires ${p.plan_access}`}</span>
+                              <span className="text-text-muted group-hover:text-accent flex items-center gap-0.5 font-medium transition-colors">
+                                View
+                                <ArrowRight className="h-2.5 w-2.5" />
+                              </span>
+                            </>
+                          )}
                         </div>
-                      )}
+                        <div className="bg-muted h-1 w-full overflow-hidden rounded-full">
+                          {isEnrolled && (
+                            <div className="bg-accent h-full rounded-full transition-all" style={{ width: `${p.progressPct}%` }} />
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </Card>
                 </Link>

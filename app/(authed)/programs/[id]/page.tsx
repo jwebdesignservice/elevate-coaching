@@ -226,7 +226,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
               <h2 className="text-text text-lg font-semibold">Programme weeks</h2>
               <span className="text-text-dim text-xs">{weeks.length} weeks total</span>
             </div>
-            <div className="space-y-3">
+            <div className="flex flex-col gap-4">
               {weeks.map((week) => {
                 const weekSessions = week.program_sessions ?? [];
                 const weekDone = weekSessions.filter((s) => completedIds.has(s.id)).length;

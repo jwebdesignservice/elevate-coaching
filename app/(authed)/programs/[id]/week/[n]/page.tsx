@@ -123,27 +123,13 @@ export default async function WeekDetailPage({ params }: { params: Promise<{ id:
           <StatTile icon={Flame} value={muscleList.length || '—'} label="Muscle groups" />
         </div>
 
-        {/* Muscle groups card */}
-        {muscleList.length > 0 && (
-          <Card className="bg-surface border-border p-5">
-            <p className="text-text-dim mb-3 text-[10px] font-bold uppercase tracking-wider">Targets this week</p>
-            <div className="flex flex-wrap gap-1.5">
-              {muscleList.map((mg) => (
-                <span key={mg} className="bg-muted text-text rounded-md px-2 py-1 text-xs font-medium capitalize">
-                  {mg.replace(/-/g, ' ')}
-                </span>
-              ))}
-            </div>
-          </Card>
-        )}
-
         {/* Sessions */}
         <section className="space-y-3">
           <div className="flex items-baseline justify-between">
             <h2 className="text-text text-lg font-semibold">Sessions</h2>
             <span className="text-text-dim text-xs">{sessions.length} total</span>
           </div>
-          <div className="space-y-3">
+          <div className="flex flex-col gap-4">
             {sessions.map((sess) => {
               const done = completedIds.has(sess.id);
               const exerciseCount = sess.session_exercises?.length ?? 0;
