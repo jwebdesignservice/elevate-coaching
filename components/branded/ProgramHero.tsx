@@ -78,7 +78,7 @@ export function ProgramHero({
             />
             <span
               className="text-text absolute -top-6 text-sm font-semibold"
-              style={{ left: `${pct}%`, transform: 'translateX(-100%)' }}
+              style={{ left: `${pct}%`, transform: `translateX(${pct === 0 ? '0' : '-100'}%)` }}
             >
               {pct}%
             </span>
