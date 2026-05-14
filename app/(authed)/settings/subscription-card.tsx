@@ -59,7 +59,7 @@ export function SubscriptionCard({ tier, periodEnd, cancelAtPeriodEnd }: Props) 
     : null;
 
   return (
-    <Card className="bg-surface border-border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-white/[0.08]">
+    <Card className="bg-surface border-border p-6">
       {/* Header row */}
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>

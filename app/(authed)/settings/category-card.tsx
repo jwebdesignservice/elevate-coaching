@@ -46,7 +46,7 @@ export function CategoryCard({ currentCategory, pendingRequest }: CategoryCardPr
   const otherCategories = CATEGORIES.filter((c) => c !== currentCategory);
 
   return (
-    <Card className="bg-surface border-border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-white/[0.08]">
+    <Card className="bg-surface border-border p-6">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <span className="text-accent text-[11px] font-semibold tracking-[0.25em] uppercase">
