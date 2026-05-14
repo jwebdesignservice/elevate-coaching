@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Check, Lock, Zap } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
@@ -13,6 +14,19 @@ const TIER_LABEL: Record<PlanTier, string> = {
   basic: 'Basic',
   pro:   'Pro',
 };
+
+const FEATURES: { label: string; minTier: PlanTier }[] = [
+  { label: 'Dashboard & progress tracking',  minTier: 'free'  },
+  { label: 'Full workout programmes',         minTier: 'basic' },
+  { label: 'Daily task assignments',          minTier: 'basic' },
+  { label: 'Tutorial exercise library',       minTier: 'basic' },
+  { label: 'WhatsApp coach access',           minTier: 'basic' },
+  { label: 'Priority coach response',         minTier: 'pro'   },
+  { label: 'Advanced performance tracking',   minTier: 'pro'   },
+  { label: 'Monthly strategy call',           minTier: 'pro'   },
+];
+
+const TIER_RANK: Record<PlanTier, number> = { free: 0, basic: 1, pro: 2 };
 
 interface Props {
   tier: PlanTier;
@@ -36,8 +50,7 @@ export function SubscriptionCard({ tier, periodEnd, cancelAtPeriodEnd }: Props) 
     }
   }
 
-  const showAccessUntil = cancelAtPeriodEnd && periodEnd !== null;
-  const accessUntilFormatted = periodEnd
+  const periodEndFormatted = periodEnd
     ? new Date(periodEnd).toLocaleDateString('en-GB', {
         day: 'numeric',
         month: 'short',
@@ -47,51 +60,113 @@ export function SubscriptionCard({ tier, periodEnd, cancelAtPeriodEnd }: Props) 
 
   return (
     <Card className="bg-surface border-border p-6">
-      <h2 className="mb-4 text-xl font-semibold tracking-tight text-text">Subscription</h2>
-
-      <div className="flex items-center gap-3">
+      {/* Header row */}
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="mb-1 text-xl font-semibold tracking-tight text-text">Subscription</h2>
+          {periodEndFormatted && (
+            <p className="text-sm text-text-muted">
+              {cancelAtPeriodEnd ? 'Access until' : 'Renews'}{' '}
+              <span className="font-medium text-text">{periodEndFormatted}</span>
+            </p>
+          )}
+          {!periodEndFormatted && tier === 'free' && (
+            <p className="text-sm text-text-muted">No active subscription</p>
+          )}
+        </div>
         <span
           className={cn(
-            'rounded-pill inline-flex items-center px-2.5 py-1 text-xs font-semibold',
+            'rounded-pill inline-flex items-center px-3 py-1 text-sm font-semibold',
             tier === 'free'  && 'bg-surface-hover text-text-muted',
             tier === 'basic' && 'bg-accent/15 text-accent',
             tier === 'pro'   && 'bg-accent text-accent-fg',
           )}
         >
-          {TIER_LABEL[tier]}
+          {TIER_LABEL[tier]} Plan
         </span>
-        <span className="text-sm text-text">{TIER_LABEL[tier]} Plan</span>
       </div>
 
-      {showAccessUntil && (
-        <p className="mt-3 text-sm text-text-muted">
-          Access until{' '}
-          <span className="font-medium text-text">{accessUntilFormatted}</span>
-        </p>
-      )}
+      {/* Feature list */}
+      <ul className="mb-5 space-y-2">
+        {FEATURES.map(({ label, minTier }) => {
+          const unlocked = TIER_RANK[tier] >= TIER_RANK[minTier];
+          const upgradeLabel = minTier === 'pro' ? 'Pro' : 'Basic';
+          return (
+            <li key={label} className="flex items-center gap-2.5 text-sm">
+              {unlocked ? (
+                <Check className="h-4 w-4 shrink-0 text-accent" />
+              ) : (
+                <Lock className="h-4 w-4 shrink-0 text-text-dim" />
+              )}
+              <span className={unlocked ? 'text-text' : 'text-text-muted'}>
+                {label}
+              </span>
+              {!unlocked && (
+                <span className="ml-auto rounded-pill bg-surface-hover px-2 py-0.5 text-[10px] font-medium text-text-dim">
+                  {upgradeLabel}+
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
 
-      <div className="mt-5 flex flex-wrap gap-3">
-        {(tier === 'free' || tier === 'basic') && (
-          <Link
-            href="/pricing"
-            className={cn(
-              buttonVariants({ size: 'sm' }),
-              'bg-accent text-accent-fg hover:bg-accent/90',
-            )}
-          >
-            Upgrade →
-          </Link>
+      {/* CTAs */}
+      <div className="flex flex-wrap gap-3">
+        {tier === 'free' && (
+          <>
+            <Link
+              href="/pricing"
+              className={cn(
+                buttonVariants(),
+                'bg-accent text-accent-fg hover:bg-accent/90',
+              )}
+            >
+              <Zap className="h-4 w-4 fill-current" />
+              Upgrade plan
+            </Link>
+            <Link
+              href="/pricing"
+              className={cn(buttonVariants({ variant: 'outline' }))}
+            >
+              View pricing
+            </Link>
+          </>
         )}
-        {(tier === 'basic' || tier === 'pro') && (
+        {tier === 'basic' && (
+          <>
+            <button
+              onClick={openPortal}
+              disabled={loading}
+              className={cn(
+                buttonVariants({ variant: 'outline' }),
+                loading && 'cursor-not-allowed opacity-60',
+              )}
+            >
+              {loading ? 'Redirecting…' : 'Manage subscription'}
+            </button>
+            <Link
+              href="/pricing"
+              className={cn(
+                buttonVariants(),
+                'bg-accent text-accent-fg hover:bg-accent/90',
+              )}
+            >
+              <Zap className="h-4 w-4 fill-current" />
+              Upgrade to Pro
+            </Link>
+          </>
+        )}
+        {tier === 'pro' && (
           <button
             onClick={openPortal}
             disabled={loading}
             className={cn(
-              buttonVariants({ variant: 'outline', size: 'sm' }),
+              buttonVariants({ variant: 'outline' }),
               loading && 'cursor-not-allowed opacity-60',
             )}
           >
-            {loading ? 'Redirecting…' : 'Manage subscription →'}
+            {loading ? 'Redirecting…' : 'Manage subscription'}
           </button>
         )}
       </div>

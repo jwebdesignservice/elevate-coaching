@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { Menu, X } from 'lucide-react';
 import { SidebarContent } from './Sidebar';
+import type { PlanTier } from '@/lib/plans';
 
 /**
  * Mobile navigation — hamburger button + off-canvas drawer.
@@ -22,7 +23,7 @@ import { SidebarContent } from './Sidebar';
  * absorbs clicks (closing the drawer); the Popup is the panel itself,
  * pinned to the left edge.
  */
-export function MobileNav() {
+export function MobileNav({ tier }: { tier?: PlanTier }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -48,7 +49,7 @@ export function MobileNav() {
           >
             <X className="h-4 w-4" aria-hidden />
           </Dialog.Close>
-          <SidebarContent onNavigate={() => setOpen(false)} />
+          <SidebarContent onNavigate={() => setOpen(false)} tier={tier} />
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>

@@ -12,11 +12,20 @@ import {
   MessageCircle,
   Settings,
   Users,
+  Zap,
   type LucideIcon,
 } from 'lucide-react';
 import { Logo } from '@/components/branded/Logo';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import type { PlanTier } from '@/lib/plans';
+
+const TIER_LABEL: Record<PlanTier, string> = {
+  free: 'Free',
+  basic: 'Basic',
+  pro: 'Pro',
+};
 
 interface NavItem {
   label: string;
@@ -48,10 +57,8 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 interface SidebarContentProps {
-  /** Called after a nav link is clicked. Used by the mobile drawer to close
-   *  itself; the inline desktop sidebar can omit this and the links behave
-   *  as normal full-route navigations. */
   onNavigate?: () => void;
+  tier?: PlanTier;
 }
 
 /**
@@ -60,7 +67,7 @@ interface SidebarContentProps {
  * Uses usePathname() so the active state updates on client-side navigation
  * without requiring a full layout re-render.
  */
-export function SidebarContent({ onNavigate }: SidebarContentProps) {
+export function SidebarContent({ onNavigate, tier = 'free' }: SidebarContentProps) {
   // usePathname() is the primary source — it returns the full URL path and
   // updates reactively on client-side navigation.
   // useSelectedLayoutSegment() is a belt-and-suspenders fallback: it reads
@@ -145,6 +152,34 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
         </div>
         <div className="text-text-muted mb-0.5 text-xs">Discipline today,</div>
         <div className="text-accent mb-4 text-sm font-medium italic">Freedom tomorrow.</div>
+
+        {/* Plan status */}
+        <div className="border-border mb-3 flex items-center justify-between rounded-md border px-3 py-2">
+          <div className="flex items-center gap-2">
+            <span
+              className={cn(
+                'rounded-pill inline-flex items-center px-2 py-0.5 text-[10px] font-semibold',
+                tier === 'free'  && 'bg-surface-hover text-text-muted',
+                tier === 'basic' && 'bg-accent/15 text-accent',
+                tier === 'pro'   && 'bg-accent text-accent-fg',
+              )}
+            >
+              {TIER_LABEL[tier]}
+            </span>
+            <span className="text-text-dim text-xs">{TIER_LABEL[tier]} Plan</span>
+          </div>
+          {tier !== 'pro' && (
+            <Link
+              href="/pricing"
+              onClick={onNavigate}
+              className="text-accent hover:text-accent/80 flex items-center gap-1 text-[11px] font-medium transition-colors"
+            >
+              <Zap className="h-3 w-3 fill-current" />
+              Upgrade
+            </Link>
+          )}
+        </div>
+
         <Button
           nativeButton={false}
           render={<a href={whatsappHref} target="_blank" rel="noopener noreferrer" />}
@@ -163,10 +198,10 @@ export function SidebarContent({ onNavigate }: SidebarContentProps) {
  * The inline desktop sidebar. Hidden on small viewports (the MobileNav
  * drawer renders the same SidebarContent there).
  */
-export function Sidebar() {
+export function Sidebar({ tier }: { tier?: PlanTier }) {
   return (
     <aside className="bg-surface border-border hidden w-[220px] shrink-0 border-r md:flex md:flex-col">
-      <SidebarContent />
+      <SidebarContent tier={tier} />
     </aside>
   );
 }

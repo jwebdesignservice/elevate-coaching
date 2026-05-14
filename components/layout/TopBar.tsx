@@ -45,7 +45,7 @@ export function TopBar({ title, subtitle, userTier, userName }: TopBarProps) {
         {userTier !== 'pro' && (
           <Button
             nativeButton={false}
-            render={<Link href="/settings" />}
+            render={<Link href="/pricing" />}
             variant="outline"
             className="text-accent border-accent/40 hover:bg-accent/10 hover:border-accent transition-colors"
           >
