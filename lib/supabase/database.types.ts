@@ -1,11 +1,4 @@
-﻿node.exe : Initialising login role...
-At line:1 char:1
-+ & "C:\Program Files\nodejs/node.exe" "C:\Users\Jack\AppData\Roaming\n ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (Initialising login role...:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -291,4 +284,3 @@ export const Constants = {
     },
   },
 } as const
-<claude-code-hint v="1" type="plugin" value="supabase@claude-plugins-official" />
