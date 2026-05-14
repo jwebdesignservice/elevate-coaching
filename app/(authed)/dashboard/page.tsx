@@ -15,7 +15,15 @@ import { requireUser } from '@/lib/auth';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { CATEGORY_INFO, type Category } from '@/lib/categories';
 import { programProgressPct } from '@/lib/programs';
-import { getMondayOf, isoDayOfWeek, todayCompletionPct, toIsoDate } from '@/lib/tasks';
+import {
+  bestStreak,
+  currentStreak,
+  getMondayOf,
+  isoDayOfWeek,
+  todayCompletionPct,
+  toIsoDate,
+  type DayRollup,
+} from '@/lib/tasks';
 import type { TaskType } from '@/lib/task-types';
 import { CircularProgress } from '@/components/charts/CircularProgress';
 import { MiniBars } from '@/components/charts/MiniBars';
@@ -25,7 +33,7 @@ import { ProgramHero } from '@/components/branded/ProgramHero';
 import { StatCard } from '@/components/branded/StatCard';
 import { VideoTutorialCard } from '@/components/branded/VideoTutorialCard';
 import { TodaysTasks, type DashboardTaskItem } from '@/components/dashboard/TodaysTasks';
-import { WeeklySchedule, type ScheduleItem } from '@/components/dashboard/WeeklySchedule';
+import { WeeklyStreak } from '@/components/dashboard/WeeklyStreak';
 import { PerformanceOverview } from '@/components/dashboard/PerformanceOverview';
 
 export const metadata = {
@@ -42,22 +50,6 @@ export const metadata = {
 //   • weekly schedule        → SP-4
 //   • performance series     → SP-4
 // ─────────────────────────────────────────────────────────────────────────
-
-const DEMO_DAYS = [
-  { letter: 'M', date: 19 },
-  { letter: 'T', date: 20 },
-  { letter: 'W', date: 21 },
-  { letter: 'T', date: 22 },
-  { letter: 'F', date: 23 },
-  { letter: 'S', date: 24 },
-  { letter: 'S', date: 25 },
-];
-
-const DEMO_SCHEDULE: ScheduleItem[] = [
-  { Icon: Dumbbell, label: 'Lower Body Strength', time: '8:00 AM' },
-  { Icon: HeartPulse, label: 'Conditioning', time: '12:00 PM' },
-  { Icon: Waves, label: 'Mobility & Recovery', time: '6:00 PM' },
-];
 
 const DEMO_PERFORMANCE = {
   '7D': {
@@ -228,6 +220,26 @@ export default async function DashboardPage() {
   const todayPct = todayCompletionPct(todayTasks.length, completedTaskIds.size);
   const allDone = todayTasks.length > 0 && completedTaskIds.size === todayTasks.length;
 
+  // 90-day rollup for streak + performance chart (single RPC round-trip).
+  const ninetyDaysAgo = new Date(today);
+  ninetyDaysAgo.setDate(today.getDate() - 90);
+  const fromIso = toIsoDate(ninetyDaysAgo);
+
+  const { data: rollupRaw } = await sb.rpc('get_task_rollup', {
+    uid: profile.id,
+    cat: category,
+    from_date: fromIso,
+    to_date: todayIso,
+  });
+
+  // Zero out pre-signup days so they don't penalise the streak (spec §8.1, Q9).
+  const signupIso = toIsoDate(new Date(profile.created_at as string));
+  const adjustedRollup: DayRollup[] = ((rollupRaw ?? []) as { date: string; total: number; done: number }[])
+    .map((d) => (d.date < signupIso ? { ...d, total: 0, done: 0 } : d));
+
+  const streak = currentStreak(adjustedRollup, todayIso);
+  const best = bestStreak(adjustedRollup);
+
   return (
     <>
       <TopBar
@@ -269,10 +281,10 @@ export default async function DashboardPage() {
             <StatCard
               icon={<Flame className="h-3.5 w-3.5" />}
               label="Active Streak"
-              value="—"
-              caption="Coming in SP-5"
-              captionTone="muted"
-              visual={<MiniBars data={[1, 1, 1, 1, 1, 1, 1]} />}
+              value={streak === 0 ? '—' : `${streak}`}
+              caption={best > 0 ? `Best: ${best} days` : 'Start your streak today'}
+              captionTone={streak >= 3 ? 'accent' : 'muted'}
+              visual={<MiniBars data={adjustedRollup.slice(-7).map((d) => (d.total > 0 && d.done === d.total ? 1 : 0))} />}
             />
             <StatCard
               icon={<Bookmark className="h-3.5 w-3.5" />}
@@ -321,7 +333,7 @@ export default async function DashboardPage() {
 
         <RightRail>
           <TodaysTasks tasks={todayTasks} completedTaskIds={completedTaskIds} todayIso={todayIso} />
-          <WeeklySchedule days={DEMO_DAYS} activeDayIndex={3} items={DEMO_SCHEDULE} />
+          <WeeklyStreak weekStartIso={mondayIso} todayIso={todayIso} rollup={adjustedRollup} />
           <PerformanceOverview
             metricLabel="Strength Score"
             series={DEMO_PERFORMANCE}
